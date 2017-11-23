@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 2.8)
 
 # Set variables
-set(PROJECT_NAME util1)
+set(PROJECT_NAME demo_dup)
 set(PROJECT_LANGUAGE C CXX)
-set(PROJECT_DEPS deps1 demo)
+set(PROJECT_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/demo.h)
 
 # Compile setting
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
@@ -37,12 +37,13 @@ file(GLOB PROJECT_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
 	)
 
-# Build utility
-add_executable(${PROJECT_NAME} ${PROJECT_SRCS})
+# Build library
+add_library(${PROJECT_NAME} STATIC ${PROJECT_SRCS})
 set_target_properties(${PROJECT_NAME}
-	PROPERTIES OUTPUT_NAME ${PROJECT_NAME}
+	PROPERTIES
+	OUTPUT_NAME			${PROJECT_NAME}
+		PREFIX			"lib"
 	)
-target_link_libraries(${PROJECT_NAME} ${PROJECT_DEPS})
 
 # Install
 install(TARGETS ${PROJECT_NAME}
@@ -50,4 +51,7 @@ install(TARGETS ${PROJECT_NAME}
 	ARCHIVE DESTINATION "${CMAKE_INSTALL_PREFIX}/lib"
 	LIBRARY DESTINATION "${CMAKE_INSTALL_PREFIX}/lib"
 	PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_PREFIX}/include"
+	)
+install(FILES ${PROJECT_HEADERS}
+	DESTINATION "${CMAKE_INSTALL_PREFIX}/include"
 	)

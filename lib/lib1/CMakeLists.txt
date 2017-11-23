@@ -8,6 +8,8 @@ set(PROJECT_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/demo.h)
 # Compile setting
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 set(CMAKE_C_FLAGS_RELEASE "-O3")
+set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -Wall")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 # Variables
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Build confugure" FORCE)
