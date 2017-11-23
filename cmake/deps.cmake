@@ -1,8 +1,10 @@
-# Set dependences paths
-set(DEPS_PATHS
-	${CMAKE_CURRENT_SOURCE_DIR}/deps/deps1
-	${CMAKE_CURRENT_SOURCE_DIR}/deps/deps2
-	)
+# Project Dependences Configuration
+
+# Backup and set build type to release
+set(CMAKE_BUILD_TYPE_BAK ${CMAKE_BUILD_TYPE})
+set(CMAKE_BUILD_TYPE Release)
+
+# Include subdirectories
 include_directories(${DEPS_PATHS})
 
 # Find other dependences
@@ -24,3 +26,7 @@ include_directories(${SERIALPORT_INCLUDE_DIR})
 foreach(DEPS_PATH ${DEPS_PATHS})
 	add_subdirectory(${DEPS_PATH})
 endforeach()
+
+# Restore origin build type
+set(CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE_BAK})
+
