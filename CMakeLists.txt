@@ -23,8 +23,7 @@ set(DEPS_PATHS
 
 # Library paths
 set(LIB_PATHS
-	#${CMAKE_CURRENT_SOURCE_DIR}/lib/lib1
-	#${CMAKE_CURRENT_SOURCE_DIR}/lib/lib2
+	${CMAKE_CURRENT_SOURCE_DIR}/lib/trasvc
 	)
 
 # Utility paths
