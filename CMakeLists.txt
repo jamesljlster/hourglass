@@ -18,20 +18,19 @@ endif()
 
 # Dependences paths
 set(DEPS_PATHS
-	${CMAKE_CURRENT_SOURCE_DIR}/deps/deps1
-	${CMAKE_CURRENT_SOURCE_DIR}/deps/deps2
+	${CMAKE_CURRENT_SOURCE_DIR}/deps/lstm/src
 	)
 
 # Library paths
 set(LIB_PATHS
-	${CMAKE_CURRENT_SOURCE_DIR}/lib/lib1
-	${CMAKE_CURRENT_SOURCE_DIR}/lib/lib2
+	#${CMAKE_CURRENT_SOURCE_DIR}/lib/lib1
+	#${CMAKE_CURRENT_SOURCE_DIR}/lib/lib2
 	)
 
 # Utility paths
 set(UTIL_PATHS
-	${CMAKE_CURRENT_SOURCE_DIR}/util/util1
-	${CMAKE_CURRENT_SOURCE_DIR}/util/util2
+	#${CMAKE_CURRENT_SOURCE_DIR}/util/util1
+	#${CMAKE_CURRENT_SOURCE_DIR}/util/util2
 	)
 
 if(${BUILD_TEST})

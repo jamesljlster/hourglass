@@ -1,0 +1,3 @@
+[submodule "deps/lstm"]
+	path = deps/lstm
+	url = git@140.127.205.188:jamesljlster/lstm.git
