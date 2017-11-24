@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 # Set variables
-set(PROJECT_NAME CMake_Template)
+set(PROJECT_NAME hourglass)
 set(PROJECT_LANGUAGE C CXX)
 
 # Environment variables
