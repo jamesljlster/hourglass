@@ -22,10 +22,10 @@ int trasvc_create(trasvc_t* svcPtr, lstm_config_t lstmCfg, int dataLimit)
 
 	// Memory allocation
 	trasvc_alloc(tmpSvcPtr, 1, struct TRASVC, ret, RET);
-	trasvc_alloc(tmpSvcPtr->data, rows, double*, ret, ERR);
+	trasvc_alloc(tmpSvcPtr->data, rows, float*, ret, ERR);
 	for(i = 0; i < rows; i++)
 	{
-		trasvc_alloc(tmpSvcPtr->data[i], cols, double, ret, ERR);
+		trasvc_alloc(tmpSvcPtr->data[i], cols, float, ret, ERR);
 	}
 
 	// Clone lstm config

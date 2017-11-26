@@ -17,7 +17,7 @@ struct TRASVC
 	int thStatus;
 	pthread_t th;
 
-	double** data;
+	float** data;
 	int dataHead;
 	int dataTail;
 	int dataMemLen;
