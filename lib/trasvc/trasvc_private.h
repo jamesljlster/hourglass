@@ -1,6 +1,8 @@
 #ifndef __TRASVC_PRIVATE_H__
 #define __TRASVC_PRIVATE_H__
 
+#include "trasvc_types.h"
+
 // Macros
 #ifdef DEBUG
 #include <stdio.h>
@@ -32,6 +34,17 @@
 	{ \
 		goto errLabel; \
 	}
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+int trasvc_data_struct_init(struct TRASVC_DATA* dataPtr, int rowLimit, int cols);
+void trasvc_data_struct_cleanup(struct TRASVC_DATA* dataPtr);
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif
