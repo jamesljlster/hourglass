@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 # Set variables
 set(PROJECT_NAME hourglass_test)
 set(PROJECT_LANGUAGE C CXX)
-set(PROJECT_DEPS trasvc lstm ${OpenCV_LIBS})
+set(PROJECT_DEPS trasvc lstm ${OpenCV_LIBS} pthread)
 
 # Compile setting
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
