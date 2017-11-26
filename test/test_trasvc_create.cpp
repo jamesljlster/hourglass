@@ -3,6 +3,8 @@
 
 #include <trasvc.h>
 
+#define DATA_LIMIT	1000
+
 int main()
 {
 	int ret;
@@ -20,7 +22,7 @@ int main()
 	while(1)
 	{
 		// Create trasvc
-		ret = trasvc_create(&ts, cfg);
+		ret = trasvc_create(&ts, cfg, DATA_LIMIT);
 		if(ret < 0)
 		{
 			printf("trasvc_create() failed with error: %d\n", ret);

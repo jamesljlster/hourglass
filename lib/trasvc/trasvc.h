@@ -16,7 +16,7 @@ typedef struct TRASVC* trasvc_t;
 extern "C" {
 #endif
 
-int trasvc_create(trasvc_t* svcPtr, lstm_config_t lstmCfg);
+int trasvc_create(trasvc_t* svcPtr, lstm_config_t lstmCfg, int dataLimit);
 void trasvc_delete(trasvc_t svc);
 
 int trasvc_start(trasvc_t svc);
