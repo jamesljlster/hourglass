@@ -48,7 +48,10 @@ int trasvc_data_append(trasvc_t svc, float* data, int timeout)
 	}
 
 	// Append data
-	memcpy(svc->mgrData.data[tmpIndex], data, sizeof(double) * svc->mgrData.dataCols);
+	memcpy(svc->mgrData.data[tmpIndex], data, sizeof(float) * svc->mgrData.dataCols);
+
+	// Set head
+	svc->mgrData.dataHead = tmpIndex;
 
 RET:
 	if(lockStatus > 0)

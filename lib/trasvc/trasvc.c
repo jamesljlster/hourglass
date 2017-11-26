@@ -19,7 +19,6 @@ int trasvc_data_struct_init(struct TRASVC_DATA* dataPtr, int rowLimit, int cols)
 
 	// Memory allocation
 	trasvc_alloc(dataPtr->data, rows, float*, ret, ERR);
-	dataPtr->dataMemLen = rows;
 	for(i = 0; i < rows; i++)
 	{
 		trasvc_alloc(dataPtr->data[i], cols, float, ret, ERR);
@@ -47,6 +46,10 @@ int trasvc_data_struct_init(struct TRASVC_DATA* dataPtr, int rowLimit, int cols)
 	{
 		dataPtr->condStatus = 1;
 	}
+
+	// Assign values
+	dataPtr->dataMemLen = rows;
+	dataPtr->dataCols = cols;
 
 	goto RET;
 
