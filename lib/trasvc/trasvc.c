@@ -21,6 +21,10 @@ int trasvc_create(trasvc_t* svcPtr, lstm_config_t lstmCfg)
 	trasvc_run(lstm_config_clone(&tmpSvcPtr->lstmCfg, lstmCfg), ret, ERR);
 
 	// Create lstm state
+	trasvc_run(lstm_state_create(&tmpSvcPtr->lstmState, lstmCfg), ret, ERR);
+
+	// Assign value
+	*svcPtr = tmpSvcPtr;
 
 	goto RET;
 
