@@ -43,6 +43,8 @@ extern "C" {
 int trasvc_data_struct_init(struct TRASVC_DATA* dataPtr, int rowLimit, int cols);
 void trasvc_data_struct_cleanup(struct TRASVC_DATA* dataPtr);
 
+void* trasvc_tra_task(void* arg);
+
 #ifdef __cplusplus
 }
 #endif
