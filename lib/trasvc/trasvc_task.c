@@ -9,6 +9,12 @@
 #define DEFAULT_ITER	1
 #define DELTA_LIMIT		30
 
+void mem_free(void* arg)
+{
+	LOG("free mem with address: %p", arg);
+	free(arg);
+}
+
 void* trasvc_tra_task(void* arg)
 {
 	int i, j, iter;
@@ -21,6 +27,10 @@ void* trasvc_tra_task(void* arg)
 
 	float* outBuf = NULL;
 	float* errBuf = NULL;
+
+	// Thread cleanup task
+	pthread_cleanup_push(mem_free, outBuf);
+	pthread_cleanup_push(mem_free, errBuf);
 
 	// Find inputs and outputs
 	inputs = lstm_config_get_inputs(svc->lstmCfg);
@@ -159,8 +169,8 @@ void* trasvc_tra_task(void* arg)
 	}
 
 RET:
-	free(outBuf);
-	free(errBuf);
+	pthread_cleanup_pop(1);
+	pthread_cleanup_pop(1);
 
 	pthread_exit(NULL);
 	return NULL;
