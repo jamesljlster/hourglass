@@ -15,9 +15,16 @@ void mem_free(void* arg)
 	free(arg);
 }
 
+void mutex_unlock(void* arg)
+{
+	LOG("Unlock mutex: 0x%p", arg);
+	pthread_mutex_unlock(arg);
+}
+
 void* trasvc_tra_task(void* arg)
 {
 	int i, j, iter;
+	int mgrLockStatus = 0;
 	int inputs, outputs;
 	int tmpLen, tmpIndex, srcIndex;
 	struct TRASVC* svc = arg;
@@ -31,6 +38,7 @@ void* trasvc_tra_task(void* arg)
 	// Thread cleanup task
 	pthread_cleanup_push(mem_free, outBuf);
 	pthread_cleanup_push(mem_free, errBuf);
+	pthread_cleanup_push(mutex_unlock, &svc->mgrData.mutex);
 
 	// Find inputs and outputs
 	inputs = lstm_config_get_inputs(svc->lstmCfg);
@@ -61,6 +69,7 @@ void* trasvc_tra_task(void* arg)
 		// Lock mgr data
 		LOG("Wait for mgrData lock");
 		pthread_mutex_lock(&svc->mgrData.mutex);
+		mgrLockStatus = 1;
 		LOG("mgrData locked");
 
 		// Update training data
@@ -120,6 +129,7 @@ void* trasvc_tra_task(void* arg)
 
 		// Unlock mgr data
 		pthread_mutex_unlock(&svc->mgrData.mutex);
+		mgrLockStatus = 0;
 		LOG("mgrData unlocked");
 
 		// Restore lstm state
@@ -169,6 +179,7 @@ void* trasvc_tra_task(void* arg)
 	}
 
 RET:
+	pthread_cleanup_pop(mgrLockStatus);
 	pthread_cleanup_pop(1);
 	pthread_cleanup_pop(1);
 
