@@ -49,7 +49,9 @@ void* trasvc_tra_task(void* arg)
 	while(svc->stop == 0)
 	{
 		// Lock mgr data
+		LOG("Wait for mgrData lock");
 		pthread_mutex_lock(&svc->mgrData.mutex);
+		LOG("mgrData locked");
 
 		// Update training data
 		tmpLen = svc->mgrData.dataHead - svc->mgrData.dataTail;
@@ -72,8 +74,25 @@ void* trasvc_tra_task(void* arg)
 					lstm_state_save(svc->lstmState, svc->lstm);
 
 					// Overwrite
+					LOG("Overwirte training data index: %d", svc->traData.dataTail);
 					svc->traData.dataTail = (svc->traData.dataTail + 1) % svc->traData.dataMemLen;
 				}
+
+#ifdef DEBUG
+				printf("Push data: ");
+				for(j = 0; j < svc->mgrData.dataCols; j++)
+				{
+					printf("%f", svc->mgrData.data[srcIndex][j]);
+					if(j == svc->mgrData.dataCols - 1)
+					{
+						printf("\n");
+					}
+					else
+					{
+						printf(", ");
+					}
+				}
+#endif
 
 				// Copy memory
 				memcpy(svc->traData.data[tmpIndex], svc->mgrData.data[srcIndex], sizeof(float) * svc->traData.dataCols);
@@ -82,6 +101,12 @@ void* trasvc_tra_task(void* arg)
 			// Clear mgr data queue
 			svc->mgrData.dataTail = svc->mgrData.dataHead;
 		}
+#ifdef DEBUG
+		else
+		{
+			LOG("Empty mgrData");
+		}
+#endif
 
 		// Training
 		tmpLen = svc->traData.dataHead - svc->traData.dataTail;
@@ -117,6 +142,7 @@ void* trasvc_tra_task(void* arg)
 
 		// Find mse
 		mse /= (float)(DEFAULT_ITER * outputs);
+		LOG("mse = %f", mse);
 	}
 
 RET:
