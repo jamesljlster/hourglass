@@ -108,6 +108,10 @@ void* trasvc_tra_task(void* arg)
 		}
 #endif
 
+		// Unlock mgr data
+		pthread_mutex_unlock(&svc->mgrData.mutex);
+		LOG("mgrData unlocked");
+
 		// Restore lstm state
 		lstm_state_restore(svc->lstmState, svc->lstm);
 
@@ -118,7 +122,13 @@ void* trasvc_tra_task(void* arg)
 			tmpLen += svc->traData.dataMemLen;
 		}
 
-		for(iter = 0; iter < DEFAULT_ITER; i++)
+		if(tmpLen <= 0)
+		{
+			LOG("Empty training data");
+			continue;
+		}
+
+		for(iter = 0; iter < DEFAULT_ITER; iter++)
 		{
 			mse = 0;
 			for(i = 0; i < tmpLen; i++)
