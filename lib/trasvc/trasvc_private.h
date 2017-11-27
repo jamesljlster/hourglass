@@ -19,7 +19,8 @@
 		goto errLabel; \
 	}
 
-#ifdef DEBUG
+//#ifdef DEBUG
+#if 1
 #define trasvc_run(func, retVal, errLabel) \
 	retVal = func; \
 	if(retVal != TRASVC_NO_ERROR) \

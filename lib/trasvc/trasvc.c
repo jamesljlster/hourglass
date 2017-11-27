@@ -106,6 +106,10 @@ int trasvc_create(trasvc_t* svcPtr, lstm_config_t lstmCfg, int dataLimit)
 	// Create lstm state
 	trasvc_run(lstm_state_create(&tmpSvcPtr->lstmState, lstmCfg), ret, ERR);
 
+	// Create lstm
+	trasvc_run(lstm_create(&tmpSvcPtr->lstm, lstmCfg), ret, ERR);
+	lstm_rand_network(tmpSvcPtr->lstm);
+
 	// Create data pool
 	cols = lstm_config_get_inputs(lstmCfg) + lstm_config_get_outputs(lstmCfg);
 	trasvc_run(trasvc_data_struct_init(&tmpSvcPtr->traData, dataLimit, cols), ret, ERR);
