@@ -11,6 +11,10 @@
 
 #define INPUTS 1
 #define OUTPUTS 1
+
+#define IT_FUNC		LSTM_SIGMOID
+#define OT_FUNC		LSTM_SIGMOID
+
 #define TIMEOUT 1000
 
 #define TARGET_MSE 0.001
@@ -34,8 +38,10 @@ int main()
 
 	lstm_config_set_inputs(cfg, INPUTS);
 	lstm_config_set_outputs(cfg, OUTPUTS);
-	lstm_config_set_learning_rate(cfg, 0.01);
-	lstm_config_set_momentum_coef(cfg, 0.1);
+	lstm_config_set_input_transfer_func(cfg, IT_FUNC);
+	lstm_config_set_output_transfer_func(cfg, OT_FUNC);
+	lstm_config_set_learning_rate(cfg, 0.1);
+	lstm_config_set_momentum_coef(cfg, 0.0);
 
 	// Create trasvc
 	ret = trasvc_create(&ts, cfg, DATA_LIMIT);
@@ -60,6 +66,8 @@ int main()
 		if(ret != 0)
 		{
 			printf("trasvc_data_append() failed with error: %d\n", ret);
+			i--;
+			continue;
 		}
 	}
 

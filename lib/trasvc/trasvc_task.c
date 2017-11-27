@@ -131,8 +131,8 @@ void* trasvc_tra_task(void* arg)
 #endif
 
 		// Unlock mgr data
-		pthread_mutex_unlock(&svc->mgrData.mutex);
 		mgrLockStatus = 0;
+		pthread_mutex_unlock(&svc->mgrData.mutex);
 		LOG("mgrData unlocked");
 
 		// Restore lstm state

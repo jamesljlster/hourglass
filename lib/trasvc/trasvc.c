@@ -135,6 +135,10 @@ void trasvc_delete(trasvc_t svc)
 {
 	LOG("enter");
 
+	// Stop training task
+	trasvc_stop(svc);
+
+	// Cleanup
 	if(svc != NULL)
 	{
 		if(svc->traTaskStatus > 0)
@@ -162,6 +166,9 @@ int trasvc_start(trasvc_t svc)
 
 	LOG("enter");
 
+	// Set stop state
+	svc->stop = 0;
+
 	ret = pthread_create(&svc->traTask, NULL, trasvc_tra_task, (void*)svc);
 	if(ret != 0)
 	{
@@ -183,7 +190,8 @@ void trasvc_stop(trasvc_t svc)
 
 	if(svc->traTaskStatus > 0)
 	{
-		pthread_cancel(svc->traTask);
+		// Set stop state
+		svc->stop = 1;
 		pthread_join(svc->traTask, NULL);
 	}
 
