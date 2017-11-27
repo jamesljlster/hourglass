@@ -115,6 +115,9 @@ void* trasvc_tra_task(void* arg)
 
 				// Copy memory
 				memcpy(svc->traData.data[tmpIndex], svc->mgrData.data[srcIndex], sizeof(float) * svc->traData.dataCols);
+
+				// Set queue head
+				svc->traData.dataHead = tmpIndex;
 			}
 
 			// Clear mgr data queue
@@ -151,6 +154,7 @@ void* trasvc_tra_task(void* arg)
 		for(iter = 0; iter < DEFAULT_ITER; iter++)
 		{
 			mse = 0;
+			LOG("Training data amount: %d", tmpLen);
 			for(i = 0; i < tmpLen; i++)
 			{
 				// Find data index
@@ -171,11 +175,12 @@ void* trasvc_tra_task(void* arg)
 
 			// Update network
 			lstm_bptt_adjust_network(svc->lstm, lRate, mCoef, DELTA_LIMIT);
-		}
 
-		// Find mse
-		mse /= (float)(DEFAULT_ITER * outputs);
-		LOG("mse = %f", mse);
+			// Find mse
+			mse /= (float)(tmpLen * outputs);
+			svc->mse = mse;
+			LOG("mse = %f", mse);
+		}
 	}
 
 RET:

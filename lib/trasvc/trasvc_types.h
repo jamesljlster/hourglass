@@ -28,6 +28,8 @@ struct TRASVC
 	lstm_state_t lstmState;
 	lstm_config_t lstmCfg;
 
+	float mse;
+
 	int traTaskStatus;
 	pthread_t traTask;	// LSTM training task
 	struct TRASVC_DATA traData;
