@@ -108,6 +108,9 @@ void* trasvc_tra_task(void* arg)
 		}
 #endif
 
+		// Restore lstm state
+		lstm_state_restore(svc->lstmState, svc->lstm);
+
 		// Training
 		tmpLen = svc->traData.dataHead - svc->traData.dataTail;
 		if(tmpLen < 0)

@@ -156,6 +156,37 @@ void trasvc_delete(trasvc_t svc)
 	LOG("exit");
 }
 
-int trasvc_start(trasvc_t svc);
-void trasvc_stop(trasvc_t svc);
+int trasvc_start(trasvc_t svc)
+{
+	int ret = TRASVC_NO_ERROR;
+
+	LOG("enter");
+
+	ret = pthread_create(&svc->traTask, NULL, trasvc_tra_task, (void*)svc);
+	if(ret != 0)
+	{
+		LOG("Failed to create training task");
+		ret = TRASVC_SYS_FAILED;
+	}
+	else
+	{
+		svc->traTaskStatus = 1;
+	}
+
+	LOG("exit");
+	return ret;
+}
+
+void trasvc_stop(trasvc_t svc)
+{
+	LOG("enter");
+
+	if(svc->traTaskStatus > 0)
+	{
+		pthread_cancel(svc->traTask);
+		pthread_join(svc->traTask, NULL);
+	}
+
+	LOG("exit");
+}
 
