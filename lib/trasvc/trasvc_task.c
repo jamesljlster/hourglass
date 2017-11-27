@@ -175,6 +175,7 @@ void* trasvc_tra_task(void* arg)
 
 			// Update network
 			lstm_bptt_adjust_network(svc->lstm, lRate, mCoef, DELTA_LIMIT);
+			lstm_bptt_erase(svc->lstm);
 
 			// Find mse
 			mse /= (float)(tmpLen * outputs);
