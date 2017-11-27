@@ -19,6 +19,7 @@ endif()
 # Dependences paths
 set(DEPS_PATHS
 	${CMAKE_CURRENT_SOURCE_DIR}/deps/lstm/src
+	${CMAKE_CURRENT_SOURCE_DIR}/deps/tcpmgr/lib
 	)
 
 # Library paths
