@@ -22,7 +22,7 @@ int trasvc_data_append(trasvc_t svc, float* data, int timeout)
 
 	// Lock mgr data mutex
 	timeTmp.tv_sec = 0;
-	timeTmp.tv_nsec = timeout * 1000;
+	timeTmp.tv_nsec = timeout * 1000000;
 	ret = pthread_mutex_timedlock(&svc->mgrData.mutex, &timeTmp);
 	if(ret == ETIMEDOUT)
 	{
