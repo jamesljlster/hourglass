@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "trasvc.h"
 #include "trasvc_private.h"
@@ -8,6 +9,7 @@
 
 #define DEFAULT_ITER	1
 #define DELTA_LIMIT		30
+#define BUF_RESERVE		100
 
 // Reset active flag
 void trasvc_active_reset(void* arg)
@@ -26,6 +28,31 @@ void trasvc_mutex_unlock(void* arg)
 {
 	LOG("Unlock mutex: 0x%p", arg);
 	pthread_mutex_unlock(arg);
+}
+
+void trasvc_client_task(void* arg, int sock)
+{
+	int i;
+	int ret;
+	int bufLen;
+	char* buf = NULL;
+
+	struct TRASVC* svc = arg;
+
+	// Setup cleanup handler
+	pthread_cleanup_push(trasvc_mem_free, buf);
+
+	// Memory allocation
+	bufLen = BUF_RESERVE + svc->mgrData.dataCols * sizeof(float);
+	trasvc_alloc(buf, bufLen, char, ret, RET);
+
+	// Loop for communication
+	while(1)
+	{
+	}
+
+RET:
+	pthread_cleanup_pop(1);
 }
 
 void* trasvc_tra_task(void* arg)

@@ -49,6 +49,8 @@ void* trasvc_tra_task(void* arg);
 void trasvc_mem_free(void* arg);
 void trasvc_mutex_unlock(void* arg);
 
+int trasvc_str_recv(int sock, int* tsFlag, char* buf, int bufLen, int timeout);
+
 #ifdef __cplusplus
 }
 #endif
