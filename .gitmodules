@@ -4,3 +4,6 @@
 [submodule "deps/tcpmgr"]
 	path = deps/tcpmgr
 	url = git@140.127.205.188:jamesljlster/tcpmgr.git
+[submodule "deps/args"]
+	path = deps/args
+	url = git@140.127.205.188:jamesljlster/args.git
