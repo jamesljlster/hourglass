@@ -2,12 +2,16 @@
 #include <string.h>
 #include <time.h>
 
+#include <tcpmgr_sock.h>
+
 #include "trasvc.h"
 #include "trasvc_private.h"
 
 #include "debug.h"
 
 #define DEFAULT_ITER	1
+#define DEFAULT_TIMEOUT	3000
+
 #define DELTA_LIMIT		30
 #define BUF_RESERVE		100
 
@@ -32,7 +36,6 @@ void trasvc_mutex_unlock(void* arg)
 
 void trasvc_client_task(void* arg, int sock)
 {
-	int i;
 	int ret;
 	int bufLen;
 	char* buf = NULL;
@@ -49,6 +52,63 @@ void trasvc_client_task(void* arg, int sock)
 	// Loop for communication
 	while(1)
 	{
+		// Receive command string
+		ret = trasvc_str_recv(sock, buf, bufLen, DEFAULT_TIMEOUT);
+		if(ret < 0)
+		{
+			printf("trasvc_str_recv() failed with error: %d\n", ret);
+			printf("Shutdown connection\n");
+			goto RET;
+		}
+
+		// Parse command
+		ret = trasvc_cmd_parse(buf);
+		if(ret < 0)
+		{
+			printf("trasvc_cmd_parse() failed with error: %d\n", ret);
+			printf("Restart\n");
+			goto RESP;
+		}
+
+		// Receive external data
+		if(ret & TRASVC_CMD_APPEND_FLAG)
+		{
+			ret = trasvc_data_recv(sock, buf, bufLen, svc->mgrData.dataCols * sizeof(float), DEFAULT_TIMEOUT);
+			if(ret < 0)
+			{
+				printf("trasvc_data_recv() failed with error: %d\n", ret);
+				printf("Shutdown connection\n");
+				goto RET;
+			}
+		}
+
+RESP:
+		// Send response
+		strncpy(buf, TRASVC_CMD_HEAD_STR, bufLen - 1);
+		strncat(buf, " ", bufLen - strlen(buf) - 1);
+		switch(ret)
+		{
+			case TRASVC_NO_ERROR:
+				strncat(buf, TRASVC_CMD_OK_STR, bufLen - strlen(buf) - 1);
+				break;
+
+			case TRASVC_TIMEOUT:
+				strncat(buf, TRASVC_CMD_TIMEOUT_STR, bufLen - strlen(buf) - 1);
+				break;
+
+			default:
+				strncat(buf, TRASVC_CMD_ERR_STR, bufLen - strlen(buf) - 1);
+		}
+
+		strncat(buf, "\x0A", bufLen - strlen(buf) - 1);
+
+		ret = send(sock, buf, strlen(buf), 0);
+		if(ret < 0)
+		{
+			printf("send() failed with error: %d\n", ret);
+			printf("Shutdown connection\n");
+			goto RET;
+		}
 	}
 
 RET:

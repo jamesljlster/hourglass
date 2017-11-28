@@ -9,6 +9,8 @@
 #define TRASVC_CMD_HEAD_STR "TS"
 #define TRASVC_CMD_APPEND_STR "APPEND"
 #define TRASVC_CMD_OK_STR "OK"
+#define TRASVC_CMD_ERR_STR "ERR"
+#define TRASVC_CMD_TIMEOUT_STR "TIMEOUT"
 
 // Macros
 #ifdef DEBUG

@@ -12,7 +12,7 @@
 int trasvc_data_recv(int sock, char* buf, int bufLen, int recvLen, int timeout)
 {
 	int recvCounter;
-	int ret = TRASVC_NO_ERROR;
+	int ret;
 
 	struct timespec timeHold, timeTmp;
 	struct timeval timeLeft;
@@ -69,6 +69,9 @@ int trasvc_data_recv(int sock, char* buf, int bufLen, int recvLen, int timeout)
 			recvCounter += ret;
 		}
 	}
+
+	// Reset returun value
+	ret = TRASVC_NO_ERROR;
 
 RET:
 	LOG("exit");
