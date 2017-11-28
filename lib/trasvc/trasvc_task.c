@@ -9,13 +9,13 @@
 #define DEFAULT_ITER	1
 #define DELTA_LIMIT		30
 
-void mem_free(void* arg)
+void trasvc_mem_free(void* arg)
 {
 	LOG("free mem with address: %p", arg);
 	free(arg);
 }
 
-void mutex_unlock(void* arg)
+void trasvc_mutex_unlock(void* arg)
 {
 	LOG("Unlock mutex: 0x%p", arg);
 	pthread_mutex_unlock(arg);
@@ -36,9 +36,9 @@ void* trasvc_tra_task(void* arg)
 	float* errBuf = NULL;
 
 	// Thread cleanup task
-	pthread_cleanup_push(mem_free, outBuf);
-	pthread_cleanup_push(mem_free, errBuf);
-	pthread_cleanup_push(mutex_unlock, &svc->mgrData.mutex);
+	pthread_cleanup_push(trasvc_mem_free, outBuf);
+	pthread_cleanup_push(trasvc_mem_free, errBuf);
+	pthread_cleanup_push(trasvc_mutex_unlock, &svc->mgrData.mutex);
 
 	// Find inputs and outputs
 	inputs = lstm_config_get_inputs(svc->lstmCfg);

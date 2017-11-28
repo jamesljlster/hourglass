@@ -46,6 +46,9 @@ void trasvc_data_struct_cleanup(struct TRASVC_DATA* dataPtr);
 
 void* trasvc_tra_task(void* arg);
 
+void trasvc_mem_free(void* arg);
+void trasvc_mutex_unlock(void* arg);
+
 #ifdef __cplusplus
 }
 #endif
