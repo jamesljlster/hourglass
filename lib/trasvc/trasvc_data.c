@@ -17,6 +17,9 @@ int trasvc_data_append(trasvc_t svc, float* data, int timeout)
 
 	LOG("enter");
 
+	// Setup cleanup handler
+	pthread_cleanup_push(trasvc_mutex_unlock, &svc->mgrData.mutex);
+
 	// Lock mgr data mutex
 	timeTmp.tv_sec = 0;
 	timeTmp.tv_nsec = timeout * 1000;
@@ -54,10 +57,7 @@ int trasvc_data_append(trasvc_t svc, float* data, int timeout)
 	svc->mgrData.dataHead = tmpIndex;
 
 RET:
-	if(lockStatus > 0)
-	{
-		pthread_mutex_unlock(&svc->mgrData.mutex);
-	}
+	pthread_cleanup_pop(lockStatus);
 
 	LOG("exit");
 	return ret;
