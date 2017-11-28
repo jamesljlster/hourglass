@@ -59,6 +59,8 @@ void trasvc_mutex_unlock(void* arg);
 int trasvc_str_recv(int sock, char* buf, int bufLen, int timeout);
 int trasvc_data_recv(int sock, char* buf, int bufLen, int recvLen, int timeout);
 
+int trasvc_cmd_parse(char* buf);
+
 #ifdef __cplusplus
 }
 #endif
