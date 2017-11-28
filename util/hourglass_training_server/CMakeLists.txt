@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 2.8)
 
 # Set variables
-set(PROJECT_NAME util1)
+set(PROJECT_NAME hourglass_training_server)
 set(PROJECT_LANGUAGE C CXX)
-set(PROJECT_DEPS deps1 demo)
+set(PROJECT_DEPS trasvc lstm args pthread)
 
 # Compile setting
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
