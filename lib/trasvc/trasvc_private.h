@@ -3,6 +3,13 @@
 
 #include "trasvc_types.h"
 
+#define TRASVC_CMD_SEP_CHAR ' '
+#define TRASVC_CMD_END_CHAR 0x0A
+
+#define TRASVC_CMD_HEAD_STR "TS"
+#define TRASVC_CMD_APPEND_STR "APPEND"
+#define TRASVC_CMD_OK_STR "OK"
+
 // Macros
 #ifdef DEBUG
 #include <stdio.h>
@@ -49,8 +56,10 @@ void* trasvc_tra_task(void* arg);
 void trasvc_mem_free(void* arg);
 void trasvc_mutex_unlock(void* arg);
 
-int trasvc_str_recv(int sock, int* tsFlag, char* buf, int bufLen, int timeout);
+int trasvc_str_recv(int sock, char* buf, int bufLen, int timeout);
 int trasvc_data_recv(int sock, char* buf, int bufLen, int recvLen, int timeout);
+
+int trasvc_cmd_parse(char* buf);
 
 #ifdef __cplusplus
 }

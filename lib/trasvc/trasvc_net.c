@@ -9,13 +9,6 @@
 
 #include "debug.h"
 
-#define TRASVC_CMD_SEP_CHAR ' '
-#define TRASVC_CMD_END_CHAR 0x0A
-
-#define TRASVC_CMD_HEAD_STR "TS"
-#define TRASVC_CMD_APPEND_STR "APPEND"
-#define TRASVC_CMD_OK_STR "OK"
-
 int trasvc_data_recv(int sock, char* buf, int bufLen, int recvLen, int timeout)
 {
 	int recvCounter;
@@ -82,10 +75,9 @@ RET:
 	return ret;
 }
 
-int trasvc_str_recv(int sock, int* tsFlag, char* buf, int bufLen, int timeout)
+int trasvc_str_recv(int sock, char* buf, int bufLen, int timeout)
 {
-	int status, counter;
-	int bufIndex;
+	int bufIndex = 0;
 	int ret = TRASVC_NO_ERROR;
 	char tmpRead;
 
@@ -97,11 +89,6 @@ int trasvc_str_recv(int sock, int* tsFlag, char* buf, int bufLen, int timeout)
 
 	// Initialize buffer
 	memset(buf, 0, bufLen);
-
-	// Set initial status
-	status = 0;
-	counter = 0;
-	bufIndex = 0;
 
 	// Set timeout
 	timeout = timeout * 1000; // msec to usec
@@ -144,95 +131,12 @@ int trasvc_str_recv(int sock, int* tsFlag, char* buf, int bufLen, int timeout)
 		{
 			// Insert character to buf
 			buf[bufIndex++] = tmpRead;
-		}
 
-		// Determine state
-		if(counter == 0)
-		{
-			if(tmpRead == TRASVC_CMD_HEAD_STR[0])
+			if(tmpRead == TRASVC_CMD_END_CHAR)
 			{
-				status = TRASVC_CMD_HEAD_FLAG;
-			}
-			else if(tmpRead == TRASVC_CMD_APPEND_STR[0])
-			{
-				status = TRASVC_CMD_APPEND_FLAG;
-			}
-			else if(tmpRead == TRASVC_CMD_OK_STR[0])
-			{
-				status = TRASVC_CMD_OK_FLAG;
+				goto RET;
 			}
 		}
-		else
-		{
-			switch(status)
-			{
-				case TRASVC_CMD_HEAD_FLAG:
-					if((tmpRead == TRASVC_CMD_SEP_CHAR || tmpRead == TRASVC_CMD_END_CHAR) &&
-							TRASVC_CMD_HEAD_STR[counter] == '\0')
-					{
-						counter = 0;
-						ret |= TRASVC_CMD_HEAD_FLAG;
-					}
-					else if(tmpRead == TRASVC_CMD_HEAD_STR[counter])
-					{
-						counter++;
-					}
-					else
-					{
-						ret = TRASVC_INVALID_CMD;
-						goto RET;
-					}
-
-					break;
-
-				case TRASVC_CMD_APPEND_FLAG:
-					if((tmpRead == TRASVC_CMD_SEP_CHAR || tmpRead == TRASVC_CMD_END_CHAR) &&
-							TRASVC_CMD_APPEND_STR[counter] == '\0')
-					{
-						counter = 0;
-						ret |= TRASVC_CMD_APPEND_FLAG;
-					}
-					else if(tmpRead == TRASVC_CMD_APPEND_STR[counter])
-					{
-						counter++;
-					}
-					else
-					{
-						ret = TRASVC_INVALID_CMD;
-						goto RET;
-					}
-
-					break;
-
-				case TRASVC_CMD_OK_FLAG:
-					if((tmpRead == TRASVC_CMD_SEP_CHAR || tmpRead == TRASVC_CMD_END_CHAR) &&
-							TRASVC_CMD_OK_STR[counter] == '\0')
-					{
-						counter = 0;
-						ret |= TRASVC_CMD_OK_FLAG;
-					}
-					else if(tmpRead == TRASVC_CMD_OK_STR[counter])
-					{
-						counter++;
-					}
-					else
-					{
-						ret = TRASVC_INVALID_CMD;
-						goto RET;
-					}
-
-					break;
-			}
-		}
-
-		// Check if reach end
-		if(tmpRead == TRASVC_CMD_END_CHAR)
-		{
-			break;
-		}
-
-		// Increase counter
-		counter++;
 	}
 
 RET:
