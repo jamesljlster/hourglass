@@ -46,7 +46,7 @@ int trasvc_data_append(trasvc_t svc, float* data, int timeout)
 	if(tmpIndex == svc->mgrData.dataTail)
 	{
 		LOG("Buffer full");
-		ret = TRASVC_BUF_FULL;
+		ret = TRASVC_MGRDATA_FULL;
 		goto RET;
 	}
 

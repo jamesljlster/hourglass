@@ -9,6 +9,13 @@
 #define DEFAULT_ITER	1
 #define DELTA_LIMIT		30
 
+// Reset active flag
+void trasvc_active_reset(void* arg)
+{
+	struct TRASVC* svc = arg;
+	svc->status = svc->status & (~TRASVC_ACTIVE);
+}
+
 void trasvc_mem_free(void* arg)
 {
 	LOG("free mem with address: %p", arg);
@@ -39,6 +46,10 @@ void* trasvc_tra_task(void* arg)
 	pthread_cleanup_push(trasvc_mem_free, outBuf);
 	pthread_cleanup_push(trasvc_mem_free, errBuf);
 	pthread_cleanup_push(trasvc_mutex_unlock, &svc->mgrData.mutex);
+	pthread_cleanup_push(trasvc_active_reset, svc);
+
+	// Set active flag
+	svc->status = svc->status | TRASVC_ACTIVE;
 
 	// Find inputs and outputs
 	inputs = lstm_config_get_inputs(svc->lstmCfg);
@@ -185,9 +196,10 @@ void* trasvc_tra_task(void* arg)
 	}
 
 RET:
-	pthread_cleanup_pop(mgrLockStatus);
-	pthread_cleanup_pop(1);
-	pthread_cleanup_pop(1);
+	pthread_cleanup_pop(1);	// Reset active flag
+	pthread_cleanup_pop(mgrLockStatus);	// Unlock mutex
+	pthread_cleanup_pop(1);	// Free errBuf
+	pthread_cleanup_pop(1);	// Free outBuf
 
 	pthread_exit(NULL);
 	return NULL;
