@@ -18,16 +18,14 @@ char* ts_max_client_def[] = {
 };
 
 char* ts_dev_timeout_def[] = {
-	"20"
+	"3000"
 };
 
 args_t ts_arg_list[] = {
 	{1, "host-ip", 'I', 1, ts_ip_def, "Server Setting", "Host IP dddress"},
 	{1, "host-port", 'P', 1, ts_port_def, "Host port"},
 	{1, "max-client", 'M', 1, ts_max_client_def, "Maximum client connection"},
-	{0, "dev-path", 'D', 1, NULL, "Wheel Device Setting", "Wheel device path"},
-	{0, "dev-baud", 'B', 1, NULL, "Wheel device baudrate"},
-	{1, "timeout", 'T', 1, ts_dev_timeout_def, "Wheel device timeout"},
+	{1, "timeout", 'T', 1, ts_dev_timeout_def, "Operation timeout"},
 	{0, "help", 'H', 0, NULL, "User Interface", "Print detail of arguments"},
 	ARGS_TERMINATE
 };
