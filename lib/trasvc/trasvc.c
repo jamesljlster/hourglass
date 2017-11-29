@@ -132,12 +132,12 @@ void trasvc_delete(trasvc_t svc)
 {
 	LOG("enter");
 
-	// Stop training task
-	trasvc_stop(svc);
-
-	// Cleanup
 	if(svc != NULL)
 	{
+		// Stop training task
+		trasvc_stop(svc);
+
+		// Cleanup
 		if(svc->traTaskStatus > 0)
 		{
 			pthread_cancel(svc->traTask);
