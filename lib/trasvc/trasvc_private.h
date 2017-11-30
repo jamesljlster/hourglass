@@ -46,6 +46,8 @@
 	}
 #endif
 
+extern const char* trasvc_errmsg[];
+
 #ifdef __cplusplus
 extern "C" {
 #endif

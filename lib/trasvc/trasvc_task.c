@@ -62,7 +62,7 @@ void trasvc_client_task(void* arg, int sock)
 		ret = trasvc_str_recv(sock, buf, bufLen);
 		if(ret < 0)
 		{
-			printf("trasvc_str_recv() failed with error: %d\n", ret);
+			printf("trasvc_str_recv() failed with error: %s\n", trasvc_get_error_msg(ret));
 			printf("Shutdown connection\n");
 			break;
 		}
@@ -71,7 +71,7 @@ void trasvc_client_task(void* arg, int sock)
 		ret = trasvc_cmd_parse(buf);
 		if(ret < 0)
 		{
-			printf("trasvc_cmd_parse() failed with error: %d\n", ret);
+			printf("trasvc_cmd_parse() failed with error: %s\n", trasvc_get_error_msg(ret));
 			printf("Restart\n");
 			goto RESP;
 		}
@@ -82,7 +82,7 @@ void trasvc_client_task(void* arg, int sock)
 			ret = trasvc_data_recv(sock, buf, bufLen, svc->mgrData.dataCols * sizeof(float), DEFAULT_TIMEOUT);
 			if(ret < 0)
 			{
-				printf("trasvc_data_recv() failed with error: %d\n", ret);
+				printf("trasvc_data_recv() failed with error: %s\n", trasvc_get_error_msg(ret));
 				printf("Shutdown connection\n");
 				break;
 			}

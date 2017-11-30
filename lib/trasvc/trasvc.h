@@ -50,6 +50,8 @@ int trasvc_get_status(trasvc_t svc);
 
 void trasvc_client_task(void* arg, int sock);
 
+const char* trasvc_get_error_msg(int ret);
+
 #ifdef __cplusplus
 }
 #endif
