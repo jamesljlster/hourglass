@@ -78,46 +78,19 @@ RET:
 	return ret;
 }
 
-int trasvc_str_recv(int sock, char* buf, int bufLen, int timeout)
+int trasvc_str_recv(int sock, char* buf, int bufLen)
 {
 	int bufIndex = 0;
 	int ret = TRASVC_NO_ERROR;
 	char tmpRead;
-
-	struct timespec timeHold, timeTmp;
-	struct timeval timeLeft;
-	fd_set fdSet;
 
 	LOG("enter");
 
 	// Initialize buffer
 	memset(buf, 0, bufLen);
 
-	// Set timeout
-	timeout = timeout * 1000; // msec to usec
-	timeLeft.tv_sec = 0;
-
-	// Get current time
-	clock_gettime(CLOCK_MONOTONIC, &timeHold);
-
 	while(1)
 	{
-		// Set timeout
-		clock_gettime(CLOCK_MONOTONIC, &timeTmp);
-		timeTmp.tv_sec = timeTmp.tv_sec - timeHold.tv_sec;
-		timeTmp.tv_nsec = timeTmp.tv_nsec - timeHold.tv_nsec;
-		timeLeft.tv_usec = timeout - (timeTmp.tv_sec * 1000000 + timeTmp.tv_nsec / 1000);
-
-		// Select
-		FD_ZERO(&fdSet);
-		FD_SET(sock, &fdSet);
-		ret = select(sock + 1, &fdSet, NULL, NULL, &timeLeft);
-		if(ret == 0)
-		{
-			ret = TRASVC_TIMEOUT;
-			goto RET;
-		}
-
 		// Receive
 		ret = recv(sock, &tmpRead, 1, 0);
 		if(ret < 0)
@@ -132,13 +105,13 @@ int trasvc_str_recv(int sock, char* buf, int bufLen, int timeout)
 		}
 		else
 		{
-			// Insert character to buf
-			buf[bufIndex++] = tmpRead;
-
 			if(tmpRead == TRASVC_CMD_END_CHAR)
 			{
 				goto RET;
 			}
+
+			// Insert character to buf
+			buf[bufIndex++] = tmpRead;
 		}
 	}
 

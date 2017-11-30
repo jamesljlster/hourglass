@@ -54,7 +54,7 @@ void trasvc_client_task(void* arg, int sock)
 	while(1)
 	{
 		// Receive command string
-		ret = trasvc_str_recv(sock, buf, bufLen, DEFAULT_TIMEOUT);
+		ret = trasvc_str_recv(sock, buf, bufLen);
 		if(ret < 0)
 		{
 			printf("trasvc_str_recv() failed with error: %d\n", ret);
