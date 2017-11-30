@@ -4,7 +4,10 @@
 
 #include <tcpmgr.h>
 #include <trasvc.h>
+#include <trasvc_private.h>
 #include <args.h>
+
+#include "hts.h"
 
 #define BUF_SIZE	128
 
@@ -19,52 +22,6 @@
 		goto RET; \
 	} \
 }
-
-enum TS_ARG
-{
-	TS_ARG_HOST_IP,
-	TS_ARG_HOST_PORT,
-	TS_ARG_MAX_CLIENT,
-	TS_ARG_TIMEOUT,
-	TS_ARG_LSTM_CFG_PATH,
-	TS_ARG_DATA_LIMIT,
-	TS_ARG_HELP
-};
-
-char* ts_ip_def[] = {
-	"0.0.0.0"
-};
-
-char* ts_port_def[] = {
-	"7500"
-};
-
-char* ts_max_client_def[] = {
-	"5"
-};
-
-char* ts_dev_timeout_def[] = {
-	"3000"
-};
-
-char* ts_lstm_cfg_def[] = {
-	"lstm.cfg"
-};
-
-char* ts_data_limit_def[] = {
-	"5000"
-};
-
-args_t ts_arg_list[] = {
-	{1, "host-ip", 'I', 1, ts_ip_def, "Server Setting", "Host IP dddress"},
-	{1, "host-port", 'P', 1, ts_port_def, NULL, "Host port"},
-	{1, "max-client", 'M', 1, ts_max_client_def, NULL, "Maximum client connection"},
-	{1, "timeout", 'T', 1, ts_dev_timeout_def, NULL, "Operation timeout"},
-	{1, "lstm-cfg", 'F', 1, ts_lstm_cfg_def, "Training Service Setting", "LSTM config file path"},
-	{1, "data-limit", 'L', 1, ts_data_limit_def, NULL, "Maximum queue length of training data"},
-	{0, "help", 'H', 0, NULL, "User Interface", "Print detail of arguments"},
-	ARGS_TERMINATE
-};
 
 int main(int argc, char* argv[])
 {
@@ -122,6 +79,7 @@ int main(int argc, char* argv[])
 	// Print summary
 	printf("Summary:\n");
 	args_print_summary(ts_arg_list);
+	printf("\n");
 
 	// Import lstm config
 	ret = lstm_config_import(&lstmCfg, ts_arg_list[TS_ARG_LSTM_CFG_PATH].leading[0]);
@@ -163,6 +121,8 @@ int main(int argc, char* argv[])
 		goto RET;
 	}
 
+	// Get user input and show training status
+	i = 0;
 	while(1)
 	{
 		for(i = 0; i < BUF_SIZE; i++)
