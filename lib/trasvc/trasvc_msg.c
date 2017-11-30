@@ -10,6 +10,7 @@ const char* trasvc_errmsg[] = {
 	"System function failed",
 	"Timeout",
 	"Connection closed",
+	"Connect failed",
 	"Invalid command",
 	"Insufficient buffer"
 };

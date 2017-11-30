@@ -107,6 +107,7 @@ int trasvc_str_recv(int sock, char* buf, int bufLen)
 		{
 			if(tmpRead == TRASVC_CMD_END_CHAR)
 			{
+				ret = TRASVC_NO_ERROR;
 				goto RET;
 			}
 

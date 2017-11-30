@@ -29,16 +29,19 @@ enum TRASVC_RET_VALUE
 	TRASVC_SYS_FAILED = -2,
 	TRASVC_TIMEOUT = -3,
 	TRASVC_CONNECTION_CLOSED = -4,
-	TRASVC_INVALID_CMD = -5,
-	TRASVC_INSUFFICIENT_BUF = -6
+	TRASVC_CONNECT_FAILED = -5,
+	TRASVC_INVALID_CMD = -6,
+	TRASVC_INSUFFICIENT_BUF = -7
 };
 
 typedef struct TRASVC* trasvc_t;
+typedef int trasvc_client_t;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+// Server functions
 int trasvc_create(trasvc_t* svcPtr, lstm_config_t lstmCfg, int dataLimit);
 void trasvc_delete(trasvc_t svc);
 
@@ -50,6 +53,12 @@ int trasvc_get_status(trasvc_t svc);
 
 void trasvc_client_task(void* arg, int sock);
 
+// Client functions
+int trasvc_client_connect(trasvc_client_t* clientPtr, const char* serverIP, int serverPort);
+int trasvc_client_datasend(trasvc_client_t client, float* data, int dataLen);
+void trasvc_client_disconnect(trasvc_client_t client);
+
+// Common functions
 const char* trasvc_get_error_msg(int ret);
 
 #ifdef __cplusplus
