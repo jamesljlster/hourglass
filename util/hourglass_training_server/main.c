@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <pthread.h>
 
 #include <tcpmgr.h>
 #include <trasvc.h>
@@ -40,15 +39,6 @@ int main(int argc, char* argv[])
 
 	tcpmgr_t mgr = NULL;
 	trasvc_t ts = NULL;
-
-	int thStatus = 0;
-	pthread_t th;
-
-	int mutexStatus = 0;
-	pthread_mutex_t mutex;
-
-	int condStatus = 0;
-	pthread_cond_t cond;
 
 	// Process arguments
 	ret = args_parse(ts_arg_list, argc, argv, NULL);
