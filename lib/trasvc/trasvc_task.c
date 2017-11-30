@@ -73,11 +73,10 @@ void trasvc_client_task(void* arg, int sock)
 		{
 			printf("trasvc_cmd_parse() failed with error: %s\n", trasvc_get_error_msg(ret));
 			printf("Restart\n");
-			goto RESP;
 		}
 
 		// Receive external data
-		if(ret & TRASVC_CMD_APPEND_FLAG)
+		if(ret > 0 && (ret & TRASVC_CMD_APPEND_FLAG) > 0)
 		{
 			ret = trasvc_data_recv(sock, buf, bufLen, svc->mgrData.dataCols * sizeof(float), DEFAULT_TIMEOUT);
 			if(ret < 0)
@@ -88,7 +87,6 @@ void trasvc_client_task(void* arg, int sock)
 			}
 		}
 
-RESP:
 		// Send response
 		strncpy(buf, TRASVC_CMD_HEAD_STR, bufLen - 1);
 		strncat(buf, " ", bufLen - strlen(buf) - 1);
