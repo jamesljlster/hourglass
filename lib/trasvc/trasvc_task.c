@@ -48,7 +48,12 @@ void trasvc_client_task(void* arg, int sock)
 
 	// Memory allocation
 	bufLen = BUF_RESERVE + svc->mgrData.dataCols * sizeof(float);
-	trasvc_alloc(buf, bufLen, char, ret, RET);
+	buf = calloc(bufLen, sizeof(char));
+	if(buf == NULL)
+	{
+		printf("Memory allocation failed!\n");
+		return;
+	}
 
 	// Loop for communication
 	while(1)
@@ -59,7 +64,7 @@ void trasvc_client_task(void* arg, int sock)
 		{
 			printf("trasvc_str_recv() failed with error: %d\n", ret);
 			printf("Shutdown connection\n");
-			goto RET;
+			break;
 		}
 
 		// Parse command
@@ -79,7 +84,7 @@ void trasvc_client_task(void* arg, int sock)
 			{
 				printf("trasvc_data_recv() failed with error: %d\n", ret);
 				printf("Shutdown connection\n");
-				goto RET;
+				break;
 			}
 		}
 
@@ -108,11 +113,10 @@ RESP:
 		{
 			printf("send() failed with error: %d\n", ret);
 			printf("Shutdown connection\n");
-			goto RET;
+			break;
 		}
 	}
 
-RET:
 	pthread_cleanup_pop(1);
 }
 
