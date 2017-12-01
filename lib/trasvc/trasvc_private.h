@@ -15,6 +15,8 @@
 #define TRASVC_CMD_STOP_STR "STOP"
 #define TRASVC_CMD_MSE_STR "MSE"
 #define TRASVC_CMD_STATUS_STR "STATUS"
+#define TRASVC_CMD_UPLOAD_STR "UPLOAD"
+#define TRASVC_CMD_DOWNLOAD_STR "DOWNLOAD"
 
 // Macros
 #ifdef DEBUG
@@ -67,6 +69,8 @@ void trasvc_mutex_unlock(void* arg);
 
 int trasvc_str_recv(int sock, char* buf, int bufLen);
 int trasvc_data_recv(int sock, char* buf, int bufLen, int recvLen, int timeout);
+int trasvc_model_send(int sock, lstm_t lstmSrc);
+int trasvc_model_recv(int sock, lstm_t* lstmDstPtr);
 
 int trasvc_cmd_parse(char* buf);
 

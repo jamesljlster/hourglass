@@ -9,6 +9,17 @@
 
 #include "debug.h"
 
+int trasvc_model_send(int sock, lstm_t lstmSrc)
+{
+	int ret = TRASVC_NO_ERROR;
+
+	LOG("enter");
+
+RET:
+	LOG("exit");
+	return ret;
+}
+
 int trasvc_data_recv(int sock, char* buf, int bufLen, int recvLen, int timeout)
 {
 	int recvCounter;

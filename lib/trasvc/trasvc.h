@@ -13,15 +13,17 @@
 #define TRASVC_WARNING			0x0040
 
 // TRASVC command flag
-#define TRASVC_CMD_HEAD_FLAG	0x0001
-#define TRASVC_CMD_APPEND_FLAG	0x0002
-#define TRASVC_CMD_OK_FLAG		0x0004
-#define TRASVC_CMD_ERR_FLAG		0x0008
-#define TRASVC_CMD_TIMEOUT_FLAG	0x0010
-#define TRASVC_CMD_START_FLAG	0x0020
-#define TRASVC_CMD_STOP_FLAG	0x0040
-#define TRASVC_CMD_MSE_FLAG		0x0080
-#define TRASVC_CMD_STATUS_FLAG	0x0100
+#define TRASVC_CMD_HEAD_FLAG		0x0001
+#define TRASVC_CMD_APPEND_FLAG		0x0002
+#define TRASVC_CMD_OK_FLAG			0x0004
+#define TRASVC_CMD_ERR_FLAG			0x0008
+#define TRASVC_CMD_TIMEOUT_FLAG		0x0010
+#define TRASVC_CMD_START_FLAG		0x0020
+#define TRASVC_CMD_STOP_FLAG		0x0040
+#define TRASVC_CMD_MSE_FLAG			0x0080
+#define TRASVC_CMD_STATUS_FLAG		0x0100
+#define TRASVC_CMD_UPLOAD_FLAG		0x0200
+#define TRASVC_CMD_DOWNLOAD_FLAG	0x0400
 
 enum TRASVC_RET_VALUE
 {
@@ -65,6 +67,8 @@ int trasvc_client_get_status(trasvc_client_t client, int* flagPtr);
 int trasvc_client_get_mse(trasvc_client_t client, float* msePtr);
 int trasvc_client_start(trasvc_client_t client);
 int trasvc_client_stop(trasvc_client_t client);
+int trasvc_client_model_download(trasvc_client_t client, lstm_t* lstmDstPtr);
+int trasvc_client_model_upload(trasvc_client_t client, lstm_t lstmSrc);
 
 // Common functions
 const char* trasvc_get_error_msg(int ret);
