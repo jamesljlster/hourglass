@@ -39,6 +39,7 @@ void trasvc_client_task(void* arg, int sock)
 {
 	int ret;
 	int bufLen;
+	int defaultResp;
 	char* buf = NULL;
 
 	struct TRASVC* svc = arg;
@@ -58,6 +59,8 @@ void trasvc_client_task(void* arg, int sock)
 	// Loop for communication
 	while(1)
 	{
+		defaultResp = 1;
+
 		// Receive command string
 		ret = trasvc_str_recv(sock, buf, bufLen);
 		if(ret < 0)
@@ -103,27 +106,53 @@ void trasvc_client_task(void* arg, int sock)
 				// Stop training task
 				trasvc_stop(svc);
 			}
+			else if((ret & TRASVC_CMD_MSE_FLAG) > 0)
+			{
+				// Make response string
+				snprintf(buf, bufLen, "%s %f\x0A",
+						TRASVC_CMD_HEAD_STR,
+						svc->mse
+						);
+
+				// Using custom response string
+				defaultResp = 0;
+			}
+			else if((ret & TRASVC_CMD_STATUS_FLAG) > 0)
+			{
+				// Make response string
+				snprintf(buf, bufLen, "%s %x\x0A",
+						TRASVC_CMD_HEAD_STR,
+						svc->status
+						);
+
+				// Using custom response string
+				defaultResp = 0;
+			}
+		}
+
+		// Make default response string
+		if(defaultResp > 0)
+		{
+			strncpy(buf, TRASVC_CMD_HEAD_STR, bufLen - 1);
+			strncat(buf, " ", bufLen - strlen(buf) - 1);
+			switch(ret)
+			{
+				case TRASVC_NO_ERROR:
+					strncat(buf, TRASVC_CMD_OK_STR, bufLen - strlen(buf) - 1);
+					break;
+
+				case TRASVC_TIMEOUT:
+					strncat(buf, TRASVC_CMD_TIMEOUT_STR, bufLen - strlen(buf) - 1);
+					break;
+
+				default:
+					strncat(buf, TRASVC_CMD_ERR_STR, bufLen - strlen(buf) - 1);
+			}
+
+			strncat(buf, "\x0A", bufLen - strlen(buf) - 1);
 		}
 
 		// Send response
-		strncpy(buf, TRASVC_CMD_HEAD_STR, bufLen - 1);
-		strncat(buf, " ", bufLen - strlen(buf) - 1);
-		switch(ret)
-		{
-			case TRASVC_NO_ERROR:
-				strncat(buf, TRASVC_CMD_OK_STR, bufLen - strlen(buf) - 1);
-				break;
-
-			case TRASVC_TIMEOUT:
-				strncat(buf, TRASVC_CMD_TIMEOUT_STR, bufLen - strlen(buf) - 1);
-				break;
-
-			default:
-				strncat(buf, TRASVC_CMD_ERR_STR, bufLen - strlen(buf) - 1);
-		}
-
-		strncat(buf, "\x0A", bufLen - strlen(buf) - 1);
-
 		ret = send(sock, buf, strlen(buf), 0);
 		if(ret < 0)
 		{
