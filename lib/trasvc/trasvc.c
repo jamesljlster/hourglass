@@ -6,6 +6,71 @@
 
 #include "debug.h"
 
+void trasvc_flag_update(trasvc_t svc)
+{
+	LOG("enter");
+
+	int tmpLen;
+
+	// Check active
+	if(svc->traTaskStatus > 0)
+	{
+		svc->status |= TRASVC_ACTIVE;
+	}
+	else
+	{
+		svc->status &= (~TRASVC_ACTIVE);
+	}
+
+	// Check training data
+	tmpLen = svc->traData.dataHead - svc->traData.dataTail;
+	if(tmpLen < 0)
+	{
+		tmpLen += svc->traData.dataMemLen;
+	}
+
+	if(tmpLen == 0)
+	{
+		svc->status |= TRASVC_TRADATA_EMPTY;
+		svc->status &= (~TRASVC_TRADATA_FULL);
+	}
+	else if(tmpLen == svc->traData.dataMemLen - 1)
+	{
+		svc->status |= TRASVC_TRADATA_FULL;
+		svc->status &= (~TRASVC_TRADATA_EMPTY);
+	}
+	else
+	{
+		svc->status &= (~TRASVC_TRADATA_EMPTY);
+		svc->status &= (~TRASVC_TRADATA_FULL);
+	}
+
+	// Check manage data
+	tmpLen = svc->mgrData.dataHead - svc->mgrData.dataTail;
+	if(tmpLen < 0)
+	{
+		tmpLen += svc->mgrData.dataMemLen;
+	}
+
+	if(tmpLen == 0)
+	{
+		svc->status |= TRASVC_MGRDATA_EMPTY;
+		svc->status &= (~TRASVC_MGRDATA_FULL);
+	}
+	else if(tmpLen == svc->mgrData.dataMemLen - 1)
+	{
+		svc->status |= TRASVC_MGRDATA_FULL;
+		svc->status &= (~TRASVC_MGRDATA_EMPTY);
+	}
+	else
+	{
+		svc->status &= (~TRASVC_MGRDATA_EMPTY);
+		svc->status &= (~TRASVC_MGRDATA_FULL);
+	}
+
+	LOG("exit");
+}
+
 int trasvc_data_struct_init(struct TRASVC_DATA* dataPtr, int rowLimit, int cols)
 {
 	int i;

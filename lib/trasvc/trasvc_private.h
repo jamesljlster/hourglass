@@ -68,6 +68,8 @@ int trasvc_data_recv(int sock, char* buf, int bufLen, int recvLen, int timeout);
 
 int trasvc_cmd_parse(char* buf);
 
+void trasvc_flag_update(trasvc_t svc);
+
 #ifdef __cplusplus
 }
 #endif
