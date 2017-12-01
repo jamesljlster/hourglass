@@ -106,12 +106,12 @@ int main(int argc, char* argv[])
 	}
 
 	// Start trasvc
-	ret = trasvc_start(ts);
-	if(ret < 0)
-	{
-		printf("Start training service failed with error: %d\n", ret);
-		goto RET;
-	}
+//	ret = trasvc_start(ts);
+//	if(ret < 0)
+//	{
+//		printf("Start training service failed with error: %d\n", ret);
+//		goto RET;
+//	}
 
 	// Start tcpmgr
 	ret = tcpmgr_start(mgr, trasvc_client_task, ts);
@@ -162,7 +162,7 @@ int main(int argc, char* argv[])
 	}
 
 	// Stop trasvc
-	trasvc_stop(ts);
+	//trasvc_stop(ts);
 
 	// Stop tcpmgr
 	tcpmgr_stop(mgr);
