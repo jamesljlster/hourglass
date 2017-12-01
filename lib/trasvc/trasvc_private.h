@@ -11,6 +11,8 @@
 #define TRASVC_CMD_OK_STR "OK"
 #define TRASVC_CMD_ERR_STR "ERR"
 #define TRASVC_CMD_TIMEOUT_STR "TIMEOUT"
+#define TRASVC_CMD_START_STR "START"
+#define TRASVC_CMD_STOP_STR "STOP"
 
 // Macros
 #ifdef DEBUG
@@ -47,6 +49,7 @@
 #endif
 
 extern const char* trasvc_errmsg[];
+extern struct TRASVC_FLAG trasvc_flag_list[];
 
 #ifdef __cplusplus
 extern "C" {

@@ -6,8 +6,20 @@
 
 #include "debug.h"
 
+struct TRASVC_FLAG trasvc_flag_list[] = {
+	{TRASVC_CMD_HEAD_FLAG, TRASVC_CMD_HEAD_STR},
+	{TRASVC_CMD_APPEND_FLAG, TRASVC_CMD_APPEND_STR},
+	{TRASVC_CMD_OK_FLAG, TRASVC_CMD_OK_STR},
+	{TRASVC_CMD_ERR_FLAG, TRASVC_CMD_ERR_STR},
+	{TRASVC_CMD_TIMEOUT_FLAG, TRASVC_CMD_TIMEOUT_STR},
+	{TRASVC_CMD_START_FLAG, TRASVC_CMD_START_STR},
+	{TRASVC_CMD_STOP_FLAG, TRASVC_CMD_STOP_STR},
+	{0, NULL}
+};
+
 int trasvc_cmd_parse(char* buf)
 {
+	int i;
 	int ret = TRASVC_NO_ERROR;
 
 	char* tmpPtr = NULL;
@@ -40,22 +52,14 @@ int trasvc_cmd_parse(char* buf)
 
 		LOG("tmpPtr: %s", tmpPtr);
 
-		if(strcmp(tmpPtr, TRASVC_CMD_APPEND_STR) == 0)
+		for(i = 0; trasvc_flag_list[i].flag > 0; i++)
 		{
-			LOG("Have APPEND");
-			ret |= TRASVC_CMD_APPEND_FLAG;
-			LOG("ret = %x", ret);
-		}
-		else if(strcmp(tmpPtr, TRASVC_CMD_OK_STR) == 0)
-		{
-			LOG("Have OK");
-			ret |= TRASVC_CMD_OK_FLAG;
-			LOG("ret = %x", ret);
-		}
-		else
-		{
-			LOG("%s not a reserved command.", tmpPtr);
-			ret = TRASVC_INVALID_CMD;
+			if(strcmp(tmpPtr, trasvc_flag_list[i].str) == 0)
+			{
+				LOG("Have %s", trasvc_flag_list[i].str);
+				ret |= trasvc_flag_list[i].flag;
+				LOG("ret = %x", ret);
+			}
 		}
 	}
 
