@@ -163,6 +163,12 @@ int trasvc_start(trasvc_t svc)
 
 	LOG("enter");
 
+	// Checking
+	if(svc->traTaskStatus > 0)
+	{
+		goto RET;
+	}
+
 	// Set stop state
 	svc->stop = 0;
 
@@ -177,6 +183,7 @@ int trasvc_start(trasvc_t svc)
 		svc->traTaskStatus = 1;
 	}
 
+RET:
 	LOG("exit");
 	return ret;
 }
