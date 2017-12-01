@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <time.h>
 
@@ -12,20 +13,25 @@
 #define INPUTS 1
 #define OUTPUTS 1
 
-#define IT_FUNC		LSTM_SIGMOID
-#define OT_FUNC		LSTM_SIGMOID
-
 #define TIMEOUT 1000
 
 #define TARGET_MSE 0.001
+
+#define BUF_SIZE	128
 
 extern float dataset[];
 
 int main(int argc, char* argv[])
 {
+	int i;
 	int ret;
+	float mse;
+	int status;
+
 	const char* serverIP;
 	int serverPort;
+	char buf[BUF_SIZE] = {0};
+	char tmpRead;
 
 	trasvc_client_t tsClient;
 
@@ -65,18 +71,83 @@ int main(int argc, char* argv[])
 	}
 	printf("Finished!\n");
 
-	//while(1)
-	//{
-	//	// Delay
-	//	usleep(1000 * 1000);
+	// Get user input
+	i = 0;
+	while(1)
+	{
+		printf("hts> ");
+		for(i = 0; i < BUF_SIZE; i++)
+		{
+			ret = scanf("%c", &tmpRead);
+			if(ret <= 0)
+			{
+				continue;
+			}
 
-	//	double tmp = ts->mse;
-	//	printf("mse: %f, time cost: %f\n", tmp, (float)(clock() - timeHold) / (float)CLOCKS_PER_SEC);
-	//	if(tmp < TARGET_MSE)
-	//	{
-	//		break;
-	//	}
-	//}
+			if(tmpRead == '\n')
+			{
+				buf[i] = '\0';
+				break;
+			}
+			else
+			{
+				buf[i] = tmpRead;
+			}
+		}
+
+		// Parse command
+		if(strcmp(buf, "exit") == 0)
+		{
+			break;
+		}
+		else if(strcmp(buf, "start") == 0)
+		{
+			ret = trasvc_client_start(tsClient);
+			if(ret < 0)
+			{
+				printf("trasvc_client_start() failed with error: %s\n", trasvc_get_error_msg(ret));
+			}
+		}
+		else if(strcmp(buf, "stop") == 0)
+		{
+			ret = trasvc_client_stop(tsClient);
+			if(ret < 0)
+			{
+				printf("trasvc_client_stop() failed with error: %s\n", trasvc_get_error_msg(ret));
+			}
+		}
+		else if(strcmp(buf, "status") == 0)
+		{
+			ret = trasvc_client_get_status(tsClient, &status);
+			if(ret < 0)
+			{
+				printf("trasvc_client_get_status() failed with error: %s\n", trasvc_get_error_msg(ret));
+			}
+			else
+			{
+				printf("Status: 0x%x\n", status);
+				printf("Active: %d\n", (status & TRASVC_ACTIVE) > 0);
+				printf("TraData Empty: %d\n", (status & TRASVC_TRADATA_EMPTY) > 0);
+				printf("TraData Full: %d\n", (status & TRASVC_TRADATA_FULL) > 0);
+				printf("MgrData Empty: %d\n", (status & TRASVC_MGRDATA_EMPTY) > 0);
+				printf("MgrData Full: %d\n", (status & TRASVC_MGRDATA_FULL) > 0);
+			}
+		}
+		else if(strcmp(buf, "mse") == 0)
+		{
+			ret = trasvc_client_get_mse(tsClient, &mse);
+			if(ret < 0)
+			{
+				printf("trasvc_client_get_mse() failed with error: %s\n", trasvc_get_error_msg(ret));
+			}
+			else
+			{
+				printf("MSE: %f\n", mse);
+			}
+		}
+
+		printf("\n");
+	}
 
 	trasvc_client_disconnect(tsClient);
 

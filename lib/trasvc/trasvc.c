@@ -251,6 +251,9 @@ int trasvc_start(trasvc_t svc)
 		svc->traTaskStatus = 1;
 	}
 
+	// Update flag
+	trasvc_flag_update(svc);
+
 RET:
 	LOG("exit");
 	return ret;
@@ -266,6 +269,9 @@ void trasvc_stop(trasvc_t svc)
 		svc->stop = 1;
 		pthread_join(svc->traTask, NULL);
 	}
+
+	// Update flag
+	trasvc_flag_update(svc);
 
 	LOG("exit");
 }

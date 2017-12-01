@@ -91,6 +91,13 @@ void trasvc_client_task(void* arg, int sock)
 					printf("Shutdown connection\n");
 					break;
 				}
+
+				// Append data
+				ret = trasvc_data_append(svc, (float*)buf, DEFAULT_TIMEOUT);
+				if(ret < 0)
+				{
+					printf("trasvc_data_append() failed with error: %s\n", trasvc_get_error_msg(ret));
+				}
 			}
 			else if((ret & TRASVC_CMD_START_FLAG) > 0)
 			{
@@ -337,6 +344,8 @@ void* trasvc_tra_task(void* arg)
 	}
 
 RET:
+	svc->traTaskStatus = 0;
+
 	pthread_cleanup_pop(1);	// Reset active flag
 	pthread_cleanup_pop(mgrLockStatus);	// Unlock mutex
 	pthread_cleanup_pop(1);	// Free errBuf
