@@ -62,6 +62,9 @@ extern "C" {
 int trasvc_data_struct_init(struct TRASVC_DATA* dataPtr, int rowLimit, int cols);
 void trasvc_data_struct_cleanup(struct TRASVC_DATA* dataPtr);
 
+int trasvc_lstm_struct_init(struct TRASVC_LSTM* lstmPtr);
+void trasvc_lstm_struct_cleanup(struct TRASVC_LSTM* lstmPtr);
+
 void* trasvc_tra_task(void* arg);
 
 void trasvc_mem_free(void* arg);
