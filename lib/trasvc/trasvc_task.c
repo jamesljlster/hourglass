@@ -185,6 +185,9 @@ void* trasvc_tra_task(void* arg)
 	// Training task
 	while(svc->stop == 0)
 	{
+		// Update flag
+		trasvc_flag_update(svc);
+
 		// Lock mgr data
 		LOG("Wait for mgrData lock");
 		pthread_mutex_lock(&svc->mgrData.mutex);
