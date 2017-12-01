@@ -14,10 +14,60 @@
 #define MODEL_RECV_TMP	".recv.lstm"
 
 #define DEFAULT_BUF_SIZE	100
+#define DATA_RECV_TIMEOUT	5000
+
+int trasvc_model_recv(int sock, lstm_t* lstmDstPtr, int fLen)
+{
+	int ret = TRASVC_NO_ERROR;
+
+	FILE* fWrite = NULL;
+	char* fBuf = NULL;
+
+	LOG("enter");
+
+	// Memory allocation
+	trasvc_alloc(fBuf, fLen, char, ret, RET);
+
+	// Receive model
+	trasvc_run(trasvc_data_recv(sock, fBuf, fLen, fLen, DATA_RECV_TIMEOUT), ret, RET);
+
+	// Write temp file
+	fWrite = fopen(MODEL_RECV_TMP, "wb");
+	if(fWrite == NULL)
+	{
+		ret = TRASVC_SYS_FAILED;
+		goto RET;
+	}
+
+	ret = fwrite(fBuf, sizeof(char), fLen, fWrite);
+	if(ret < 0)
+	{
+		ret = TRASVC_SYS_FAILED;
+		goto RET;
+	}
+
+	fclose(fWrite);
+
+	// Load model
+	ret = lstm_import(lstmDstPtr, MODEL_RECV_TMP);
+	if(ret < 0)
+	{
+		ret = TRASVC_SYS_FAILED;
+		goto RET;
+	}
+
+	// Reset return value
+	ret = TRASVC_NO_ERROR;
+
+RET:
+	free(fBuf);
+
+	LOG("exit");
+	return ret;
+}
 
 int trasvc_model_send(int sock, lstm_t lstmSrc)
 {
-	int i;
 	int ret = TRASVC_NO_ERROR;
 	int fLen;
 	char* fBuf = NULL;

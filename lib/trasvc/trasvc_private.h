@@ -74,7 +74,7 @@ void trasvc_mutex_unlock(void* arg);
 int trasvc_str_recv(int sock, char* buf, int bufLen);
 int trasvc_data_recv(int sock, char* buf, int bufLen, int recvLen, int timeout);
 int trasvc_model_send(int sock, lstm_t lstmSrc);
-int trasvc_model_recv(int sock, lstm_t* lstmDstPtr);
+int trasvc_model_recv(int sock, lstm_t* lstmDstPtr, int fLen);
 
 int trasvc_cmd_parse(char* buf);
 
