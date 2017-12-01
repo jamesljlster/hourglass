@@ -180,6 +180,9 @@ int trasvc_create(trasvc_t* svcPtr, lstm_config_t lstmCfg, int dataLimit)
 	trasvc_run(trasvc_data_struct_init(&tmpSvcPtr->traData, dataLimit, cols), ret, ERR);
 	trasvc_run(trasvc_data_struct_init(&tmpSvcPtr->mgrData, dataLimit, cols), ret, ERR);
 
+	// Update flag
+	trasvc_flag_update(tmpSvcPtr);
+
 	// Assign value
 	*svcPtr = tmpSvcPtr;
 
