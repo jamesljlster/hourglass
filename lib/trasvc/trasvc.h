@@ -61,6 +61,8 @@ void trasvc_client_task(void* arg, int sock);
 int trasvc_client_connect(trasvc_client_t* clientPtr, const char* serverIP, int serverPort);
 int trasvc_client_datasend(trasvc_client_t client, float* data, int dataLen);
 void trasvc_client_disconnect(trasvc_client_t client);
+int trasvc_client_get_status(trasvc_client_t client, int* flagPtr);
+int trasvc_client_get_mse(trasvc_client_t client, float* mse);
 
 // Common functions
 const char* trasvc_get_error_msg(int ret);
