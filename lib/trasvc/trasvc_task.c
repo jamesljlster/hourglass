@@ -105,6 +105,7 @@ void trasvc_client_task(void* arg, int sock)
 			{
 				// Stop training task
 				trasvc_stop(svc);
+				ret = TRASVC_NO_ERROR;
 			}
 			else if((ret & TRASVC_CMD_MSE_FLAG) > 0)
 			{
