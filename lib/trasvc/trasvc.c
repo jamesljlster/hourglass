@@ -6,6 +6,44 @@
 
 #include "debug.h"
 
+int trasvc_lstm_struct_init(struct TRASVC_LSTM* lstmPtr)
+{
+	int ret;
+
+	LOG("enter");
+
+	// Create mutex
+	ret = pthread_mutex_init(&lstmPtr->mutex, NULL);
+	if(ret != 0)
+	{
+		ret = TRASVC_SYS_FAILED;
+	}
+	else
+	{
+		lstmPtr->mutexStatus = 1;
+	}
+
+	// Initial lstm
+	lstmPtr->lstm = NULL;
+
+	LOG("exit");
+	return ret;
+}
+
+void trasvc_lstm_struct_cleanup(struct TRASVC_LSTM* lstmPtr)
+{
+	LOG("enter");
+
+	if(lstmPtr->mutexStatus > 0)
+	{
+		pthread_mutex_destroy(&lstmPtr->mutex);
+	}
+
+	lstm_delete(lstmPtr->lstm);
+
+	LOG("exit");
+}
+
 void trasvc_flag_update(trasvc_t svc)
 {
 	LOG("enter");
@@ -180,6 +218,10 @@ int trasvc_create(trasvc_t* svcPtr, lstm_config_t lstmCfg, int dataLimit)
 	trasvc_run(trasvc_data_struct_init(&tmpSvcPtr->traData, dataLimit, cols), ret, ERR);
 	trasvc_run(trasvc_data_struct_init(&tmpSvcPtr->mgrData, dataLimit, cols), ret, ERR);
 
+	// Create lstm buffer
+	trasvc_run(trasvc_lstm_struct_init(&tmpSvcPtr->lstmSendBuf), ret, ERR);
+	trasvc_run(trasvc_lstm_struct_init(&tmpSvcPtr->lstmRecvBuf), ret, ERR);
+
 	// Update flag
 	trasvc_flag_update(tmpSvcPtr);
 
@@ -214,6 +256,9 @@ void trasvc_delete(trasvc_t svc)
 
 		trasvc_data_struct_cleanup(&svc->traData);
 		trasvc_data_struct_cleanup(&svc->mgrData);
+
+		trasvc_lstm_struct_cleanup(&svc->lstmSendBuf);
+		trasvc_lstm_struct_cleanup(&svc->lstmRecvBuf);
 
 		lstm_delete(svc->lstm);
 		lstm_state_delete(svc->lstmState);
