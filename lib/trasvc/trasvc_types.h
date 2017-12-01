@@ -4,6 +4,12 @@
 #include <pthread.h>
 #include <lstm.h>
 
+struct TRASVC_FLAG
+{
+	int flag;
+	const char* str;
+};
+
 struct TRASVC_DATA
 {
 	int mutexStatus;

@@ -56,6 +56,9 @@ int trasvc_data_append(trasvc_t svc, float* data, int timeout)
 	// Set head
 	svc->mgrData.dataHead = tmpIndex;
 
+	// Update flag
+	trasvc_flag_update(svc);
+
 RET:
 	pthread_cleanup_pop(lockStatus);
 

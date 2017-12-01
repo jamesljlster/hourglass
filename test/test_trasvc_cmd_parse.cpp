@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstring>
+#include <cstdio>
 
 #include <trasvc.h>
 #include <trasvc_private.h>
@@ -27,9 +28,10 @@ int main()
 		}
 
 		// Show flag
-		cout << "Have HEAD flag: " << ((flag & TRASVC_CMD_HEAD_FLAG) > 0) << endl;
-		cout << "Have APPEND flag: " << ((flag & TRASVC_CMD_APPEND_FLAG) > 0) << endl;
-		cout << "Have OK flag: " << ((flag & TRASVC_CMD_OK_FLAG) > 0) << endl;
+		for(int i = 0; trasvc_flag_list[i].flag > 0; i++)
+		{
+			printf("Have %s flag: %d\n", trasvc_flag_list[i].str, (flag & trasvc_flag_list[i].flag) > 0);
+		}
 		cout << endl;
 	}
 

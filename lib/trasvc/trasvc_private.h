@@ -11,6 +11,10 @@
 #define TRASVC_CMD_OK_STR "OK"
 #define TRASVC_CMD_ERR_STR "ERR"
 #define TRASVC_CMD_TIMEOUT_STR "TIMEOUT"
+#define TRASVC_CMD_START_STR "START"
+#define TRASVC_CMD_STOP_STR "STOP"
+#define TRASVC_CMD_MSE_STR "MSE"
+#define TRASVC_CMD_STATUS_STR "STATUS"
 
 // Macros
 #ifdef DEBUG
@@ -47,6 +51,7 @@
 #endif
 
 extern const char* trasvc_errmsg[];
+extern struct TRASVC_FLAG trasvc_flag_list[];
 
 #ifdef __cplusplus
 extern "C" {
@@ -64,6 +69,8 @@ int trasvc_str_recv(int sock, char* buf, int bufLen);
 int trasvc_data_recv(int sock, char* buf, int bufLen, int recvLen, int timeout);
 
 int trasvc_cmd_parse(char* buf);
+
+void trasvc_flag_update(trasvc_t svc);
 
 #ifdef __cplusplus
 }

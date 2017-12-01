@@ -13,11 +13,15 @@
 #define TRASVC_WARNING			0x0040
 
 // TRASVC command flag
-#define TRASVC_CMD_HEAD_FLAG	0x01
-#define TRASVC_CMD_APPEND_FLAG	0x02
-#define TRASVC_CMD_OK_FLAG		0x04
-#define TRASVC_CMD_ERR_FLAG		0x08
-#define TRASVC_CMD_TIMEOUT_FLAG	0x10
+#define TRASVC_CMD_HEAD_FLAG	0x0001
+#define TRASVC_CMD_APPEND_FLAG	0x0002
+#define TRASVC_CMD_OK_FLAG		0x0004
+#define TRASVC_CMD_ERR_FLAG		0x0008
+#define TRASVC_CMD_TIMEOUT_FLAG	0x0010
+#define TRASVC_CMD_START_FLAG	0x0020
+#define TRASVC_CMD_STOP_FLAG	0x0040
+#define TRASVC_CMD_MSE_FLAG		0x0080
+#define TRASVC_CMD_STATUS_FLAG	0x0100
 
 enum TRASVC_RET_VALUE
 {
@@ -57,6 +61,8 @@ void trasvc_client_task(void* arg, int sock);
 int trasvc_client_connect(trasvc_client_t* clientPtr, const char* serverIP, int serverPort);
 int trasvc_client_datasend(trasvc_client_t client, float* data, int dataLen);
 void trasvc_client_disconnect(trasvc_client_t client);
+int trasvc_client_get_status(trasvc_client_t client, int* flagPtr);
+int trasvc_client_get_mse(trasvc_client_t client, float* mse);
 
 // Common functions
 const char* trasvc_get_error_msg(int ret);

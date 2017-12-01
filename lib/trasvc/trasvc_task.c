@@ -75,15 +75,33 @@ void trasvc_client_task(void* arg, int sock)
 			printf("Restart\n");
 		}
 
-		// Receive external data
-		if(ret > 0 && (ret & TRASVC_CMD_APPEND_FLAG) > 0)
+		// Run command
+		if(ret > 0)
 		{
-			ret = trasvc_data_recv(sock, buf, bufLen, svc->mgrData.dataCols * sizeof(float), DEFAULT_TIMEOUT);
-			if(ret < 0)
+			if((ret & TRASVC_CMD_APPEND_FLAG) > 0)
 			{
-				printf("trasvc_data_recv() failed with error: %s\n", trasvc_get_error_msg(ret));
-				printf("Shutdown connection\n");
-				break;
+				// Receive external data
+				ret = trasvc_data_recv(sock, buf, bufLen, svc->mgrData.dataCols * sizeof(float), DEFAULT_TIMEOUT);
+				if(ret < 0)
+				{
+					printf("trasvc_data_recv() failed with error: %s\n", trasvc_get_error_msg(ret));
+					printf("Shutdown connection\n");
+					break;
+				}
+			}
+			else if((ret & TRASVC_CMD_START_FLAG) > 0)
+			{
+				// Start training task
+				ret = trasvc_start(svc);
+				if(ret < 0)
+				{
+					printf("trasvc_start(ts) failed with error: %s\n", trasvc_get_error_msg(ret));
+				}
+			}
+			else if((ret & TRASVC_CMD_STOP_FLAG) > 0)
+			{
+				// Stop training task
+				trasvc_stop(svc);
 			}
 		}
 
@@ -167,6 +185,9 @@ void* trasvc_tra_task(void* arg)
 	// Training task
 	while(svc->stop == 0)
 	{
+		// Update flag
+		trasvc_flag_update(svc);
+
 		// Lock mgr data
 		LOG("Wait for mgrData lock");
 		pthread_mutex_lock(&svc->mgrData.mutex);
