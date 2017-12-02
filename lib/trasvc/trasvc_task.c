@@ -198,8 +198,11 @@ void trasvc_client_task(void* arg, int sock)
 				// Unlock lstm send buffer
 				pthread_mutex_unlock(&svc->lstmSendBuf.mutex);
 
-				// Already send response
-				needResp = 0;
+				if(ret == TRASVC_NO_ERROR)
+				{
+					// Already send response
+					needResp = 0;
+				}
 			}
 		}
 
@@ -443,7 +446,7 @@ void* trasvc_tra_task(void* arg)
 		lstm_clone(&svc->lstmSendBuf.lstm, svc->lstm);
 
 		// Unlock lstm send buffer
-		pthread_mutex_unlock(&svc->lstmRecvBuf.mutex);
+		pthread_mutex_unlock(&svc->lstmSendBuf.mutex);
 	}
 
 RET:

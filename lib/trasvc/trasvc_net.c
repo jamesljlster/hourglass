@@ -8,6 +8,7 @@
 #include "trasvc.h"
 #include "trasvc_private.h"
 
+#define DEBUG
 #include "debug.h"
 
 #define MODEL_SEND_TMP	".send.lstm"
@@ -104,6 +105,7 @@ int trasvc_model_send(int sock, lstm_t lstmSrc)
 		ret = lstm_export(lstmSrc, MODEL_SEND_TMP);
 		if(ret < 0)
 		{
+			LOG("lstm_export() failed with error: %d", ret);
 			ret = TRASVC_SYS_FAILED;
 			goto RET;
 		}
@@ -112,6 +114,7 @@ int trasvc_model_send(int sock, lstm_t lstmSrc)
 		fRead = fopen(MODEL_SEND_TMP, "rb");
 		if(fRead == NULL)
 		{
+			LOG("fopen() failed");
 			ret = TRASVC_SYS_FAILED;
 			goto RET;
 		}
@@ -119,6 +122,7 @@ int trasvc_model_send(int sock, lstm_t lstmSrc)
 		// Get file size
 		fseek(fRead, 0, SEEK_END);
 		fLen = ftell(fRead);
+		fseek(fRead, 0, SEEK_SET);
 
 		// Allocate file buffer
 		trasvc_alloc(fBuf, fLen, char, ret, RET);
@@ -127,6 +131,7 @@ int trasvc_model_send(int sock, lstm_t lstmSrc)
 		ret = fread(fBuf, sizeof(char), fLen, fRead);
 		if(ret != fLen)
 		{
+			LOG("fread() failed");
 			ret = TRASVC_SYS_FAILED;
 			goto RET;
 		}

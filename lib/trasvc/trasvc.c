@@ -245,15 +245,13 @@ void trasvc_delete(trasvc_t svc)
 	if(svc != NULL)
 	{
 		// Stop training task
-		trasvc_stop(svc);
-
-		// Cleanup
 		if(svc->traTaskStatus > 0)
 		{
 			pthread_cancel(svc->traTask);
 			pthread_join(svc->traTask, NULL);
 		}
 
+		// Cleanup
 		trasvc_data_struct_cleanup(&svc->traData);
 		trasvc_data_struct_cleanup(&svc->mgrData);
 
