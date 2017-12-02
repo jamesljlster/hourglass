@@ -18,6 +18,7 @@ int trasvc_client_model_download(trasvc_client_t client, lstm_t* lstmDstPtr)
 {
 	int ret = TRASVC_NO_ERROR;
 	char buf[DEFAULT_BUF_SIZE] = {0};
+	char bufBak[DEFAULT_BUF_SIZE] = {0};
 
 	int fLen;
 	char* fBuf = NULL;
@@ -50,6 +51,7 @@ int trasvc_client_model_download(trasvc_client_t client, lstm_t* lstmDstPtr)
 
 	// Wait response
 	trasvc_run(trasvc_str_recv(client, buf, DEFAULT_BUF_SIZE), ret, RET);
+	strcpy(bufBak, buf);
 
 	// Get status
 	ret = trasvc_cmd_parse(buf);
@@ -59,14 +61,8 @@ int trasvc_client_model_download(trasvc_client_t client, lstm_t* lstmDstPtr)
 		goto RET;
 	}
 
-	if((ret & TRASVC_CMD_OK_FLAG) == 0)
-	{
-		ret = TRASVC_SYS_FAILED;
-		goto RET;
-	}
-
 	// Parse model size
-	tmpPtr = strtok_r(buf, " ", &savePtr);
+	tmpPtr = strtok_r(bufBak, " ", &savePtr);
 	tmpPtr = strtok_r(NULL, " ", &savePtr);
 	if(tmpPtr == NULL)
 	{
@@ -88,7 +84,7 @@ int trasvc_client_model_download(trasvc_client_t client, lstm_t* lstmDstPtr)
 	trasvc_run(trasvc_data_recv(client, fBuf, fLen, fLen, DEFAULT_BUF_SIZE), ret, RET);
 
 	// Dump model
-	fWrite = fopen(MODEL_RECV_TMP, "rb");
+	fWrite = fopen(MODEL_RECV_TMP, "wb");
 	if(fWrite == NULL)
 	{
 		ret = TRASVC_SYS_FAILED;

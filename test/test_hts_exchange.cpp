@@ -19,6 +19,8 @@
 
 #define BUF_SIZE	128
 
+#define SEND_LSTM_PATH "send.lstm"
+
 extern float dataset[];
 
 int main(int argc, char* argv[])
@@ -143,6 +145,33 @@ int main(int argc, char* argv[])
 			else
 			{
 				printf("MSE: %f\n", mse);
+			}
+		}
+		else if(strcmp(buf, "upload") == 0)
+		{
+			ret = trasvc_client_model_upload(tsClient, SEND_LSTM_PATH);
+			if(ret < 0)
+			{
+				printf("trasvc_client_model_upload() failed with error: %s\n", trasvc_get_error_msg(ret));
+			}
+		}
+		else if(strcmp(buf, "download") == 0)
+		{
+			lstm_t lstm = NULL;
+			ret = trasvc_client_model_download(tsClient, &lstm);
+			if(ret < 0)
+			{
+				printf("trasvc_client_model_download() failed with error: %s\n", trasvc_get_error_msg(ret));
+			}
+			else
+			{
+				ret = lstm_export(lstm, "recv.lstm");
+				if(ret < 0)
+				{
+					printf("lstm_export() failed with error: %d\n", ret);
+				}
+
+				lstm_delete(lstm);
 			}
 		}
 

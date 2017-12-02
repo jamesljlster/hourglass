@@ -8,7 +8,6 @@
 #include "trasvc.h"
 #include "trasvc_private.h"
 
-#define DEBUG
 #include "debug.h"
 
 #define MODEL_SEND_TMP	".send.lstm"

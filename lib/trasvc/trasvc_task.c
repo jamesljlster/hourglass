@@ -42,6 +42,7 @@ void trasvc_client_task(void* arg, int sock)
 	int defaultResp;
 	int needResp;
 	char* buf = NULL;
+	char* bufBak = NULL;
 
 	char* tmpPtr;
 	char* savePtr;
@@ -57,6 +58,15 @@ void trasvc_client_task(void* arg, int sock)
 	if(buf == NULL)
 	{
 		printf("Memory allocation failed!\n");
+		return;
+	}
+
+	bufBak = calloc(bufLen, sizeof(char));
+	if(bufBak == NULL)
+	{
+		printf("Memroy allocation failed!\n");
+		free(buf);
+		buf = NULL;
 		return;
 	}
 
@@ -76,7 +86,8 @@ void trasvc_client_task(void* arg, int sock)
 		}
 
 		// Parse command
-		ret = trasvc_cmd_parse(buf);
+		strcpy(bufBak, buf);
+		ret = trasvc_cmd_parse(bufBak);
 		if(ret < 0)
 		{
 			printf("trasvc_cmd_parse() failed with error: %s\n", trasvc_get_error_msg(ret));
@@ -150,6 +161,7 @@ void trasvc_client_task(void* arg, int sock)
 				tmpPtr = strtok_r(NULL, " ", &savePtr);
 				if(tmpPtr == NULL)
 				{
+					LOG("Missing model size!");
 					ret = TRASVC_INVALID_CMD;
 				}
 				else
@@ -160,27 +172,25 @@ void trasvc_client_task(void* arg, int sock)
 						LOG("Failed to convert %s to model size!", tmpPtr);
 						ret = TRASVC_INVALID_CMD;
 					}
-				}
-
-				// Get model
-				if(ret == TRASVC_NO_ERROR)
-				{
-					// Lock lstm receive buffer
-					pthread_mutex_lock(&svc->lstmRecvBuf.mutex);
-
-					// Receive model
-					ret = trasvc_model_recv(sock, &svc->lstmRecvBuf.lstm, tmpLen);
-					if(ret < 0)
-					{
-						printf("trasvc_model_recv() failed with error: %s\n", trasvc_get_error_msg(ret));
-					}
 					else
 					{
-						svc->lstmRecvBuf.status = 1;
-					}
+						// Lock lstm receive buffer
+						pthread_mutex_lock(&svc->lstmRecvBuf.mutex);
 
-					// Unlock lstm receive buffer
-					pthread_mutex_unlock(&svc->lstmRecvBuf.mutex);
+						// Receive model
+						ret = trasvc_model_recv(sock, &svc->lstmRecvBuf.lstm, tmpLen);
+						if(ret < 0)
+						{
+							printf("trasvc_model_recv() failed with error: %s\n", trasvc_get_error_msg(ret));
+						}
+						else
+						{
+							svc->lstmRecvBuf.status = 1;
+						}
+
+						// Unlock lstm receive buffer
+						pthread_mutex_unlock(&svc->lstmRecvBuf.mutex);
+					}
 				}
 			}
 			else if((ret & TRASVC_CMD_DOWNLOAD_FLAG) > 0)
