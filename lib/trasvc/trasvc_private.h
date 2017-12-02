@@ -17,6 +17,7 @@
 #define TRASVC_CMD_STATUS_STR "STATUS"
 #define TRASVC_CMD_UPLOAD_STR "UPLOAD"
 #define TRASVC_CMD_DOWNLOAD_STR "DOWNLOAD"
+#define TRASVC_CMD_UNAVAILABLE_STR "UNAVAILABLE"
 
 // Macros
 #ifdef DEBUG
@@ -62,6 +63,9 @@ extern "C" {
 int trasvc_data_struct_init(struct TRASVC_DATA* dataPtr, int rowLimit, int cols);
 void trasvc_data_struct_cleanup(struct TRASVC_DATA* dataPtr);
 
+int trasvc_lstm_struct_init(struct TRASVC_LSTM* lstmPtr);
+void trasvc_lstm_struct_cleanup(struct TRASVC_LSTM* lstmPtr);
+
 void* trasvc_tra_task(void* arg);
 
 void trasvc_mem_free(void* arg);
@@ -70,7 +74,7 @@ void trasvc_mutex_unlock(void* arg);
 int trasvc_str_recv(int sock, char* buf, int bufLen);
 int trasvc_data_recv(int sock, char* buf, int bufLen, int recvLen, int timeout);
 int trasvc_model_send(int sock, lstm_t lstmSrc);
-int trasvc_model_recv(int sock, lstm_t* lstmDstPtr);
+int trasvc_model_recv(int sock, lstm_t* lstmDstPtr, int fLen);
 
 int trasvc_cmd_parse(char* buf);
 

@@ -25,10 +25,22 @@ struct TRASVC_DATA
 	int dataMemLen;
 };
 
+struct TRASVC_LSTM
+{
+	int status;
+	lstm_t lstm;
+
+	int mutexStatus;
+	pthread_mutex_t mutex;
+};
+
 struct TRASVC
 {
 	int status;
 	int stop;
+
+	struct TRASVC_LSTM lstmSendBuf;
+	struct TRASVC_LSTM lstmRecvBuf;
 
 	lstm_t lstm;
 	lstm_state_t lstmState;

@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
@@ -9,13 +10,167 @@
 
 #include "debug.h"
 
-int trasvc_model_send(int sock, lstm_t lstmSrc)
+#define MODEL_SEND_TMP	".send.lstm"
+#define MODEL_RECV_TMP	".recv.lstm"
+
+#define DEFAULT_BUF_SIZE	100
+#define DATA_RECV_TIMEOUT	5000
+
+int trasvc_model_recv(int sock, lstm_t* lstmDstPtr, int fLen)
 {
 	int ret = TRASVC_NO_ERROR;
 
+	FILE* fWrite = NULL;
+	char* fBuf = NULL;
+
 	LOG("enter");
 
+	// Memory allocation
+	trasvc_alloc(fBuf, fLen, char, ret, RET);
+
+	// Receive model
+	trasvc_run(trasvc_data_recv(sock, fBuf, fLen, fLen, DATA_RECV_TIMEOUT), ret, RET);
+
+	// Write temp file
+	fWrite = fopen(MODEL_RECV_TMP, "wb");
+	if(fWrite == NULL)
+	{
+		ret = TRASVC_SYS_FAILED;
+		goto RET;
+	}
+
+	ret = fwrite(fBuf, sizeof(char), fLen, fWrite);
+	if(ret < 0)
+	{
+		ret = TRASVC_SYS_FAILED;
+		goto RET;
+	}
+
+	fclose(fWrite);
+
+	// Load model
+	ret = lstm_import(lstmDstPtr, MODEL_RECV_TMP);
+	if(ret < 0)
+	{
+		ret = TRASVC_SYS_FAILED;
+		goto RET;
+	}
+
+	// Reset return value
+	ret = TRASVC_NO_ERROR;
+
 RET:
+	free(fBuf);
+
+	LOG("exit");
+	return ret;
+}
+
+int trasvc_model_send(int sock, lstm_t lstmSrc)
+{
+	int ret = TRASVC_NO_ERROR;
+	int fLen;
+	char* fBuf = NULL;
+	char buf[DEFAULT_BUF_SIZE] = {0};
+
+	FILE* fRead = NULL;
+
+	LOG("enter");
+
+	if(lstmSrc == NULL)
+	{
+		// Make response
+		ret = snprintf(buf, DEFAULT_BUF_SIZE, "%s %s\x0A",
+				TRASVC_CMD_HEAD_STR,
+				TRASVC_CMD_UNAVAILABLE_STR
+				);
+		if(ret < 0)
+		{
+			ret = TRASVC_INSUFFICIENT_BUF;
+			goto RET;
+		}
+
+		// Send response
+		ret = send(sock, buf, strlen(buf), 0);
+		if(ret < 0)
+		{
+			ret = TRASVC_CONNECT_FAILED;
+			goto RET;
+		}
+	}
+	else
+	{
+		// Export lstm
+		ret = lstm_export(lstmSrc, MODEL_SEND_TMP);
+		if(ret < 0)
+		{
+			LOG("lstm_export() failed with error: %d", ret);
+			ret = TRASVC_SYS_FAILED;
+			goto RET;
+		}
+
+		// Open model
+		fRead = fopen(MODEL_SEND_TMP, "rb");
+		if(fRead == NULL)
+		{
+			LOG("fopen() failed");
+			ret = TRASVC_SYS_FAILED;
+			goto RET;
+		}
+
+		// Get file size
+		fseek(fRead, 0, SEEK_END);
+		fLen = ftell(fRead);
+		fseek(fRead, 0, SEEK_SET);
+
+		// Allocate file buffer
+		trasvc_alloc(fBuf, fLen, char, ret, RET);
+
+		// Read file to end
+		ret = fread(fBuf, sizeof(char), fLen, fRead);
+		if(ret != fLen)
+		{
+			LOG("fread() failed");
+			ret = TRASVC_SYS_FAILED;
+			goto RET;
+		}
+
+		// Make response
+		ret = snprintf(buf, DEFAULT_BUF_SIZE, "%s %d\x0A", TRASVC_CMD_HEAD_STR, fLen);
+		if(ret < 0)
+		{
+			ret = TRASVC_INSUFFICIENT_BUF;
+			goto RET;
+		}
+
+		// Send response
+		ret = send(sock, buf, strlen(buf), 0);
+		if(ret < 0)
+		{
+			ret = TRASVC_CONNECT_FAILED;
+			goto RET;
+		}
+
+		// Send file buffer
+		ret = send(sock, fBuf, fLen, 0);
+		if(ret < 0)
+		{
+			ret = TRASVC_CONNECT_FAILED;
+			goto RET;
+		}
+	}
+
+	// Reset return value
+	ret = TRASVC_NO_ERROR;
+
+RET:
+	if(fRead != NULL)
+	{
+		fclose(fRead);
+	}
+
+	free(fBuf);
+
 	LOG("exit");
 	return ret;
 }
