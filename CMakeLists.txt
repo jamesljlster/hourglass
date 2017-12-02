@@ -31,7 +31,7 @@ set(LIB_PATHS
 # Utility paths
 set(UTIL_PATHS
 	${CMAKE_CURRENT_SOURCE_DIR}/util/hourglass_training_server
-	#${CMAKE_CURRENT_SOURCE_DIR}/util/util2
+	${CMAKE_CURRENT_SOURCE_DIR}/util/hourglass_model_randgen
 	)
 
 if(${BUILD_TEST})
