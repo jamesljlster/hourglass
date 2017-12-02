@@ -69,7 +69,7 @@ int trasvc_client_get_mse(trasvc_client_t client, float* msePtr);
 int trasvc_client_start(trasvc_client_t client);
 int trasvc_client_stop(trasvc_client_t client);
 int trasvc_client_model_download(trasvc_client_t client, lstm_t* lstmDstPtr);
-int trasvc_client_model_upload(trasvc_client_t client, lstm_t lstmSrc);
+int trasvc_client_model_upload(trasvc_client_t client, const char* modelPath);
 
 // Common functions
 const char* trasvc_get_error_msg(int ret);

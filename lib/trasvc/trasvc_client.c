@@ -10,6 +10,210 @@
 #include "debug.h"
 
 #define DEFAULT_BUF_SIZE	100
+#define DEFAULT_TIMEOUT		5000
+
+#define MODEL_RECV_TMP	".recv.lstm"
+
+int trasvc_client_model_download(trasvc_client_t client, lstm_t* lstmDstPtr)
+{
+	int ret = TRASVC_NO_ERROR;
+	char buf[DEFAULT_BUF_SIZE] = {0};
+
+	int fLen;
+	char* fBuf = NULL;
+
+	char* tmpPtr = NULL;
+	char* savePtr = NULL;
+
+	FILE* fWrite = NULL;
+
+	LOG("enter");
+
+	// Make command
+	ret = snprintf(buf, DEFAULT_BUF_SIZE, "%s %s\x0A",
+			TRASVC_CMD_HEAD_STR,
+			TRASVC_CMD_DOWNLOAD_STR
+			);
+	if(ret < 0)
+	{
+		ret = TRASVC_INSUFFICIENT_BUF;
+		goto RET;
+	}
+
+	// Send command
+	ret = send(client, buf, strlen(buf), 0);
+	if(ret < 0)
+	{
+		ret = TRASVC_SYS_FAILED;
+		goto RET;
+	}
+
+	// Wait response
+	trasvc_run(trasvc_str_recv(client, buf, DEFAULT_BUF_SIZE), ret, RET);
+
+	// Get status
+	ret = trasvc_cmd_parse(buf);
+	if((ret & TRASVC_CMD_HEAD_FLAG) == 0)
+	{
+		ret = TRASVC_INVALID_CMD;
+		goto RET;
+	}
+
+	if((ret & TRASVC_CMD_OK_FLAG) == 0)
+	{
+		ret = TRASVC_SYS_FAILED;
+		goto RET;
+	}
+
+	// Parse model size
+	tmpPtr = strtok_r(buf, " ", &savePtr);
+	tmpPtr = strtok_r(NULL, " ", &savePtr);
+	if(tmpPtr == NULL)
+	{
+		ret = TRASVC_INVALID_CMD;
+		goto RET;
+	}
+
+	fLen = strtol(tmpPtr, &savePtr, 10);
+	if(tmpPtr == savePtr)
+	{
+		ret = TRASVC_INVALID_CMD;
+		goto RET;
+	}
+
+	// Memory allocation
+	trasvc_alloc(fBuf, fLen, char, ret, RET);
+
+	// Get model
+	trasvc_run(trasvc_data_recv(client, fBuf, fLen, fLen, DEFAULT_BUF_SIZE), ret, RET);
+
+	// Dump model
+	fWrite = fopen(MODEL_RECV_TMP, "rb");
+	if(fWrite == NULL)
+	{
+		ret = TRASVC_SYS_FAILED;
+		goto RET;
+	}
+
+	ret = fwrite(fBuf, sizeof(char), fLen, fWrite);
+	if(ret < 0)
+	{
+		ret = TRASVC_SYS_FAILED;
+		goto RET;
+	}
+
+	fclose(fWrite);
+
+	// Load model
+	ret = lstm_import(lstmDstPtr, MODEL_RECV_TMP);
+	if(ret < 0)
+	{
+		ret = TRASVC_SYS_FAILED;
+		goto RET;
+	}
+
+	// Reset return value
+	ret = TRASVC_NO_ERROR;
+
+RET:
+	LOG("exit");
+	return ret;
+}
+
+int trasvc_client_model_upload(trasvc_client_t client, const char* modelPath)
+{
+	int ret = TRASVC_NO_ERROR;
+	char buf[DEFAULT_BUF_SIZE] = {0};
+
+	int fLen;
+	char* fBuf = NULL;
+
+	FILE* fRead = NULL;
+
+	LOG("enter");
+
+	// Open model
+	fRead = fopen(modelPath, "rb");
+	if(fRead == NULL)
+	{
+		ret = TRASVC_SYS_FAILED;
+		goto RET;
+	}
+
+	// Get file size
+	fseek(fRead, 0, SEEK_END);
+	fLen = ftell(fRead);
+	fseek(fRead, 0, SEEK_SET);
+
+	// Memory allocation
+	trasvc_alloc(fBuf, fLen, char, ret, RET);
+
+	// Read file
+	ret = fread(fBuf, sizeof(char), fLen, fRead);
+	if(ret < 0)
+	{
+		ret = TRASVC_SYS_FAILED;
+		goto RET;
+	}
+
+	// Make command
+	ret = snprintf(buf, DEFAULT_BUF_SIZE, "%s %s %d\x0A",
+			TRASVC_CMD_HEAD_STR,
+			TRASVC_CMD_UPLOAD_STR,
+			fLen
+			);
+	if(ret < 0)
+	{
+		ret = TRASVC_SYS_FAILED;
+		goto RET;
+	}
+
+	// Send command and model
+	ret = send(client, buf, strlen(buf), 0);
+	if(ret < 0)
+	{
+		ret = TRASVC_SYS_FAILED;
+		goto RET;
+	}
+
+	ret = send(client, fBuf, fLen, 0);
+	if(ret < 0)
+	{
+		ret = TRASVC_SYS_FAILED;
+		goto RET;
+	}
+
+	// Wait response
+	trasvc_run(trasvc_str_recv(client, buf, DEFAULT_BUF_SIZE), ret, RET);
+
+	// Get status
+	ret = trasvc_cmd_parse(buf);
+	if((ret & TRASVC_CMD_HEAD_FLAG) == 0)
+	{
+		ret = TRASVC_INVALID_CMD;
+		goto RET;
+	}
+
+	if((ret & TRASVC_CMD_OK_FLAG) == 0)
+	{
+		ret = TRASVC_SYS_FAILED;
+		goto RET;
+	}
+
+	// Reset return value
+	ret = TRASVC_NO_ERROR;
+
+RET:
+	free(fBuf);
+
+	if(fRead != NULL)
+	{
+		fclose(fRead);
+	}
+
+	LOG("exit");
+	return ret;
+}
 
 int trasvc_client_start(trasvc_client_t client)
 {
