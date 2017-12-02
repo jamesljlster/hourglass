@@ -38,9 +38,13 @@ void trasvc_mutex_unlock(void* arg)
 void trasvc_client_task(void* arg, int sock)
 {
 	int ret;
-	int bufLen;
+	int bufLen, tmpLen;
 	int defaultResp;
+	int needResp;
 	char* buf = NULL;
+
+	char* tmpPtr;
+	char* savePtr;
 
 	struct TRASVC* svc = arg;
 
@@ -60,6 +64,7 @@ void trasvc_client_task(void* arg, int sock)
 	while(1)
 	{
 		defaultResp = 1;
+		needResp = 1;
 
 		// Receive command string
 		ret = trasvc_str_recv(sock, buf, bufLen);
@@ -136,37 +141,100 @@ void trasvc_client_task(void* arg, int sock)
 				// Using custom response string
 				defaultResp = 0;
 			}
+			else if((ret & TRASVC_CMD_UPLOAD_FLAG) > 0)
+			{
+				// Parse model size
+				savePtr = NULL;
+				tmpPtr = strtok_r(buf, " ", &savePtr);
+				tmpPtr = strtok_r(NULL, " ", &savePtr);
+				tmpPtr = strtok_r(NULL, " ", &savePtr);
+				if(tmpPtr == NULL)
+				{
+					ret = TRASVC_INVALID_CMD;
+				}
+				else
+				{
+					tmpLen = strtol(tmpPtr, &savePtr, 10);
+					if(tmpPtr == savePtr)
+					{
+						LOG("Failed to convert %s to model size!", tmpPtr);
+						ret = TRASVC_INVALID_CMD;
+					}
+				}
+
+				// Get model
+				if(ret == TRASVC_NO_ERROR)
+				{
+					// Lock lstm receive buffer
+					pthread_mutex_lock(&svc->lstmRecvBuf.mutex);
+
+					// Receive model
+					ret = trasvc_model_recv(sock, &svc->lstmRecvBuf.lstm, tmpLen);
+					if(ret < 0)
+					{
+						printf("trasvc_model_recv() failed with error: %s\n", trasvc_get_error_msg(ret));
+					}
+					else
+					{
+						svc->lstmRecvBuf.status = 1;
+					}
+
+					// Unlock lstm receive buffer
+					pthread_mutex_unlock(&svc->lstmRecvBuf.mutex);
+				}
+			}
+			else if((ret & TRASVC_CMD_DOWNLOAD_FLAG) > 0)
+			{
+				// Lock lstm send buffer
+				pthread_mutex_lock(&svc->lstmSendBuf.mutex);
+
+				// Send model
+				ret = trasvc_model_send(sock, svc->lstmSendBuf.lstm);
+				if(ret < 0)
+				{
+					printf("trasvc_model_send() failed with error: %s\n", trasvc_get_error_msg(ret));
+				}
+
+				// Unlock lstm send buffer
+				pthread_mutex_unlock(&svc->lstmSendBuf.mutex);
+
+				// Already send response
+				needResp = 0;
+			}
 		}
 
 		// Make default response string
-		if(defaultResp > 0)
+		if(needResp > 0)
 		{
-			strncpy(buf, TRASVC_CMD_HEAD_STR, bufLen - 1);
-			strncat(buf, " ", bufLen - strlen(buf) - 1);
-			switch(ret)
+			if(defaultResp > 0)
 			{
-				case TRASVC_NO_ERROR:
-					strncat(buf, TRASVC_CMD_OK_STR, bufLen - strlen(buf) - 1);
-					break;
+				strncpy(buf, TRASVC_CMD_HEAD_STR, bufLen - 1);
+				strncat(buf, " ", bufLen - strlen(buf) - 1);
+				switch(ret)
+				{
+					case TRASVC_NO_ERROR:
+						strncat(buf, TRASVC_CMD_OK_STR, bufLen - strlen(buf) - 1);
+						break;
 
-				case TRASVC_TIMEOUT:
-					strncat(buf, TRASVC_CMD_TIMEOUT_STR, bufLen - strlen(buf) - 1);
-					break;
+					case TRASVC_TIMEOUT:
+						strncat(buf, TRASVC_CMD_TIMEOUT_STR, bufLen - strlen(buf) - 1);
+						break;
 
-				default:
-					strncat(buf, TRASVC_CMD_ERR_STR, bufLen - strlen(buf) - 1);
+					default:
+						strncat(buf, TRASVC_CMD_ERR_STR, bufLen - strlen(buf) - 1);
+				}
+
+				strncat(buf, "\x0A", bufLen - strlen(buf) - 1);
 			}
 
-			strncat(buf, "\x0A", bufLen - strlen(buf) - 1);
-		}
-
-		// Send response
-		ret = send(sock, buf, strlen(buf), 0);
-		if(ret < 0)
-		{
-			printf("send() failed with error: %d\n", ret);
-			printf("Shutdown connection\n");
-			break;
+			// Send response
+			ret = send(sock, buf, strlen(buf), 0);
+			if(ret < 0)
+			{
+				printf("send() failed with error: %d\n", ret);
+				printf("Shutdown connection\n");
+				break;
+			}
 		}
 	}
 
@@ -175,6 +243,7 @@ void trasvc_client_task(void* arg, int sock)
 
 void* trasvc_tra_task(void* arg)
 {
+	int ret;
 	int i, j, iter;
 	int mgrLockStatus = 0;
 	int inputs, outputs;
@@ -224,6 +293,30 @@ void* trasvc_tra_task(void* arg)
 	{
 		// Update flag
 		trasvc_flag_update(svc);
+
+		// Update model if available
+		if(svc->lstmRecvBuf.status > 0)
+		{
+			// Lock lstm receive buffer
+			pthread_mutex_lock(&svc->lstmRecvBuf.mutex);
+
+			// Update model
+			ret = lstm_clone(&svc->lstm, svc->lstmRecvBuf.lstm);
+			if(ret < 0)
+			{
+				printf("lstm_clone() failed with error: %d\n", ret);
+				break;
+			}
+			else
+			{
+				lstm_delete(svc->lstmRecvBuf.lstm);
+				svc->lstmRecvBuf.lstm = NULL;
+				svc->lstmRecvBuf.status = 0;
+			}
+
+			// Unlock lstm receive buffer
+			pthread_mutex_unlock(&svc->lstmRecvBuf.mutex);
+		}
 
 		// Lock mgr data
 		LOG("Wait for mgrData lock");
@@ -341,6 +434,16 @@ void* trasvc_tra_task(void* arg)
 			svc->mse = mse;
 			LOG("mse = %f", mse);
 		}
+
+		// Lock lstm send buffer
+		pthread_mutex_lock(&svc->lstmSendBuf.mutex);
+
+		// Clean and copy model
+		lstm_delete(svc->lstmSendBuf.lstm);
+		lstm_clone(&svc->lstmSendBuf.lstm, svc->lstm);
+
+		// Unlock lstm send buffer
+		pthread_mutex_unlock(&svc->lstmRecvBuf.mutex);
 	}
 
 RET:

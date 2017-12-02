@@ -27,6 +27,7 @@ struct TRASVC_DATA
 
 struct TRASVC_LSTM
 {
+	int status;
 	lstm_t lstm;
 
 	int mutexStatus;
