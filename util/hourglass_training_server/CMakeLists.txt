@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 2.8)
 
 # Set variables
-set(PROJECT_NAME demo)
+set(PROJECT_NAME hourglass_training_server)
 set(PROJECT_LANGUAGE C CXX)
-set(PROJECT_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/demo.h)
+set(PROJECT_DEPS trasvc tcpmgr lstm args m pthread)
 
 # Compile setting
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
@@ -31,13 +31,12 @@ file(GLOB PROJECT_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
 	)
 
-# Build library
-add_library(${PROJECT_NAME} STATIC ${PROJECT_SRCS})
+# Build utility
+add_executable(${PROJECT_NAME} ${PROJECT_SRCS})
 set_target_properties(${PROJECT_NAME}
-	PROPERTIES
-	OUTPUT_NAME			${PROJECT_NAME}
-		PREFIX			"lib"
+	PROPERTIES OUTPUT_NAME ${PROJECT_NAME}
 	)
+target_link_libraries(${PROJECT_NAME} ${PROJECT_DEPS})
 
 # Install
 install(TARGETS ${PROJECT_NAME}
@@ -45,7 +44,4 @@ install(TARGETS ${PROJECT_NAME}
 	ARCHIVE DESTINATION "${CMAKE_INSTALL_PREFIX}/lib"
 	LIBRARY DESTINATION "${CMAKE_INSTALL_PREFIX}/lib"
 	PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_PREFIX}/include"
-	)
-install(FILES ${PROJECT_HEADERS}
-	DESTINATION "${CMAKE_INSTALL_PREFIX}/include"
 	)
