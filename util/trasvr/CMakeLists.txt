@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 2.8)
 
 # Set variables
-set(PROJECT_NAME hourglass_model_randgen)
+set(PROJECT_NAME trasvr)
 set(PROJECT_LANGUAGE C)
-set(PROJECT_DEPS lstm args m)
+set(PROJECT_DEPS trasvc tcpmgr lstm args m pthread)
 
 # Compile setting
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
@@ -28,6 +28,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 # Set file list
 file(GLOB PROJECT_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/*.c
+	${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
 	)
 
 # Build utility
