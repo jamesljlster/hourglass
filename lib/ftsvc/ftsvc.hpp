@@ -6,7 +6,7 @@
 
 #include <opencv2/opencv.hpp>
 
-#include <laneft.hpp>
+#include <laneft_ocv.hpp>
 
 namespace hourglass
 {
@@ -33,7 +33,7 @@ namespace hourglass
 			pthread_t th;
 
 			cv::VideoCapture cam;
-			laneft laneFt;
+			laneft_ocv laneFt;
 	};
 }
 
