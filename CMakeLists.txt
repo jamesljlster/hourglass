@@ -27,6 +27,7 @@ set(DEPS_PATHS
 # Library paths
 set(LIB_PATHS
 	${CMAKE_CURRENT_SOURCE_DIR}/lib/trasvc
+	${CMAKE_CURRENT_SOURCE_DIR}/lib/ftsvc
 	)
 
 # Utility paths
