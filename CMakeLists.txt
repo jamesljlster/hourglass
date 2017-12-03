@@ -21,6 +21,7 @@ set(DEPS_PATHS
 	${CMAKE_CURRENT_SOURCE_DIR}/deps/lstm/src
 	${CMAKE_CURRENT_SOURCE_DIR}/deps/tcpmgr/lib
 	${CMAKE_CURRENT_SOURCE_DIR}/deps/args/lib
+	${CMAKE_CURRENT_SOURCE_DIR}/deps/laneft/src
 	)
 
 # Library paths
