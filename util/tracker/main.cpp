@@ -8,20 +8,13 @@ using namespace hourglass;
 
 int main(int argc, char* argv[])
 {
-	int ret;
 	struct TKR tkr;
 
-	// Zero memory
-	memset(&tkr, 0, sizeof(struct TKR));
-
-	// Processing arguments
-	ret = args_parse(arg_list, argc, argv, NULL);
-	if (ret < 0)
+	if(!tkr_init(&tkr, argc, argv))
 	{
-		ret = -1;
-		goto RET;
+		cout << "Initialization failed!" << endl;
+		return -1;
 	}
 
-RET:
-	return ret;
+	return 0;
 }
