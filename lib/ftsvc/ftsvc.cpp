@@ -1,3 +1,4 @@
+#include <exception>
 
 #include "ftsvc.hpp"
 
@@ -11,6 +12,25 @@ namespace hourglass
 	ftsvc::ftsvc()
 	{
 		this->thStatus = 0;
+	}
+
+	float ftsvc::get_norm_feature()
+	{
+		// Read frame
+		if(!this->cam.read(this->img))
+		{
+			throw runtime_error("Failed to read frame form VideoCapture!");
+		}
+
+		// Get feature
+		Mat canny;
+		Canny(this->img, canny, 255, 255);
+		float ftTmp = this->laneFt.get_feature(canny);
+
+		// Normalize
+		ftTmp /= (float)(this->img.cols / 2);
+
+		return ftTmp;
 	}
 
 	bool ftsvc::open_cam(int camIndex, int width, int height)

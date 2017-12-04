@@ -28,11 +28,17 @@ namespace hourglass
 			void set_find_line_rule(int maxDist, int threshold);
 			void set_line_height_filter(int threshold);
 
+			// Task start and stop
+
+			// Get normalized feature
+			float get_norm_feature();
+
 		protected:
 			int thStatus;
 			pthread_t th;
 
 			cv::VideoCapture cam;
+			cv::Mat img;
 			laneft_ocv laneFt;
 	};
 }
