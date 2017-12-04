@@ -22,12 +22,14 @@ set(DEPS_PATHS
 	${CMAKE_CURRENT_SOURCE_DIR}/deps/tcpmgr/lib
 	${CMAKE_CURRENT_SOURCE_DIR}/deps/args/lib
 	${CMAKE_CURRENT_SOURCE_DIR}/deps/laneft/src
+	${CMAKE_CURRENT_SOURCE_DIR}/deps/SimplePID/src
 	)
 
 # Library paths
 set(LIB_PATHS
 	${CMAKE_CURRENT_SOURCE_DIR}/lib/trasvc
 	${CMAKE_CURRENT_SOURCE_DIR}/lib/ftsvc
+	${CMAKE_CURRENT_SOURCE_DIR}/lib/wclt
 	)
 
 # Utility paths
