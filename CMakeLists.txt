@@ -23,6 +23,7 @@ set(DEPS_PATHS
 	${CMAKE_CURRENT_SOURCE_DIR}/deps/args/lib
 	${CMAKE_CURRENT_SOURCE_DIR}/deps/laneft/src
 	${CMAKE_CURRENT_SOURCE_DIR}/deps/SimplePID/src
+	${CMAKE_CURRENT_SOURCE_DIR}/deps/ModConfig/src
 	)
 
 # Library paths
