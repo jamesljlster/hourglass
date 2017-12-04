@@ -41,12 +41,19 @@ int main(int argc, char* argv[])
 	}
 
 	// Lock device
+	printf("=== Lock Device ===\n");
 	ret = wclt_lock(wclt);
 	if(ret < 0)
 	{
 		printf("wclt_lock() failed with error: %d\n", ret);
 		return -1;
 	}
+	else
+	{
+		printf("OK\n");
+	}
+
+	printf("\n");
 
 	// Control test
 	printf("=== Forward Test ===\n");
@@ -68,6 +75,8 @@ int main(int argc, char* argv[])
 		printf("Left Speed: %d\n", tmpSal);
 		printf("Right Speed: %d\n", tmpSar);
 	}
+
+	printf("\n");
 
 	usleep(1000 * 1000);
 
@@ -91,6 +100,8 @@ int main(int argc, char* argv[])
 		printf("Right Speed: %d\n", tmpSar);
 	}
 
+	printf("\n");
+
 	usleep(1000 * 1000);
 
 	printf("==== Trun Right Test ===\n");
@@ -112,6 +123,8 @@ int main(int argc, char* argv[])
 		printf("Left Speed: %d\n", tmpSal);
 		printf("Right Speed: %d\n", tmpSar);
 	}
+
+	printf("\n");
 
 	usleep(1000 * 1000);
 
@@ -135,6 +148,8 @@ int main(int argc, char* argv[])
 		printf("Right Speed: %d\n", tmpSar);
 	}
 
+	printf("\n");
+
 	usleep(1000 * 1000);
 
 	printf("==== Stop Test ===\n");
@@ -157,13 +172,22 @@ int main(int argc, char* argv[])
 		printf("Right Speed: %d\n", tmpSar);
 	}
 
+	printf("\n");
+
 	// Unlock device
+	printf("=== Unlock Device ===\n");
 	ret = wclt_unlock(wclt);
 	if(ret < 0)
 	{
 		printf("wclt_unlock() failed with error: %d\n", ret);
 		return -1;
 	}
+	else
+	{
+		printf("OK\n");
+	}
+
+	printf("\n");
 
 	return 0;
 }
