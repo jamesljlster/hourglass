@@ -5,6 +5,59 @@
 
 using namespace std;
 
+bool tkr_svc_connect(struct TKR* tkrPtr)
+{
+	bool ret = true;
+
+	// Connect wheel service
+	ret = wclt_connect(&tkrPtr->wclt, tkrPtr->wsvr.ip, tkrPtr->wsvr.port);
+	if(ret < 0)
+	{
+		printf("wclt_connect() failed with error: %d\n", ret);
+		goto ERR;
+	}
+	else
+	{
+		tkrPtr->wcltStatus = 1;
+	}
+
+	// Connect training service
+	ret = trasvc_client_connect(&tkrPtr->ts, tkrPtr->trasvr.ip, tkrPtr->trasvr.port);
+	if(ret < 0)
+	{
+		printf("trasvc_client_connect() failed with error: %d\n", ret);
+		goto ERR;
+	}
+	else
+	{
+		tkrPtr->tsStatus = 1;
+	}
+
+	goto RET;
+
+ERR:
+	tkr_svc_disconnect(tkrPtr);
+
+RET:
+
+	return ret;
+}
+
+void tkr_svc_disconnect(struct TKR* tkrPtr)
+{
+	if(tkrPtr->wcltStatus)
+	{
+		wclt_disconnect(tkrPtr->wclt);
+		tkrPtr->wcltStatus = 0;
+	}
+
+	if(tkrPtr->tsStatus)
+	{
+		trasvc_client_disconnect(tkrPtr->ts);
+		tkrPtr->tsStatus = 0;
+	}
+}
+
 bool tkr_init(struct TKR* tkrPtr, int argc, char* argv[])
 {
 	bool ret = true;
