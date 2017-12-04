@@ -87,6 +87,47 @@ RET:
 	return ret;
 }
 
+int wclt_get_speed(wclt_t wclt, int* leftSpeedPtr, int* rightSpeedPtr)
+{
+	int tmpSal, tmpSar;
+	int ret = WCLT_NO_ERROR;
+	char buf[WCLT_BUF_SIZE] = {0};
+
+	// Make control string
+	ret = snprintf(buf, WCLT_BUF_SIZE, "%s%c", WCLT_GET_STR, WCLT_END_CHAR);
+	if(ret < 0)
+	{
+		ret = WCLT_INSUFFICIENT_BUF;
+		goto RET;
+	}
+
+	// Send control string
+	ret = send(wclt, buf, strlen(buf), 0);
+	if(ret <= 0)
+	{
+		ret = WCLT_CONNECT_FAILED;
+		goto RET;
+	}
+
+	// Wait response
+	ret = wclt_str_recv(wclt, buf, WCLT_BUF_SIZE);
+	if(ret < 0)
+	{
+		goto RET;
+	}
+
+	// Parse response
+	tmpSal = (buf[1] - '0') * 100 + (buf[2] - '0') * 10 + (buf[3] - '0');
+	tmpSar = (buf[4] - '0') * 100 + (buf[5] - '0') * 10 + (buf[6] - '0');
+
+	// Assign value
+	*leftSpeedPtr = tmpSal;
+	*rightSpeedPtr = tmpSar;
+
+RET:
+	return ret;
+}
+
 int wclt_lock(wclt_t wclt)
 {
 	int ret = WCLT_NO_ERROR;

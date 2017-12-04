@@ -19,6 +19,7 @@ extern "C" {
 
 int wclt_connect(wclt_t* wcltPtr, const char* serverIP, int serverPort);
 int wclt_control(wclt_t wclt, int leftSpeed, int rightSpeed);
+int wclt_get_speed(wclt_t wclt, int* leftSpeedPtr, int* rightSpeedPtr);
 int wclt_lock(wclt_t wclt);
 int wclt_unlock(wclt_t wclt);
 void wclt_disconnect(wclt_t wclt);
