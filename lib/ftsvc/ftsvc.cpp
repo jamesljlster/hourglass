@@ -27,6 +27,9 @@ namespace hourglass
 		Canny(this->img, canny, 255, 255);
 		float ftTmp = this->laneFt.get_feature(canny);
 
+		// Draw image
+		this->laneFt.draw_line_onto(this->img);
+
 		// Normalize
 		ftTmp /= (float)(this->img.cols / 2);
 
