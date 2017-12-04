@@ -4,6 +4,8 @@
 
 #include "debug.h"
 
+#define FT_WNAME "Lane detection"
+
 using namespace std;
 using namespace cv;
 
@@ -12,6 +14,20 @@ namespace hourglass
 	ftsvc::ftsvc()
 	{
 		this->thStatus = 0;
+		this->showImg = 0;
+	}
+
+	void ftsvc::set_image_show(int enable)
+	{
+		if(enable)
+		{
+			this->showImg = 1;
+		}
+		else
+		{
+			this->showImg = 0;
+			destroyWindow(FT_WNAME);
+		}
 	}
 
 	float ftsvc::get_norm_feature()
@@ -28,7 +44,11 @@ namespace hourglass
 		float ftTmp = this->laneFt.get_feature(canny);
 
 		// Draw image
-		this->laneFt.draw_line_onto(this->img);
+		if(this->showImg)
+		{
+			this->laneFt.draw_line_onto(this->img);
+			imshow(FT_WNAME, this->img);
+		}
 
 		// Normalize
 		ftTmp /= (float)(this->img.cols / 2);
@@ -73,6 +93,7 @@ namespace hourglass
 			pthread_cancel(this->th);
 			pthread_join(this->th, NULL);
 		}
+
 	}
 
 	void ftsvc::set_find_point_rule(int maskSize, int threshold)

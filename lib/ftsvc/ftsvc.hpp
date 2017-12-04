@@ -28,12 +28,17 @@ namespace hourglass
 			void set_find_line_rule(int maxDist, int threshold);
 			void set_line_height_filter(int threshold);
 
+			// Show setting
+			void set_image_show(int enable);
+
 			// Task start and stop
 
 			// Get normalized feature
 			float get_norm_feature();
 
 		protected:
+			int showImg;
+
 			int thStatus;
 			pthread_t th;
 
