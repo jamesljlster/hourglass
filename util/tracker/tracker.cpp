@@ -1,5 +1,8 @@
 #include <iostream>
+#include <cstdio>
 #include <cstring>
+
+#include <modcfg.h>
 
 #include "tracker.hpp"
 

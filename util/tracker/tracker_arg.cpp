@@ -1,3 +1,5 @@
+#include <cstdlib>
+
 #include "tracker.hpp"
 
 args_t arg_list[] = {

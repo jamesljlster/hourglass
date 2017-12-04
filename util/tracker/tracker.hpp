@@ -1,9 +1,7 @@
 #ifndef __TRACKER_HPP__
 #define __TRACKER_HPP__
 
-#include <ftsvc.hpp>
 #include <wclt.h>
-#include <modcfg.h>
 #include <args.h>
 #include <trasvc.h>
 
