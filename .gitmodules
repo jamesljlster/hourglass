@@ -10,3 +10,6 @@
 [submodule "deps/laneft"]
 	path = deps/laneft
 	url = git@140.127.205.188:jamesljlster/laneft.git
+[submodule "deps/SimplePID"]
+	path = deps/SimplePID
+	url = git@140.127.205.188:jamesljlster/SimplePID.git
