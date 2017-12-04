@@ -7,6 +7,7 @@
 int main(int argc, char* argv[])
 {
 	int ret;
+	int tmpSal, tmpSar;
 	char* serverIP, *tmpPtr;
 	int serverPort;
 
@@ -48,6 +49,7 @@ int main(int argc, char* argv[])
 	}
 
 	// Control test
+	printf("=== Forward Test ===\n");
 	ret = wclt_control(wclt, 320, 320);
 	if(ret < 0)
 	{
@@ -55,8 +57,21 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
+	ret = wclt_get_speed(wclt, &tmpSal, &tmpSar);
+	if(ret < 0)
+	{
+		printf("wclt_get_speed() failed with error: %d\n", ret);
+		return -1;
+	}
+	else
+	{
+		printf("Left Speed: %d\n", tmpSal);
+		printf("Right Speed: %d\n", tmpSar);
+	}
+
 	usleep(1000 * 1000);
 
+	printf("==== Trun Left Test ===\n");
 	ret = wclt_control(wclt, 190, 320);
 	if(ret < 0)
 	{
@@ -64,8 +79,21 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
+	ret = wclt_get_speed(wclt, &tmpSal, &tmpSar);
+	if(ret < 0)
+	{
+		printf("wclt_get_speed() failed with error: %d\n", ret);
+		return -1;
+	}
+	else
+	{
+		printf("Left Speed: %d\n", tmpSal);
+		printf("Right Speed: %d\n", tmpSar);
+	}
+
 	usleep(1000 * 1000);
 
+	printf("==== Trun Right Test ===\n");
 	ret = wclt_control(wclt, 320, 190);
 	if(ret < 0)
 	{
@@ -73,8 +101,21 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
+	ret = wclt_get_speed(wclt, &tmpSal, &tmpSar);
+	if(ret < 0)
+	{
+		printf("wclt_get_speed() failed with error: %d\n", ret);
+		return -1;
+	}
+	else
+	{
+		printf("Left Speed: %d\n", tmpSal);
+		printf("Right Speed: %d\n", tmpSar);
+	}
+
 	usleep(1000 * 1000);
 
+	printf("==== Backward Test ===\n");
 	ret = wclt_control(wclt, 190, 190);
 	if(ret < 0)
 	{
@@ -82,13 +123,38 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
+	ret = wclt_get_speed(wclt, &tmpSal, &tmpSar);
+	if(ret < 0)
+	{
+		printf("wclt_get_speed() failed with error: %d\n", ret);
+		return -1;
+	}
+	else
+	{
+		printf("Left Speed: %d\n", tmpSal);
+		printf("Right Speed: %d\n", tmpSar);
+	}
+
 	usleep(1000 * 1000);
 
+	printf("==== Stop Test ===\n");
 	ret = wclt_control(wclt, 255, 255);
 	if(ret < 0)
 	{
 		printf("wclt_control() failed with error: %d\n", ret);
 		return -1;
+	}
+
+	ret = wclt_get_speed(wclt, &tmpSal, &tmpSar);
+	if(ret < 0)
+	{
+		printf("wclt_get_speed() failed with error: %d\n", ret);
+		return -1;
+	}
+	else
+	{
+		printf("Left Speed: %d\n", tmpSal);
+		printf("Right Speed: %d\n", tmpSar);
 	}
 
 	// Unlock device
