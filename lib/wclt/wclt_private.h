@@ -6,6 +6,9 @@
 
 #define WCLT_OK_STR "WOK"
 #define WCLT_ERR_STR "WERR"
+#define WCLT_LOCK_STR "WLOCK"
+#define WCLT_UNLOCK_STR "WUNLOCK"
+#define WCLT_GET_STR "WGET"
 
 #ifdef __cplusplus
 extern "C" {

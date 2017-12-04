@@ -80,12 +80,89 @@ int wclt_control(wclt_t wclt, int leftSpeed, int rightSpeed)
 	// Check response
 	if(strcmp(buf, WCLT_OK_STR) != 0)
 	{
-		ret = WCLT_CONNECT_FAILED;
+		ret = WCLT_CONTROL_FAILED;
 	}
 
 RET:
 	return ret;
 }
+
+int wclt_lock(wclt_t wclt)
+{
+	int ret = WCLT_NO_ERROR;
+	char buf[WCLT_BUF_SIZE] = {0};
+
+	// Make control string
+	ret = snprintf(buf, WCLT_BUF_SIZE, "%s%c", WCLT_LOCK_STR, WCLT_END_CHAR);
+	if(ret < 0)
+	{
+		ret = WCLT_INSUFFICIENT_BUF;
+		goto RET;
+	}
+
+	// Send control string
+	ret = send(wclt, buf, strlen(buf), 0);
+	if(ret <= 0)
+	{
+		ret = WCLT_CONNECT_FAILED;
+		goto RET;
+	}
+
+	// Wait response
+	ret = wclt_str_recv(wclt, buf, WCLT_BUF_SIZE);
+	if(ret < 0)
+	{
+		goto RET;
+	}
+
+	// Check response
+	if(strcmp(buf, WCLT_OK_STR) != 0)
+	{
+		ret = WCLT_CONTROL_FAILED;
+	}
+
+RET:
+	return ret;
+}
+
+int wclt_unlock(wclt_t wclt)
+{
+	int ret = WCLT_NO_ERROR;
+	char buf[WCLT_BUF_SIZE] = {0};
+
+	// Make control string
+	ret = snprintf(buf, WCLT_BUF_SIZE, "%s%c", WCLT_UNLOCK_STR, WCLT_END_CHAR);
+	if(ret < 0)
+	{
+		ret = WCLT_INSUFFICIENT_BUF;
+		goto RET;
+	}
+
+	// Send control string
+	ret = send(wclt, buf, strlen(buf), 0);
+	if(ret <= 0)
+	{
+		ret = WCLT_CONNECT_FAILED;
+		goto RET;
+	}
+
+	// Wait response
+	ret = wclt_str_recv(wclt, buf, WCLT_BUF_SIZE);
+	if(ret < 0)
+	{
+		goto RET;
+	}
+
+	// Check response
+	if(strcmp(buf, WCLT_OK_STR) != 0)
+	{
+		ret = WCLT_CONTROL_FAILED;
+	}
+
+RET:
+	return ret;
+}
+
 int wclt_str_recv(int sock, char* buf, int bufLen)
 {
 	int ret = 0;
