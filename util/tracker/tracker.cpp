@@ -7,12 +7,33 @@ using namespace std;
 
 bool tkr_init(struct TKR* tkrPtr, int argc, char* argv[])
 {
-	int iResult;
-	bool ret;
-	const char* tmpStr;
+	bool ret = true;
 
 	// Zero memory
 	memset(tkrPtr, 0, sizeof(struct TKR));
+
+	// Parse argument
+	if(!tkr_arg_parse(tkrPtr, argc, argv))
+	{
+		ret = false;
+		goto ERR;
+	}
+
+	goto RET;
+
+ERR:
+	tkr_delete(tkrPtr);
+
+RET:
+	return ret;
+}
+
+bool tkr_arg_parse(struct TKR* tkrPtr, int argc, char* argv[])
+{
+	int iResult;
+	bool ret = true;
+	const char* tmpStr;
+	MODCFG cfg = NULL;
 
 	// Processing arguments
 	ret = args_parse(arg_list, argc, argv, NULL);
@@ -34,7 +55,6 @@ bool tkr_init(struct TKR* tkrPtr, int argc, char* argv[])
 	}
 
 	// Read config file
-	MODCFG cfg;
 	iResult = modcfg_create(&cfg, arg_list[TKR_ARG_CFG_PATH].leading[0]);
 	if(iResult < 0)
 	{
@@ -49,7 +69,7 @@ bool tkr_init(struct TKR* tkrPtr, int argc, char* argv[])
 	{
 		printf("'%s' not found in '%s' setting!\n", TKS_CFG_WSVR_IP, TKS_CFG_ROOT);
 		ret = false;
-		goto ERR;
+		goto RET;
 	}
 	else
 	{
@@ -62,7 +82,7 @@ bool tkr_init(struct TKR* tkrPtr, int argc, char* argv[])
 	{
 		printf("Failed to parse wheel server port!\n");
 		ret = false;
-		goto ERR;
+		goto RET;
 	}
 
 	// Parse training server connection setting
@@ -71,7 +91,7 @@ bool tkr_init(struct TKR* tkrPtr, int argc, char* argv[])
 	{
 		printf("'%s' not found in '%s' setting!\n", TKS_CFG_TRASVR_IP, TKS_CFG_ROOT);
 		ret = false;
-		goto ERR;
+		goto RET;
 	}
 	else
 	{
@@ -84,13 +104,8 @@ bool tkr_init(struct TKR* tkrPtr, int argc, char* argv[])
 	{
 		printf("Failed to parse training server port!\n");
 		ret = false;
-		goto ERR;
+		goto RET;
 	}
-
-	goto RET;
-
-ERR:
-	tkr_delete(tkrPtr);
 
 RET:
 	modcfg_delete(cfg);

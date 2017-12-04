@@ -40,4 +40,6 @@ extern args_t arg_list[];
 bool tkr_init(struct TKR* tkrPtr, int argc, char* argv[]);
 void tkr_delete(struct TKR* tkrPtr);
 
+bool tkr_arg_parse(struct TKR* tkrPtr, int argc, char* argv[]); // No self cleanup
+
 #endif
