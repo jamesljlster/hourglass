@@ -15,6 +15,7 @@
 enum TKR_ARG
 {
 	TKR_ARG_CFG_PATH,
+	TKR_ARG_LOG_PATH,
 	TKR_ARG_HELP
 };
 
@@ -27,6 +28,8 @@ struct TKR_NET
 struct TKR
 {
 	int stop;
+
+	char* logPath;
 
 	struct TKR_NET wsvr;
 	struct TKR_NET trasvr;

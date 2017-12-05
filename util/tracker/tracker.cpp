@@ -110,7 +110,19 @@ bool tkr_arg_parse(struct TKR* tkrPtr, int argc, char* argv[])
 	}
 
 	// Check argument
-	if(arg_list[TKR_ARG_CFG_PATH].enable <= 0 || arg_list[TKR_ARG_HELP].enable > 0)
+	if(arg_list[TKR_ARG_CFG_PATH].enable <= 0)
+	{
+		printf("'%s' argument not set!\n", arg_list[TKR_ARG_CFG_PATH].name);
+		ret = false;
+	}
+
+	if(arg_list[TKR_ARG_LOG_PATH].enable <= 0)
+	{
+		printf("'%s' argument not set!\n", arg_list[TKR_ARG_LOG_PATH].name);
+		ret = false;
+	}
+
+	if(!ret || arg_list[TKR_ARG_HELP].enable > 0)
 	{
 		cout << endl;
 		cout << "Usage:" << endl;
@@ -120,6 +132,11 @@ bool tkr_arg_parse(struct TKR* tkrPtr, int argc, char* argv[])
 		ret = false;
 		goto RET;
 	}
+
+	// Clone log file path
+	tmpStr = arg_list[TKR_ARG_LOG_PATH].leading[0];
+	tkrPtr->logPath = new char[strlen(tmpStr)];
+	strcpy(tkrPtr->logPath, tmpStr);
 
 	// Read config file
 	iResult = modcfg_create(&cfg, arg_list[TKR_ARG_CFG_PATH].leading[0]);
@@ -185,6 +202,7 @@ void tkr_delete(struct TKR* tkrPtr)
 	tkr_svc_disconnect(tkrPtr);
 
 	// Free memory
+	delete [] tkrPtr->logPath;
 	delete [] tkrPtr->wsvr.ip;
 	delete [] tkrPtr->trasvr.ip;
 }

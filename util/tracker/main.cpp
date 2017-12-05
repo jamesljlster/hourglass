@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstring>
+#include <fstream>
 
 #include <ftsvc.hpp>
 #include <SPID.h>
@@ -29,6 +30,7 @@ int main(int argc, char* argv[])
 	struct TKR tkr;
 	SPID sPid;
 	ftsvc ft;
+	fstream fLog;
 
 	// Initialize
 	if(!tkr_init(&tkr, argc, argv))
@@ -46,9 +48,19 @@ int main(int argc, char* argv[])
 		goto RET;
 	}
 
+	fLog.open(tkr.logPath, ios_base::out);
+	if(!fLog.is_open())
+	{
+		cout << "Failed to open log file with path: " << tkr.logPath << endl;
+		goto RET;
+	}
+
 	// Setup feature
 	ft.set_line_height_filter(10);
 	ft.set_image_show(1);
+
+	// Dump csv header
+	fLog << "error,sal,sar" << endl;
 
 	// Tracking
 	while(tkr.stop == 0)
@@ -90,6 +102,9 @@ int main(int argc, char* argv[])
 			cout << "wclt_control() failed with error: " << ret << endl;
 			goto RET;
 		}
+
+		// Dump log
+		fLog << ftInput << "," << ((float)sal / (float)SPEED_MAX) << "," << ((float)sar / (float)SPEED_MAX) << endl;
 	}
 
 RET:
@@ -102,6 +117,7 @@ RET:
 	}
 
 	// Cleanup
+	fLog.close();
 	tkr_delete(&tkr);
 
 	return ret;
