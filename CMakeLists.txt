@@ -40,6 +40,7 @@ set(UTIL_PATHS
 	${CMAKE_CURRENT_SOURCE_DIR}/util/rand_model
 	${CMAKE_CURRENT_SOURCE_DIR}/util/pid_tracker
 	${CMAKE_CURRENT_SOURCE_DIR}/util/lstm_tracker
+	${CMAKE_CURRENT_SOURCE_DIR}/util/lstm_trainer
 	)
 
 if(${BUILD_TEST})
