@@ -10,12 +10,14 @@ using namespace std;
 
 bool tkr_svc_connect(struct TKR* tkrPtr)
 {
+	int iResult;
 	bool ret = true;
 
 	// Connect wheel service
-	ret = wclt_connect(&tkrPtr->wclt, tkrPtr->wsvr.ip, tkrPtr->wsvr.port);
-	if(ret < 0)
+	iResult = wclt_connect(&tkrPtr->wclt, tkrPtr->wsvr.ip, tkrPtr->wsvr.port);
+	if(iResult < 0)
 	{
+		ret = false;
 		printf("wclt_connect() failed with error: %d\n", ret);
 		goto ERR;
 	}
@@ -25,9 +27,10 @@ bool tkr_svc_connect(struct TKR* tkrPtr)
 	}
 
 	// Connect training service
-	ret = trasvc_client_connect(&tkrPtr->ts, tkrPtr->trasvr.ip, tkrPtr->trasvr.port);
-	if(ret < 0)
+	iResult = trasvc_client_connect(&tkrPtr->ts, tkrPtr->trasvr.ip, tkrPtr->trasvr.port);
+	if(iResult < 0)
 	{
+		ret = false;
 		printf("trasvc_client_connect() failed with error: %d\n", ret);
 		goto ERR;
 	}
@@ -70,6 +73,13 @@ bool tkr_init(struct TKR* tkrPtr, int argc, char* argv[])
 
 	// Parse argument
 	if(!tkr_arg_parse(tkrPtr, argc, argv))
+	{
+		ret = false;
+		goto ERR;
+	}
+
+	// Connect service
+	if(!tkr_svc_connect(tkrPtr))
 	{
 		ret = false;
 		goto ERR;
@@ -171,6 +181,9 @@ RET:
 
 void tkr_delete(struct TKR* tkrPtr)
 {
+	// Disconnect
+	tkr_svc_disconnect(tkrPtr);
+
 	// Free memory
 	delete [] tkrPtr->wsvr.ip;
 	delete [] tkrPtr->trasvr.ip;
