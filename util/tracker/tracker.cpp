@@ -105,6 +105,7 @@ bool tkr_arg_parse(struct TKR* tkrPtr, int argc, char* argv[])
 		cout << endl;
 		cout << "Usage:" << endl;
 		args_print_help(arg_list);
+		cout << endl;
 
 		ret = false;
 		goto RET;
@@ -114,7 +115,7 @@ bool tkr_arg_parse(struct TKR* tkrPtr, int argc, char* argv[])
 	iResult = modcfg_create(&cfg, arg_list[TKR_ARG_CFG_PATH].leading[0]);
 	if(iResult < 0)
 	{
-		cout << "modcfg_create() failed with error: " << ret << endl;
+		cout << "modcfg_create() failed with error: " << iResult << endl;
 		ret = false;
 		goto RET;
 	}
@@ -165,7 +166,7 @@ bool tkr_arg_parse(struct TKR* tkrPtr, int argc, char* argv[])
 
 RET:
 	modcfg_delete(cfg);
-	return true;
+	return ret;
 }
 
 void tkr_delete(struct TKR* tkrPtr)

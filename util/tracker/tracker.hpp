@@ -26,6 +26,8 @@ struct TKR_NET
 
 struct TKR
 {
+	int stop;
+
 	struct TKR_NET wsvr;
 	struct TKR_NET trasvr;
 
