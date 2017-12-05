@@ -41,6 +41,7 @@ set(UTIL_PATHS
 	${CMAKE_CURRENT_SOURCE_DIR}/util/pid_tracker
 	${CMAKE_CURRENT_SOURCE_DIR}/util/lstm_tracker
 	${CMAKE_CURRENT_SOURCE_DIR}/util/lstm_trainer
+	${CMAKE_CURRENT_SOURCE_DIR}/util/learner
 	)
 
 if(${BUILD_TEST})
