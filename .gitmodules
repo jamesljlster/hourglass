@@ -7,3 +7,15 @@
 [submodule "deps/args"]
 	path = deps/args
 	url = git@140.127.205.188:jamesljlster/args.git
+[submodule "deps/laneft"]
+	path = deps/laneft
+	url = git@140.127.205.188:jamesljlster/laneft.git
+[submodule "deps/SimplePID"]
+	path = deps/SimplePID
+	url = git@140.127.205.188:jamesljlster/SimplePID.git
+[submodule "deps/ModConfig"]
+	path = deps/ModConfig
+	url = git@140.127.205.188:jamesljlster/ModConfig.git
+[submodule "deps/CSV_DataProc"]
+	path = deps/CSV_DataProc
+	url = git@140.127.205.188:jamesljlster/CSV_DataProc.git

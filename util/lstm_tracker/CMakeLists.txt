@@ -1,13 +1,15 @@
 cmake_minimum_required(VERSION 2.8)
 
 # Set variables
-set(PROJECT_NAME hourglass_training_server)
+set(PROJECT_NAME lstm_tracker)
 set(PROJECT_LANGUAGE C CXX)
-set(PROJECT_DEPS trasvc tcpmgr lstm args m pthread)
+set(PROJECT_DEPS ftsvc laneft modcfg args wclt trasvc lstm ${OpenCV_LIBS} pthread)
 
 # Compile setting
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 set(CMAKE_C_FLAGS_RELEASE "-O3")
+set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -Wall")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 # Set default build type
 if(NOT CMAKE_BUILD_TYPE)

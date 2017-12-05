@@ -1,13 +1,15 @@
 cmake_minimum_required(VERSION 2.8)
 
 # Set variables
-set(PROJECT_NAME demo_dup)
+set(PROJECT_NAME ftsvc)
 set(PROJECT_LANGUAGE C CXX)
-set(PROJECT_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/demo.h)
+set(PROJECT_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/ftsvc.hpp)
 
 # Compile setting
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 set(CMAKE_C_FLAGS_RELEASE "-O3")
+set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -Wall")
+set(CMAKE_Cxx_FLAGS_RELEASE "-O3")
 
 # Set default build type
 if(NOT CMAKE_BUILD_TYPE)

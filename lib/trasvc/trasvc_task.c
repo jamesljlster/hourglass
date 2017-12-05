@@ -313,7 +313,9 @@ void* trasvc_tra_task(void* arg)
 			// Lock lstm receive buffer
 			pthread_mutex_lock(&svc->lstmRecvBuf.mutex);
 
-			// Update model
+			// Replace model
+			lstm_delete(svc->lstm);
+
 			ret = lstm_clone(&svc->lstm, svc->lstmRecvBuf.lstm);
 			if(ret < 0)
 			{

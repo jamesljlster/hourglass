@@ -21,17 +21,26 @@ set(DEPS_PATHS
 	${CMAKE_CURRENT_SOURCE_DIR}/deps/lstm/src
 	${CMAKE_CURRENT_SOURCE_DIR}/deps/tcpmgr/lib
 	${CMAKE_CURRENT_SOURCE_DIR}/deps/args/lib
+	${CMAKE_CURRENT_SOURCE_DIR}/deps/laneft/src
+	${CMAKE_CURRENT_SOURCE_DIR}/deps/SimplePID/src
+	${CMAKE_CURRENT_SOURCE_DIR}/deps/ModConfig/src
+	${CMAKE_CURRENT_SOURCE_DIR}/deps/CSV_DataProc/src
 	)
 
 # Library paths
 set(LIB_PATHS
 	${CMAKE_CURRENT_SOURCE_DIR}/lib/trasvc
+	${CMAKE_CURRENT_SOURCE_DIR}/lib/ftsvc
+	${CMAKE_CURRENT_SOURCE_DIR}/lib/wclt
 	)
 
 # Utility paths
 set(UTIL_PATHS
-	${CMAKE_CURRENT_SOURCE_DIR}/util/hourglass_training_server
-	#${CMAKE_CURRENT_SOURCE_DIR}/util/util2
+	${CMAKE_CURRENT_SOURCE_DIR}/util/trasvr
+	${CMAKE_CURRENT_SOURCE_DIR}/util/rand_model
+	${CMAKE_CURRENT_SOURCE_DIR}/util/pid_tracker
+	${CMAKE_CURRENT_SOURCE_DIR}/util/lstm_tracker
+	${CMAKE_CURRENT_SOURCE_DIR}/util/lstm_trainer
 	)
 
 if(${BUILD_TEST})

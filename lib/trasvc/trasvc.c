@@ -247,6 +247,7 @@ void trasvc_delete(trasvc_t svc)
 		// Stop training task
 		if(svc->traTaskStatus > 0)
 		{
+			svc->stop = 1;
 			pthread_cancel(svc->traTask);
 			pthread_join(svc->traTask, NULL);
 		}
