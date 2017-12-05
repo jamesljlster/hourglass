@@ -66,6 +66,7 @@ void tkr_svc_disconnect(struct TKR* tkrPtr)
 
 bool tkr_init(struct TKR* tkrPtr, int argc, char* argv[])
 {
+	int iResult;
 	bool ret = true;
 
 	// Zero memory
@@ -81,6 +82,15 @@ bool tkr_init(struct TKR* tkrPtr, int argc, char* argv[])
 	// Connect service
 	if(!tkr_svc_connect(tkrPtr))
 	{
+		ret = false;
+		goto ERR;
+	}
+
+	// Load model
+	iResult = lstm_import(&tkrPtr->model, arg_list[TKR_ARG_MODEL_PATH].leading[0]);
+	if(iResult < 0)
+	{
+		printf("lstm_import() failed with error: %d\n", iResult);
 		ret = false;
 		goto ERR;
 	}
@@ -119,6 +129,12 @@ bool tkr_arg_parse(struct TKR* tkrPtr, int argc, char* argv[])
 	if(arg_list[TKR_ARG_LOG_PATH].enable <= 0)
 	{
 		printf("'%s' argument not set!\n", arg_list[TKR_ARG_LOG_PATH].name);
+		ret = false;
+	}
+
+	if(arg_list[TKR_ARG_LOG_PATH].enable <= 0)
+	{
+		printf("'%s' argument not set!\n", arg_list[TKR_ARG_MODEL_PATH].name);
 		ret = false;
 	}
 
@@ -200,6 +216,9 @@ void tkr_delete(struct TKR* tkrPtr)
 {
 	// Disconnect
 	tkr_svc_disconnect(tkrPtr);
+
+	// Delete model
+	lstm_delete(tkrPtr->model);
 
 	// Free memory
 	delete [] tkrPtr->logPath;

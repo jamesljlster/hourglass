@@ -4,6 +4,7 @@
 #include <wclt.h>
 #include <args.h>
 #include <trasvc.h>
+#include <lstm.h>
 
 #define TKS_CFG_ROOT "tracker"
 #define TKS_CFG_WSVR_IP "wheel_server_ip"
@@ -16,6 +17,7 @@ enum TKR_ARG
 {
 	TKR_ARG_CFG_PATH,
 	TKR_ARG_LOG_PATH,
+	TKR_ARG_MODEL_PATH,
 	TKR_ARG_HELP
 };
 
@@ -33,6 +35,8 @@ struct TKR
 
 	struct TKR_NET wsvr;
 	struct TKR_NET trasvr;
+
+	lstm_t model;
 
 	int wcltStatus;
 	wclt_t wclt;

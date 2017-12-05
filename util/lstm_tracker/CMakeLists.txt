@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 # Set variables
-set(PROJECT_NAME tracker)
+set(PROJECT_NAME lstm_tracker)
 set(PROJECT_LANGUAGE C CXX)
 set(PROJECT_DEPS ftsvc laneft modcfg args wclt trasvc lstm SPID ${OpenCV_LIBS} pthread)
 
