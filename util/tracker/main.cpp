@@ -10,9 +10,9 @@
 #define SPEED_MIN 0
 #define SPEED_BASE 320
 
-#define KP 2.5
-#define KD 0.0
-#define KI 0.0
+#define KP 35.0
+#define KD 15.0
+#define KI 0.05
 
 #define CAM_PATH 0
 #define CAM_WIDTH 320
@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
 	}
 
 	// Setup feature
-	ft.set_line_height_filter(50);
+	ft.set_line_height_filter(10);
 	ft.set_image_show(1);
 
 	// Tracking
