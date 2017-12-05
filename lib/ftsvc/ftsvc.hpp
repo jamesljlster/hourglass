@@ -36,6 +36,9 @@ namespace hourglass
 			// Get normalized feature
 			float get_norm_feature();
 
+			// User input
+			char kbin;
+
 		protected:
 			int showImg;
 

@@ -15,6 +15,7 @@ namespace hourglass
 	{
 		this->thStatus = 0;
 		this->showImg = 0;
+		this->kbin = 0;
 	}
 
 	void ftsvc::set_image_show(int enable)
@@ -48,6 +49,7 @@ namespace hourglass
 		{
 			this->laneFt.draw_line_onto(this->img);
 			imshow(FT_WNAME, this->img);
+			this->kbin = waitKey(1);
 		}
 
 		// Normalize

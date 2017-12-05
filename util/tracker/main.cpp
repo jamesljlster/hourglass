@@ -10,7 +10,7 @@
 #define SPEED_MIN 0
 #define SPEED_BASE 320
 
-#define KP 0.0
+#define KP 2.5
 #define KD 0.0
 #define KI 0.0
 
@@ -56,6 +56,10 @@ int main(int argc, char* argv[])
 		// Get feature
 		ftInput = ft.get_norm_feature();
 		delta = SPID_Control(&sPid, 0, ftInput);
+		if(ft.kbin == 27)
+		{
+			tkr.stop = 1;
+		}
 
 		// Find speed
 		sal = SPEED_BASE - delta;
@@ -89,6 +93,14 @@ int main(int argc, char* argv[])
 	}
 
 RET:
+	// Stop Wheel
+	ret = wclt_control(tkr.wclt, 255, 255);
+	if(ret < 0)
+	{
+		cout << "wclt_control() failed with error: " << ret << endl;
+		goto RET;
+	}
+
 	// Cleanup
 	tkr_delete(&tkr);
 
