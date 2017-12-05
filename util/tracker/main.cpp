@@ -48,6 +48,7 @@ int main(int argc, char* argv[])
 
 	// Setup feature
 	ft.set_line_height_filter(50);
+	ft.set_image_show(1);
 
 	// Tracking
 	while(tkr.stop == 0)

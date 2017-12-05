@@ -92,8 +92,8 @@ bool tkr_arg_parse(struct TKR* tkrPtr, int argc, char* argv[])
 	MODCFG cfg = NULL;
 
 	// Processing arguments
-	ret = args_parse(arg_list, argc, argv, NULL);
-	if(ret < 0)
+	iResult = args_parse(arg_list, argc, argv, NULL);
+	if(iResult < 0)
 	{
 		ret = false;
 		goto RET;
