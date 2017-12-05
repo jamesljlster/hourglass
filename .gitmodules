@@ -16,3 +16,6 @@
 [submodule "deps/ModConfig"]
 	path = deps/ModConfig
 	url = git@140.127.205.188:jamesljlster/ModConfig.git
+[submodule "deps/CSV_DataProc"]
+	path = deps/CSV_DataProc
+	url = git@140.127.205.188:jamesljlster/CSV_DataProc.git
