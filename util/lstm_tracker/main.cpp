@@ -3,17 +3,14 @@
 #include <fstream>
 
 #include <ftsvc.hpp>
-#include <SPID.h>
 
 #include "tracker.hpp"
 
 #define SPEED_MAX 510
 #define SPEED_MIN 0
-#define SPEED_BASE 320
 
-#define KP 35.0
-#define KD 15.0
-#define KI 0.05
+#define INPUTS 1
+#define OUTPUTS 2
 
 #define CAM_PATH 0
 #define CAM_WIDTH 320
@@ -25,12 +22,13 @@ using namespace hourglass;
 int main(int argc, char* argv[])
 {
 	int ret = 0;
-	float ftInput, delta;
-	int sal, sar;
 	struct TKR tkr;
-	SPID sPid;
+	int sal, sar;
 	ftsvc ft;
 	fstream fLog;
+
+	float inputList[INPUTS] = {0};
+	float outputList[OUTPUTS] = {0};
 
 	// Initialize
 	if(!tkr_init(&tkr, argc, argv))
@@ -39,8 +37,12 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
-	SPID_ZeroMemory(&sPid);
-	SPID_SetWeight(&sPid, KP, KI, KD);
+	if(lstm_config_get_inputs(lstm_get_config(tkr.model)) != INPUTS ||
+			lstm_config_get_outputs(lstm_get_config(tkr.model)) != OUTPUTS)
+	{
+		cout << "Incompatible LSTM control model!" << endl;
+		goto RET;
+	}
 
 	if(!ft.open_cam(CAM_PATH, CAM_WIDTH, CAM_HEIGHT))
 	{
@@ -66,16 +68,16 @@ int main(int argc, char* argv[])
 	while(tkr.stop == 0)
 	{
 		// Get feature
-		ftInput = ft.get_norm_feature();
-		delta = SPID_Control(&sPid, 0, ftInput);
+		inputList[0] = ft.get_norm_feature();
 		if(ft.kbin == 27)
 		{
 			tkr.stop = 1;
 		}
 
 		// Find speed
-		sal = SPEED_BASE - delta;
-		sar = SPEED_BASE + delta;
+		lstm_forward_computation(tkr.model, inputList, outputList);
+		sal = outputList[0] * SPEED_MAX;
+		sar = outputList[1] * SPEED_MAX;
 
 		if(sal > SPEED_MAX)
 		{
@@ -104,7 +106,7 @@ int main(int argc, char* argv[])
 		}
 
 		// Dump log
-		fLog << ftInput << "," << ((float)sal / (float)SPEED_MAX) << "," << ((float)sar / (float)SPEED_MAX) << endl;
+		fLog << inputList[0] << "," << ((float)sal / (float)SPEED_MAX) << "," << ((float)sar / (float)SPEED_MAX) << endl;
 	}
 
 RET:
