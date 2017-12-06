@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstring>
 #include <fstream>
+#include <ctime>
 
 #include <ftsvc.hpp>
 
@@ -16,8 +17,31 @@
 #define CAM_WIDTH 320
 #define CAM_HEIGHT 240
 
+#define LOG_BASE "learner_log_"
+#define LOG_EXT ".log"
+
 using namespace std;
 using namespace hourglass;
+
+struct tm get_current_date()
+{
+	time_t t;
+	struct tm tm;
+
+	t = time(NULL);
+	tm = *localtime(&t);
+
+	tm.tm_year += 1990;
+	tm.tm_mon += 1;
+
+	return tm;
+}
+
+string make_time_str()
+{
+	struct tm date = get_current_date();
+	return to_string(date.tm_year) + to_string(date.tm_mon) + to_string(date.tm_mday) + "_" + to_string(date.tm_hour) + to_string(date.tm_min);
+}
 
 int main(int argc, char* argv[])
 {
@@ -29,6 +53,8 @@ int main(int argc, char* argv[])
 
 	float inputList[INPUTS] = {0};
 	float outputList[OUTPUTS] = {0};
+
+	string pathTmp;
 
 	// Initialize
 	if(!tkr_init(&tkr, argc, argv))
@@ -50,18 +76,18 @@ int main(int argc, char* argv[])
 		goto RET;
 	}
 
-	fLog.open(tkr.logPath, ios_base::out);
-	if(!fLog.is_open())
-	{
-		cout << "Failed to open log file with path: " << tkr.logPath << endl;
-		goto RET;
-	}
-
 	// Setup feature
 	ft.set_line_height_filter(10);
 	ft.set_image_show(1);
 
 	// Dump csv header
+	pathTmp = LOG_BASE + make_time_str() + "_init" + LOG_EXT;
+	fLog.open(pathTmp.c_str(), ios_base::out);
+	if(!fLog.is_open())
+	{
+		cout << "Failed to open log file with path: " << pathTmp.c_str() << endl;
+		goto RET;
+	}
 	fLog << "error,sal,sar" << endl;
 
 	// Tracking
