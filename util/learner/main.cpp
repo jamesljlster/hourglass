@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include <iostream>
 #include <cstring>
 #include <fstream>
@@ -20,6 +21,9 @@
 #define LOG_BASE "learner_log_"
 #define LOG_EXT ".log"
 
+#define MODEL_BASE "learner_model_"
+#define MODEL_EXT ".lstm"
+
 #define SPEED_UP_INTERVAL			0.17
 #define SPEED_DELTA_UP_INTERVAL		0.33
 #define SPEED_PRESERVE_INTERVAL		0.66
@@ -27,6 +31,9 @@
 #define SPEED_DOWN_INTERVAL			1.0
 
 #define SPEED_LRATE	0.01
+
+#define SEND_LIMIT	5000
+#define TARGET_MSE	0.0001
 
 using namespace std;
 using namespace hourglass;
@@ -96,9 +103,9 @@ void reinf_speed(float err, int sal, int sar, int* reSalPtr, int* reSarPtr)
 int main(int argc, char* argv[])
 {
 	int ret = 0;
+	int sendCounter;
 	struct TKR tkr;
 	int sal, sar;
-	int reSal, reSar;
 	ftsvc ft;
 	fstream fLog;
 
@@ -135,6 +142,14 @@ int main(int argc, char* argv[])
 		goto RET;
 	}
 
+	// Start training service
+	ret = trasvc_client_start(tkr.ts);
+	if(ret < 0)
+	{
+		cout << "trasvc_client_start() failed with error: " << trasvc_get_error_msg(ret) << endl;
+		goto RET;
+	}
+
 	// Setup feature
 	ft.set_line_height_filter(10);
 	ft.set_image_show(1);
@@ -150,9 +165,13 @@ int main(int argc, char* argv[])
 	fLog << "error,sal,sar" << endl;
 
 	// Tracking
+	sendCounter = 0;
 	while(tkr.stop == 0)
 	{
+		float ctrlErr;
+
 		// Get feature
+		ctrlErr = ft.get_norm_feature();
 		inputList[0] = ft.get_norm_feature();
 		if(ft.kbin == 27)
 		{
@@ -182,6 +201,106 @@ int main(int argc, char* argv[])
 			sar = SPEED_MIN;
 		}
 
+		// Send reinforcement data
+		if(sendCounter >= SEND_LIMIT)
+		{
+			float mse;
+
+			// Watiting for new model
+			cout << "Waiting for new model" << endl;
+			ret = trasvc_client_get_mse(tkr.ts, &mse);
+			if(ret < 0)
+			{
+				cout << "trasvc_client_get_mse() failed with error: " << trasvc_get_error_msg(ret) << endl;
+				goto RET;
+			}
+
+			// Check if new model available
+			if(mse < TARGET_MSE)
+			{
+				lstm_t tmpLstm;
+
+				// Download model
+				cout << "New model available! Updating..." << endl;
+				ret = trasvc_client_model_download(tkr.ts, &tmpLstm);
+				if(ret < 0)
+				{
+					cout << "trasvc_client_model_download() failed with error: " << trasvc_get_error_msg(ret) << endl;
+					goto RET;
+				}
+
+				// Export new model
+				pathTmp = MODEL_BASE + make_time_str() + MODEL_EXT;
+				ret = lstm_export(tmpLstm, pathTmp.c_str());
+				if(ret < 0)
+				{
+					cout << "lstm_export() failed with error: " << ret << endl;
+					goto RET;
+				}
+
+				// Replace model
+				lstm_delete(tkr.model);
+				tkr.model = tmpLstm;
+
+				// Create new log
+				fLog.close();
+				pathTmp = LOG_BASE + make_time_str() + LOG_EXT;
+				fLog.open(pathTmp.c_str(), ios_base::out);
+				if(!fLog.is_open())
+				{
+					cout << "Failed to open log file with path: " << pathTmp.c_str() << endl;
+					goto RET;
+				}
+				fLog << "error,sal,sar" << endl;
+
+				// Reset sendCounter
+				sendCounter = 0;
+			}
+			else
+			{
+				cout << "Current mse: " << mse << endl;
+				usleep(1000 * 1000);
+				continue;
+			}
+		}
+		else
+		{
+			int reSal, reSar;
+			float dataTmp[INPUTS + OUTPUTS] = {0};
+
+			// Get reinforcement data
+			reinf_speed(ctrlErr, sal, sar, &reSal, &reSar);
+
+			// Set data
+			dataTmp[0] = ctrlErr;
+			dataTmp[1] = reSal;
+			dataTmp[2] = reSar;
+
+			// Send data
+			while(1)
+			{
+				ret = trasvc_client_datasend(tkr.ts, dataTmp, INPUTS + OUTPUTS);
+				if(ret < 0)
+				{
+					cout << "trasvc_client_datasend() failed with error: " << trasvc_get_error_msg(ret) << endl;
+					if(ret == TRASVC_TIMEOUT)
+					{
+						continue;
+					}
+					else
+					{
+						goto RET;
+					}
+				}
+				else
+				{
+					break;
+				}
+			}
+
+			sendCounter++;
+		}
+
 		// Control Wheel
 		ret = wclt_control(tkr.wclt, sal, sar);
 		if(ret < 0)
@@ -202,6 +321,9 @@ RET:
 		cout << "wclt_control() failed with error: " << ret << endl;
 		goto RET;
 	}
+
+	// Stop training service
+	trasvc_client_stop(tkr.ts);
 
 	// Cleanup
 	fLog.close();
