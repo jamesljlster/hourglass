@@ -132,7 +132,7 @@ bool tkr_arg_parse(struct TKR* tkrPtr, int argc, char* argv[])
 		ret = false;
 	}
 
-	if(arg_list[TKR_ARG_LOG_PATH].enable <= 0)
+	if(arg_list[TKR_ARG_MODEL_PATH].enable <= 0)
 	{
 		printf("'%s' argument not set!\n", arg_list[TKR_ARG_MODEL_PATH].name);
 		ret = false;
