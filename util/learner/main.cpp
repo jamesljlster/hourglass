@@ -21,10 +21,12 @@
 #define LOG_EXT ".log"
 
 #define SPEED_UP_INTERVAL			0.17
-#define SPEDD_DELTA_UP_INTERVAL		0.33
+#define SPEED_DELTA_UP_INTERVAL		0.33
 #define SPEED_PRESERVE_INTERVAL		0.66
 #define SPEED_BASE_DOWN_INTERVAL	0.83
 #define SPEED_DOWN_INTERVAL			1.0
+
+#define SPEED_LRATE	0.01
 
 using namespace std;
 using namespace hourglass;
@@ -49,11 +51,54 @@ string make_time_str()
 	return to_string(date.tm_year) + to_string(date.tm_mon) + to_string(date.tm_mday) + "_" + to_string(date.tm_hour) + to_string(date.tm_min);
 }
 
+void reinf_speed(float err, int sal, int sar, int* reSalPtr, int* reSarPtr)
+{
+	int tmpSal, tmpSar;
+
+	int baseSpeed = (sal + sar) / 2.0;
+	int speedDelta = sar - baseSpeed;
+	float absErr = fabs(err);
+
+	if(absErr < SPEED_UP_INTERVAL)
+	{
+		tmpSal = sal * (1.0 + SPEED_LRATE);
+		tmpSar = sar * (1.0 + SPEED_LRATE);
+	}
+	else if(absErr < SPEED_DELTA_UP_INTERVAL)
+	{
+		speedDelta = speedDelta * (1.0 + SPEED_LRATE);
+		tmpSal = baseSpeed - speedDelta;
+		tmpSar = baseSpeed + speedDelta;
+	}
+	else if(absErr < SPEED_PRESERVE_INTERVAL)
+	{
+		// No change
+		tmpSal = sal;
+		tmpSar = sar;
+	}
+	else if(absErr < SPEED_BASE_DOWN_INTERVAL)
+	{
+		speedDelta = speedDelta * (1.0 - SPEED_LRATE);
+		tmpSal = baseSpeed - speedDelta;
+		tmpSar = baseSpeed + speedDelta;
+	}
+	else
+	{
+		tmpSal = sal * (1.0 - SPEED_LRATE);
+		tmpSar = sar * (1.0 - SPEED_LRATE);
+	}
+
+	// Assign value
+	*reSalPtr = tmpSal;
+	*reSarPtr = tmpSar;
+}
+
 int main(int argc, char* argv[])
 {
 	int ret = 0;
 	struct TKR tkr;
 	int sal, sar;
+	int reSal, reSar;
 	ftsvc ft;
 	fstream fLog;
 
