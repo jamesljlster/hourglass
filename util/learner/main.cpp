@@ -296,11 +296,13 @@ int main(int argc, char* argv[])
 				ret = trasvc_client_datasend(tkr.ts, dataTmp, INPUTS + OUTPUTS);
 				if(ret < 0)
 				{
+					int tmpRet;
+
 					// Stop Wheel
-					ret = wclt_control(tkr.wclt, 255, 255);
-					if(ret < 0)
+					tmpRet = wclt_control(tkr.wclt, 255, 255);
+					if(tmpRet < 0)
 					{
-						cout << "wclt_control() failed with error: " << ret << endl;
+						cout << "wclt_control() failed with error: " << tmpRet << endl;
 						goto RET;
 					}
 
