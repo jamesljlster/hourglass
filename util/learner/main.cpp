@@ -281,8 +281,8 @@ int main(int argc, char* argv[])
 
 			// Set data
 			dataTmp[0] = ctrlErr;
-			dataTmp[1] = reSal;
-			dataTmp[2] = reSar;
+			dataTmp[1] = reSal / (float)SPEED_MAX;
+			dataTmp[2] = reSar / (float)SPEED_MAX;
 
 			// Send data
 			while(1)
