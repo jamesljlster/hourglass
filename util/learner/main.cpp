@@ -20,6 +20,12 @@
 #define LOG_BASE "learner_log_"
 #define LOG_EXT ".log"
 
+#define SPEED_UP_INTERVAL			0.17
+#define SPEDD_DELTA_UP_INTERVAL		0.33
+#define SPEED_PRESERVE_INTERVAL		0.66
+#define SPEED_BASE_DOWN_INTERVAL	0.83
+#define SPEED_DOWN_INTERVAL			1.0
+
 using namespace std;
 using namespace hourglass;
 
@@ -73,6 +79,14 @@ int main(int argc, char* argv[])
 	if(!ft.open_cam(CAM_PATH, CAM_WIDTH, CAM_HEIGHT))
 	{
 		cout << "Failed to open camera!" << endl;
+		goto RET;
+	}
+
+	// Upload lstm model
+	ret = trasvc_client_model_upload(tkr.ts, arg_list[TKR_ARG_MODEL_PATH].leading[0]);
+	if(ret < 0)
+	{
+		cout << "trasvc_client_model_upload() failed with error: " << trasvc_get_error_msg(ret) << endl;
 		goto RET;
 	}
 
