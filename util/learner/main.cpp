@@ -32,7 +32,7 @@
 
 #define SPEED_LRATE	0.01
 
-#define SEND_LIMIT	5000
+#define SEND_LIMIT	2500
 #define TARGET_MSE	0.0001
 
 using namespace std;
@@ -205,6 +205,14 @@ int main(int argc, char* argv[])
 		if(sendCounter >= SEND_LIMIT)
 		{
 			float mse;
+
+			// Stop wheel
+			ret = wclt_control(tkr.wclt, 255, 255);
+			if(ret < 0)
+			{
+				cout << "wclt_control() failed with error: " << ret << endl;
+				goto RET;
+			}
 
 			// Watiting for new model
 			cout << "Waiting for new model" << endl;
