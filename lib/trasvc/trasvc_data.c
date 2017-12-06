@@ -24,6 +24,7 @@ int trasvc_data_append(trasvc_t svc, float* data, int timeout)
 	timeTmp.tv_sec = 0;
 	timeTmp.tv_nsec = timeout * 1000000;
 	ret = pthread_mutex_timedlock(&svc->mgrData.mutex, &timeTmp);
+	/*
 	if(ret == ETIMEDOUT)
 	{
 		LOG("pthread_mutex_timedlock() timed out!");
@@ -34,6 +35,13 @@ int trasvc_data_append(trasvc_t svc, float* data, int timeout)
 	{
 		LOG("pthread_mutex_timedlock() failed with error: %d", ret);
 		ret = TRASVC_SYS_FAILED;
+		goto RET;
+	}
+	*/
+	if(ret != 0)
+	{
+		LOG("pthread_mutex_timedlock() failed with error: %d", ret);
+		ret = TRASVC_TIMEOUT;
 		goto RET;
 	}
 	else
