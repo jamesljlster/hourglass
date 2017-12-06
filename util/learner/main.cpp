@@ -35,6 +35,8 @@
 #define SEND_LIMIT	2500
 #define TARGET_MSE	0.0001
 
+#define BUF_SIZE 128
+
 using namespace std;
 using namespace hourglass;
 
@@ -54,8 +56,13 @@ struct tm get_current_date()
 
 string make_time_str()
 {
+	char strBuf[BUF_SIZE] = {0};
 	struct tm date = get_current_date();
-	return to_string(date.tm_year) + to_string(date.tm_mon) + to_string(date.tm_mday) + "_" + to_string(date.tm_hour) + to_string(date.tm_min);
+
+	snprintf(strBuf, BUF_SIZE, "%d%02d%02d_%02d%02d", date.tm_year, date.tm_mon, date.tm_mday, date.tm_hour, date.tm_min);
+
+	string ret = strBuf;
+	return ret;
 }
 
 void reinf_speed(float err, int sal, int sar, int* reSalPtr, int* reSarPtr)
