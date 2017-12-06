@@ -185,29 +185,6 @@ int main(int argc, char* argv[])
 			tkr.stop = 1;
 		}
 
-		// Find speed
-		lstm_forward_computation(tkr.model, inputList, outputList);
-		sal = outputList[0] * SPEED_MAX;
-		sar = outputList[1] * SPEED_MAX;
-
-		if(sal > SPEED_MAX)
-		{
-			sal = SPEED_MAX;
-		}
-		else if(sal < SPEED_MIN)
-		{
-			sal = SPEED_MIN;
-		}
-
-		if(sar > SPEED_MAX)
-		{
-			sar = SPEED_MAX;
-		}
-		else if(sar < SPEED_MIN)
-		{
-			sar = SPEED_MIN;
-		}
-
 		// Send reinforcement data
 		if(sendCounter >= SEND_LIMIT)
 		{
@@ -275,13 +252,35 @@ int main(int argc, char* argv[])
 			{
 				cout << "Current mse: " << mse << endl;
 				usleep(1000 * 1000);
-				continue;
 			}
 		}
 		else
 		{
 			int reSal, reSar;
 			float dataTmp[INPUTS + OUTPUTS] = {0};
+
+			// Find speed
+			lstm_forward_computation(tkr.model, inputList, outputList);
+			sal = outputList[0] * SPEED_MAX;
+			sar = outputList[1] * SPEED_MAX;
+
+			if(sal > SPEED_MAX)
+			{
+				sal = SPEED_MAX;
+			}
+			else if(sal < SPEED_MIN)
+			{
+				sal = SPEED_MIN;
+			}
+
+			if(sar > SPEED_MAX)
+			{
+				sar = SPEED_MAX;
+			}
+			else if(sar < SPEED_MIN)
+			{
+				sar = SPEED_MIN;
+			}
 
 			// Get reinforcement data
 			reinf_speed(ctrlErr, sal, sar, &reSal, &reSar);
@@ -297,6 +296,14 @@ int main(int argc, char* argv[])
 				ret = trasvc_client_datasend(tkr.ts, dataTmp, INPUTS + OUTPUTS);
 				if(ret < 0)
 				{
+					// Stop Wheel
+					ret = wclt_control(tkr.wclt, 255, 255);
+					if(ret < 0)
+					{
+						cout << "wclt_control() failed with error: " << ret << endl;
+						goto RET;
+					}
+
 					cout << "trasvc_client_datasend() failed with error: " << trasvc_get_error_msg(ret) << endl;
 					if(ret == TRASVC_TIMEOUT)
 					{
@@ -314,18 +321,18 @@ int main(int argc, char* argv[])
 			}
 
 			sendCounter++;
-		}
 
-		// Control Wheel
-		ret = wclt_control(tkr.wclt, sal, sar);
-		if(ret < 0)
-		{
-			cout << "wclt_control() failed with error: " << ret << endl;
-			goto RET;
-		}
+			// Control Wheel
+			ret = wclt_control(tkr.wclt, sal, sar);
+			if(ret < 0)
+			{
+				cout << "wclt_control() failed with error: " << ret << endl;
+				goto RET;
+			}
 
-		// Dump log
-		fLog << inputList[0] << "," << ((float)sal / (float)SPEED_MAX) << "," << ((float)sar / (float)SPEED_MAX) << endl;
+			// Dump log
+			fLog << inputList[0] << "," << ((float)sal / (float)SPEED_MAX) << "," << ((float)sar / (float)SPEED_MAX) << endl;
+		}
 	}
 
 RET:
