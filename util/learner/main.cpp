@@ -73,34 +73,38 @@ void reinf_speed(float err, int sal, int sar, int* reSalPtr, int* reSarPtr)
 	sal = sal - 255;
 	sar = sar - 255;
 
+	// Set default
+	tmpSal = sal;
+	tmpSar = sar;
+
 	int baseSpeed = (sal + sar) / 2.0;
 	int speedDelta = sar - baseSpeed;
 	float absErr = fabs(err);
 
-	if(absErr < SPEED_UP_INTERVAL)
+	if(absErr <= SPEED_UP_INTERVAL)
 	{
 		tmpSal = sal * (1.0 + SPEED_LRATE);
 		tmpSar = sar * (1.0 + SPEED_LRATE);
 	}
-	else if(absErr < SPEED_DELTA_UP_INTERVAL)
+	else if(absErr <= SPEED_DELTA_UP_INTERVAL)
 	{
 		speedDelta = speedDelta * (1.0 + SPEED_LRATE);
 		tmpSal = baseSpeed - speedDelta;
 		tmpSar = baseSpeed + speedDelta;
 	}
-	else if(absErr < SPEED_PRESERVE_INTERVAL)
+	else if(absErr <= SPEED_PRESERVE_INTERVAL)
 	{
 		// No change
 		tmpSal = sal;
 		tmpSar = sar;
 	}
-	else if(absErr < SPEED_BASE_DOWN_INTERVAL)
+	else if(absErr <= SPEED_BASE_DOWN_INTERVAL)
 	{
 		speedDelta = speedDelta * (1.0 - SPEED_LRATE);
 		tmpSal = baseSpeed - speedDelta;
 		tmpSar = baseSpeed + speedDelta;
 	}
-	else
+	else if(absErr <= SPEED_DOWN_INTERVAL)
 	{
 		tmpSal = sal * (1.0 - SPEED_LRATE);
 		tmpSar = sar * (1.0 - SPEED_LRATE);
