@@ -69,6 +69,10 @@ void reinf_speed(float err, int sal, int sar, int* reSalPtr, int* reSarPtr)
 {
 	int tmpSal, tmpSar;
 
+	// Reset offset
+	sal = sal - 255;
+	sar = sar - 255;
+
 	int baseSpeed = (sal + sar) / 2.0;
 	int speedDelta = sar - baseSpeed;
 	float absErr = fabs(err);
@@ -103,8 +107,8 @@ void reinf_speed(float err, int sal, int sar, int* reSalPtr, int* reSarPtr)
 	}
 
 	// Assign value
-	*reSalPtr = tmpSal;
-	*reSarPtr = tmpSar;
+	*reSalPtr = tmpSal + 255;
+	*reSarPtr = tmpSar + 255;
 }
 
 int main(int argc, char* argv[])
