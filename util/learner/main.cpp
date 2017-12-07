@@ -24,13 +24,13 @@
 #define MODEL_BASE "learner_model_"
 #define MODEL_EXT ".lstm"
 
-#define SPEED_UP_INTERVAL			0.17
-#define SPEED_DELTA_UP_INTERVAL		0.33
-#define SPEED_PRESERVE_INTERVAL		0.66
-#define SPEED_BASE_DOWN_INTERVAL	0.83
+#define SPEED_UP_INTERVAL			0.2
+#define SPEED_DELTA_UP_INTERVAL		0.4
+#define SPEED_PRESERVE_INTERVAL		0.6
+#define SPEED_BASE_DOWN_INTERVAL	0.8
 #define SPEED_DOWN_INTERVAL			1.0
 
-#define SPEED_LRATE	0.01
+#define SPEED_LRATE	0.05
 
 #define SEND_LIMIT	2500
 #define TARGET_MSE	0.0001
@@ -224,6 +224,7 @@ int main(int argc, char* argv[])
 					cout << "trasvc_client_model_download() failed with error: " << trasvc_get_error_msg(ret) << endl;
 					goto RET;
 				}
+				cout << "Finished!" << endl;
 
 				// Export new model
 				pathTmp = MODEL_BASE + make_time_str() + MODEL_EXT;
@@ -257,6 +258,8 @@ int main(int argc, char* argv[])
 				cout << "Current mse: " << mse << endl;
 				usleep(1000 * 1000);
 			}
+
+			cout << endl;
 		}
 		else
 		{
