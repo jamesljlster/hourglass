@@ -14,7 +14,7 @@
 
 #define CAM_PATH 0
 #define CAM_WIDTH 320
-#define CAM_HEIGHT 240
+#define CAM_HEIGHT 180
 
 using namespace std;
 using namespace hourglass;

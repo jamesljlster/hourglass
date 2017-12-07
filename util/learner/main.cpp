@@ -16,7 +16,7 @@
 
 #define CAM_PATH 0
 #define CAM_WIDTH 320
-#define CAM_HEIGHT 240
+#define CAM_HEIGHT 180
 
 #define LOG_BASE "learner_log_"
 #define LOG_EXT ".log"
@@ -32,7 +32,7 @@
 
 #define SPEED_LRATE	0.05
 
-#define SEND_LIMIT	1500
+#define SEND_LIMIT	2500
 #define TARGET_MSE	0.0001
 
 #define BUF_SIZE 128
