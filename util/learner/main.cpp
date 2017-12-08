@@ -110,9 +110,32 @@ void reinf_speed(float err, int sal, int sar, int* reSalPtr, int* reSarPtr)
 		tmpSar = sar * (1.0 - SPEED_LRATE);
 	}
 
+	// Restore offset
+	tmpSal = tmpSal + 255;
+	tmpSar = tmpSar + 255;
+
+	// Check if speed out of range
+	if(tmpSal > SPEED_MAX)
+	{
+		tmpSal = SPEED_MAX;
+	}
+	else if(tmpSal < SPEED_MIN)
+	{
+		tmpSal = SPEED_MIN;
+	}
+
+	if(tmpSar > SPEED_MAX)
+	{
+		tmpSar = SPEED_MAX;
+	}
+	else if(tmpSar < SPEED_MIN)
+	{
+		tmpSar = SPEED_MIN;
+	}
+
 	// Assign value
-	*reSalPtr = tmpSal + 255;
-	*reSarPtr = tmpSar + 255;
+	*reSalPtr = tmpSal;
+	*reSarPtr = tmpSar;
 }
 
 int main(int argc, char* argv[])
