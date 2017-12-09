@@ -11,9 +11,9 @@
 #define SPEED_MIN 0
 #define SPEED_BASE 320
 
-#define KP 35.0
-#define KD 15.0
-#define KI 0.05
+#define KP 65.0
+#define KD 45.0
+#define KI 0.08
 
 #define CAM_PATH 0
 #define CAM_WIDTH 320
