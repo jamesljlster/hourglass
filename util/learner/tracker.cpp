@@ -18,7 +18,7 @@ bool tkr_svc_connect(struct TKR* tkrPtr)
 	if(iResult < 0)
 	{
 		ret = false;
-		printf("wclt_connect() failed with error: %d\n", ret);
+		printf("wclt_connect() failed with error: %d\n", iResult);
 		goto ERR;
 	}
 	else
@@ -31,12 +31,21 @@ bool tkr_svc_connect(struct TKR* tkrPtr)
 	if(iResult < 0)
 	{
 		ret = false;
-		printf("trasvc_client_connect() failed with error: %d\n", ret);
+		printf("trasvc_client_connect() failed with error: %s\n", trasvc_get_error_msg(iResult));
 		goto ERR;
 	}
 	else
 	{
 		tkrPtr->tsStatus = 1;
+	}
+
+	// Clear training data
+	iResult = trasvc_client_clear(tkrPtr->ts);
+	if(iResult < 0)
+	{
+		ret = false;
+		printf("trasvc_client_clear() failed with error: %s\n", trasvc_get_error_msg(iResult));
+		goto ERR;
 	}
 
 	goto RET;
