@@ -14,6 +14,56 @@
 
 #define MODEL_RECV_TMP	".recv.lstm"
 
+int trasvc_client_clear(trasvc_client_t client)
+{
+	int ret = TRASVC_NO_ERROR;
+	char buf[DEFAULT_BUF_SIZE] = {0};
+
+	LOG("enter");
+
+	// Set command
+	ret = snprintf(buf, DEFAULT_BUF_SIZE, "%s %s\x0A",
+			TRASVC_CMD_HEAD_STR,
+			TRASVC_CMD_CLEAR_STR
+			);
+	if(ret < 0)
+	{
+		ret = TRASVC_INSUFFICIENT_BUF;
+		goto RET;
+	}
+
+	// Send command
+	ret = send(client, buf, strlen(buf), 0);
+	if(ret < 0)
+	{
+		ret = TRASVC_CONNECT_FAILED;
+		goto RET;
+	}
+
+	// Wait response
+	trasvc_run(trasvc_str_recv(client, buf, DEFAULT_BUF_SIZE), ret, RET);
+
+	// Get status
+	ret = trasvc_cmd_parse(buf);
+	if((ret & TRASVC_CMD_HEAD_FLAG) == 0)
+	{
+		ret = TRASVC_INVALID_CMD;
+		goto RET;
+	}
+
+	if((ret & TRASVC_CMD_OK_FLAG) == 0)
+	{
+		ret = TRASVC_SYS_FAILED;
+		goto RET;
+	}
+
+	ret = TRASVC_NO_ERROR;
+
+RET:
+	LOG("exit");
+	return ret;
+}
+
 int trasvc_client_model_download(trasvc_client_t client, lstm_t* lstmDstPtr)
 {
 	int ret = TRASVC_NO_ERROR;
