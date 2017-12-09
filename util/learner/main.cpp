@@ -16,7 +16,7 @@
 
 #define CAM_PATH 0
 #define CAM_WIDTH 320
-#define CAM_HEIGHT 240
+#define CAM_HEIGHT 180
 
 #define LOG_BASE "learner_log_"
 #define LOG_EXT ".log"
@@ -24,13 +24,13 @@
 #define MODEL_BASE "learner_model_"
 #define MODEL_EXT ".lstm"
 
-#define SPEED_UP_INTERVAL			0.17
-#define SPEED_DELTA_UP_INTERVAL		0.33
-#define SPEED_PRESERVE_INTERVAL		0.66
-#define SPEED_BASE_DOWN_INTERVAL	0.83
+#define SPEED_UP_INTERVAL			0.25
+#define SPEED_DELTA_UP_INTERVAL		0.50
+#define SPEED_PRESERVE_INTERVAL		1.0
+#define SPEED_BASE_DOWN_INTERVAL	1.0
 #define SPEED_DOWN_INTERVAL			1.0
 
-#define SPEED_LRATE	0.01
+#define SPEED_LRATE	0.05
 
 #define SEND_LIMIT	2500
 #define TARGET_MSE	0.0001
@@ -69,37 +69,68 @@ void reinf_speed(float err, int sal, int sar, int* reSalPtr, int* reSarPtr)
 {
 	int tmpSal, tmpSar;
 
+	// Reset offset
+	sal = sal - 255;
+	sar = sar - 255;
+
+	// Set default
+	tmpSal = sal;
+	tmpSar = sar;
+
 	int baseSpeed = (sal + sar) / 2.0;
 	int speedDelta = sar - baseSpeed;
 	float absErr = fabs(err);
 
-	if(absErr < SPEED_UP_INTERVAL)
+	if(absErr <= SPEED_UP_INTERVAL)
 	{
 		tmpSal = sal * (1.0 + SPEED_LRATE);
 		tmpSar = sar * (1.0 + SPEED_LRATE);
 	}
-	else if(absErr < SPEED_DELTA_UP_INTERVAL)
+	else if(absErr <= SPEED_DELTA_UP_INTERVAL)
 	{
 		speedDelta = speedDelta * (1.0 + SPEED_LRATE);
 		tmpSal = baseSpeed - speedDelta;
 		tmpSar = baseSpeed + speedDelta;
 	}
-	else if(absErr < SPEED_PRESERVE_INTERVAL)
+	else if(absErr <= SPEED_PRESERVE_INTERVAL)
 	{
 		// No change
 		tmpSal = sal;
 		tmpSar = sar;
 	}
-	else if(absErr < SPEED_BASE_DOWN_INTERVAL)
+	else if(absErr <= SPEED_BASE_DOWN_INTERVAL)
 	{
 		speedDelta = speedDelta * (1.0 - SPEED_LRATE);
 		tmpSal = baseSpeed - speedDelta;
 		tmpSar = baseSpeed + speedDelta;
 	}
-	else
+	else if(absErr <= SPEED_DOWN_INTERVAL)
 	{
 		tmpSal = sal * (1.0 - SPEED_LRATE);
 		tmpSar = sar * (1.0 - SPEED_LRATE);
+	}
+
+	// Restore offset
+	tmpSal = tmpSal + 255;
+	tmpSar = tmpSar + 255;
+
+	// Check if speed out of range
+	if(tmpSal > SPEED_MAX)
+	{
+		tmpSal = SPEED_MAX;
+	}
+	else if(tmpSal < SPEED_MIN)
+	{
+		tmpSal = SPEED_MIN;
+	}
+
+	if(tmpSar > SPEED_MAX)
+	{
+		tmpSar = SPEED_MAX;
+	}
+	else if(tmpSar < SPEED_MIN)
+	{
+		tmpSar = SPEED_MIN;
 	}
 
 	// Assign value
@@ -220,6 +251,7 @@ int main(int argc, char* argv[])
 					cout << "trasvc_client_model_download() failed with error: " << trasvc_get_error_msg(ret) << endl;
 					goto RET;
 				}
+				cout << "Finished!" << endl;
 
 				// Export new model
 				pathTmp = MODEL_BASE + make_time_str() + MODEL_EXT;
@@ -253,6 +285,8 @@ int main(int argc, char* argv[])
 				cout << "Current mse: " << mse << endl;
 				usleep(1000 * 1000);
 			}
+
+			cout << endl;
 		}
 		else
 		{
@@ -296,11 +330,13 @@ int main(int argc, char* argv[])
 				ret = trasvc_client_datasend(tkr.ts, dataTmp, INPUTS + OUTPUTS);
 				if(ret < 0)
 				{
+					int tmpRet;
+
 					// Stop Wheel
-					ret = wclt_control(tkr.wclt, 255, 255);
-					if(ret < 0)
+					tmpRet = wclt_control(tkr.wclt, 255, 255);
+					if(tmpRet < 0)
 					{
-						cout << "wclt_control() failed with error: " << ret << endl;
+						cout << "wclt_control() failed with error: " << tmpRet << endl;
 						goto RET;
 					}
 
