@@ -25,6 +25,7 @@
 #define TRASVC_CMD_UPLOAD_FLAG		0x0200
 #define TRASVC_CMD_DOWNLOAD_FLAG	0x0400
 #define TRASVC_CMD_UNAVAILABLE_FLAG	0x0800
+#define TRASVC_CMD_CLEAR_FLAG	0x0800
 
 enum TRASVC_RET_VALUE
 {
@@ -70,6 +71,7 @@ int trasvc_client_start(trasvc_client_t client);
 int trasvc_client_stop(trasvc_client_t client);
 int trasvc_client_model_download(trasvc_client_t client, lstm_t* lstmDstPtr);
 int trasvc_client_model_upload(trasvc_client_t client, const char* modelPath);
+int trasvc_client_clear(trasvc_client_t client);
 
 // Common functions
 const char* trasvc_get_error_msg(int ret);
