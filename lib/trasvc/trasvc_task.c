@@ -244,9 +244,10 @@ void trasvc_client_task(void* arg, int sock)
 				// Erase state
 				lstm_state_erase(svc->lstmState);
 
-				// Lock send buffer and clone model
+				// Lock send buffer and clear model
 				pthread_mutex_lock(&svc->lstmSendBuf.mutex);
-				lstm_clone(&svc->lstmSendBuf.lstm, svc->lstm);
+				lstm_delete(svc->lstmSendBuf.lstm);
+				svc->lstmSendBuf.lstm = NULL;
 
 				// Unlock mutex
 				pthread_mutex_unlock(&svc->lstmSendBuf.mutex);
@@ -449,8 +450,10 @@ void* trasvc_tra_task(void* arg)
 		lstm_state_restore(svc->lstmState, svc->lstm);
 
 		// Lock training data
+		LOG("Wait for traData lock");
 		pthread_mutex_lock(&svc->traData.mutex);
 		traLockStatus = 1;
+		LOG("traData locked");
 
 		// Training
 		tmpLen = svc->traData.dataHead - svc->traData.dataTail;
@@ -462,6 +465,11 @@ void* trasvc_tra_task(void* arg)
 		if(tmpLen <= 0)
 		{
 			LOG("Empty training data");
+
+			// Unlock training data
+			pthread_mutex_unlock(&svc->traData.mutex);
+			traLockStatus = 0;
+
 			continue;
 		}
 
@@ -498,7 +506,9 @@ void* trasvc_tra_task(void* arg)
 		}
 
 		// Lock lstm send buffer
+		LOG("Wait for lstmSendBuf lock");
 		pthread_mutex_lock(&svc->lstmSendBuf.mutex);
+		LOG("lstmSendBuf locked");
 
 		// Clean and copy model
 		lstm_delete(svc->lstmSendBuf.lstm);
@@ -506,10 +516,12 @@ void* trasvc_tra_task(void* arg)
 
 		// Unlock lstm send buffer
 		pthread_mutex_unlock(&svc->lstmSendBuf.mutex);
+		LOG("lstmSendBuf unlocked");
 
 		// Unlock training data
 		pthread_mutex_unlock(&svc->traData.mutex);
 		traLockStatus = 0;
+		LOG("traData unlocked");
 	}
 
 RET:
