@@ -24,7 +24,8 @@
 #define MODEL_BASE "learner_model_"
 #define MODEL_EXT ".lstm"
 
-#define SPEED_UP_INTERVAL			0.25
+#define SPEED_UP_WITH_DELTA_DOWN_INTERVAL	0.16
+#define SPEED_UP_INTERVAL			0.33
 #define SPEED_DELTA_UP_INTERVAL		0.50
 #define SPEED_PRESERVE_INTERVAL		1.0
 #define SPEED_BASE_DOWN_INTERVAL	1.0
@@ -81,7 +82,15 @@ void reinf_speed(float err, int sal, int sar, int* reSalPtr, int* reSarPtr)
 	int speedDelta = sar - baseSpeed;
 	float absErr = fabs(err);
 
-	if(absErr <= SPEED_UP_INTERVAL)
+	if(absErr <= SPEED_UP_WITH_DELTA_DOWN_INTERVAL)
+	{
+		baseSpeed = baseSpeed * (1.0 + SPEED_LRATE);
+		speedDelta = speedDelta * (1.0 - SPEED_LRATE);
+
+		tmpSal = baseSpeed - speedDelta;
+		tmpSar = baseSpeed + speedDelta;
+	}
+	else if(absErr <= SPEED_UP_INTERVAL)
 	{
 		tmpSal = sal * (1.0 + SPEED_LRATE);
 		tmpSar = sar * (1.0 + SPEED_LRATE);
