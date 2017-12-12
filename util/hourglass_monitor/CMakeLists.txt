@@ -19,6 +19,7 @@ endif()
 project(${PROJECT_NAME})
 
 # Setup Qt
+set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
