@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 
 # Set variables
 set(PROJECT_NAME hourglass_monitor)
-set(PROJECT_DEPS wclt trasvc)
+set(PROJECT_DEPS wclt trasvc lstm m)
 
 # Compile setting
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
