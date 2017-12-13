@@ -264,6 +264,7 @@ int wclt_str_recv(int sock, char* buf, int bufLen)
 
 int wclt_connect(wclt_t* wcltPtr, const char* serverIP, int serverPort)
 {
+	int tmp;
 	int ret = WCLT_NO_ERROR;
 	sock_t sock = -1;
 	struct sockaddr_in addrInfo;
@@ -286,6 +287,13 @@ int wclt_connect(wclt_t* wcltPtr, const char* serverIP, int serverPort)
 	if(ret < 0)
 	{
 		ret = WCLT_CONNECT_FAILED;
+		goto ERR;
+	}
+
+	// Test connection
+	ret = wclt_get_speed(sock, &tmp, &tmp);
+	if(ret < 0)
+	{
 		goto ERR;
 	}
 

@@ -568,6 +568,7 @@ RET:
 
 int trasvc_client_connect(trasvc_client_t* clientPtr, const char* serverIP, int serverPort)
 {
+	int tmp;
 	int ret = TRASVC_NO_ERROR;
 	sock_t sock = -1;
 	struct sockaddr_in addrInfo;
@@ -590,6 +591,13 @@ int trasvc_client_connect(trasvc_client_t* clientPtr, const char* serverIP, int 
 	if(ret < 0)
 	{
 		ret = TRASVC_CONNECT_FAILED;
+		goto ERR;
+	}
+
+	// Test connection
+	ret = trasvc_client_get_status(sock, &tmp);
+	if(ret < 0)
+	{
 		goto ERR;
 	}
 
