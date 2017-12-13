@@ -131,10 +131,26 @@
           <string>Detail</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_5">
-          <item row="0" column="0" colspan="2">
-           <widget class="QLabel" name="label_12">
+          <item row="4" column="1">
+           <widget class="QLineEdit" name="lineEdit_13"/>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLineEdit" name="lineEdit_12"/>
+          </item>
+          <item row="7" column="0" colspan="4">
+           <widget class="QGraphicsView" name="graphicsView"/>
+          </item>
+          <item row="0" column="3">
+           <widget class="QPushButton" name="pushButton_6">
             <property name="text">
-             <string>Update Interval (sec)</string>
+             <string>Refresh Now</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_13">
+            <property name="text">
+             <string>Left Speed</string>
             </property>
            </widget>
           </item>
@@ -145,45 +161,29 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="3">
-           <widget class="QLineEdit" name="lineEdit_14"/>
-          </item>
-          <item row="5" column="0" colspan="2">
-           <widget class="QCheckBox" name="checkBox">
+          <item row="0" column="0" colspan="2">
+           <widget class="QLabel" name="label_12">
             <property name="text">
-             <string>Enable Control</string>
+             <string>Update Interval (sec)</string>
             </property>
            </widget>
           </item>
-          <item row="6" column="0" colspan="4">
-           <widget class="QGraphicsView" name="graphicsView"/>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="label_13">
-            <property name="text">
-             <string>Left Speed</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="3">
-           <widget class="QPushButton" name="pushButton_6">
-            <property name="text">
-             <string>Refresh Now</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QLineEdit" name="lineEdit_12"/>
-          </item>
-          <item row="4" column="2">
+          <item row="5" column="0">
            <widget class="QLabel" name="label_14">
             <property name="text">
              <string>Right Speed</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
-           <widget class="QLineEdit" name="lineEdit_13"/>
+          <item row="5" column="1">
+           <widget class="QLineEdit" name="lineEdit_14"/>
+          </item>
+          <item row="4" column="2" colspan="2">
+           <widget class="QCheckBox" name="checkBox">
+            <property name="text">
+             <string>Enable Control</string>
+            </property>
+           </widget>
           </item>
           <item row="5" column="2" colspan="2">
            <widget class="QPushButton" name="pushButton_7">
@@ -481,7 +481,7 @@
      <x>0</x>
      <y>0</y>
      <width>700</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
