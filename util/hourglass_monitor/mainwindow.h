@@ -22,9 +22,12 @@ public:
 private slots:
     void on_wsvrButton_clicked();
     void on_wsvrRefresh_clicked();
-    void on_wsvrTimer_timeout();
 
     void on_wsvrUpdateInterval_valueChanged(double arg1);
+
+    void wclt_timer_event();
+
+    void on_wsvrEnableCtrl_stateChanged(int arg1);
 
 private:
     Ui::MainWindow *ui;
@@ -40,6 +43,10 @@ private:
     // Private functions
     void wsvr_connect();
     void wsvr_disconnect();
+    void wsvr_set_ui_enabled(bool enable);
+    void wsvr_set_ctrl_enabled(bool enable);
+
+
 };
 
 #endif // MAINWINDOW_H

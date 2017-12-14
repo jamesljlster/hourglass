@@ -21,10 +21,11 @@ MainWindow::MainWindow(QWidget *parent) :
     // Set initial status
     this->wcltStatus = 0;
     this->tsStatus = 0;
+    this->wsvr_set_ui_enabled(false);
 
     // Initial timer and event
     this->wcltTimer = new QTimer();
-    connect(this->wcltTimer, SIGNAL(timeout()), this, SLOT(on_wsvrTimer_timeout()));
+    connect(this->wcltTimer, SIGNAL(timeout()), this, SLOT(wclt_timer_event()));
     this->wcltTimer->start(this->ui->wsvrUpdateInterval->value() * 1000);
 }
 
@@ -47,12 +48,30 @@ MainWindow::~MainWindow()
     delete this->wcltTimer;
 }
 
-void MainWindow::on_wsvrTimer_timeout()
+void MainWindow::wclt_timer_event()
 {
     if(this->wcltStatus > 0)
     {
         this->on_wsvrRefresh_clicked();
     }
+}
+
+void MainWindow::wsvr_set_ui_enabled(bool enable)
+{
+    this->ui->wsvrRefresh->setEnabled(enable);
+    this->ui->wsvrEnableCtrl->setEnabled(enable);
+    this->ui->wsvrLock->setEnabled(enable);
+    this->ui->wsvrSal->setEnabled(enable);
+    this->ui->wsvrSar->setEnabled(enable);
+
+    this->wsvr_set_ctrl_enabled(
+                (this->ui->wsvrEnableCtrl->checkState() == Qt::Checked) && enable
+                );
+}
+
+void MainWindow::wsvr_set_ctrl_enabled(bool enable)
+{
+    this->ui->wsvrCtrlPanel->setEnabled(enable);
 }
 
 void MainWindow::wsvr_connect()
@@ -85,6 +104,9 @@ void MainWindow::wsvr_connect()
         return;
     }
 
+    // Enable ui
+    this->wsvr_set_ui_enabled(true);
+
     // Change status
     this->wcltStatus = 1;
     this->ui->wsvrButton->setText("Disconnect");
@@ -94,6 +116,9 @@ void MainWindow::wsvr_disconnect()
 {
     // Disconnect
     wclt_disconnect(this->wclt);
+
+    // Disable ui
+    this->wsvr_set_ui_enabled(false);
 
     // Change status
     this->wcltStatus = 0;
@@ -149,4 +174,16 @@ void MainWindow::on_wsvrRefresh_clicked()
 void MainWindow::on_wsvrUpdateInterval_valueChanged(double arg1)
 {
     this->wcltTimer->start(arg1 * 1000);
+}
+
+void MainWindow::on_wsvrEnableCtrl_stateChanged(int arg1)
+{
+    if(arg1 == Qt::Checked)
+    {
+        this->wsvr_set_ctrl_enabled(true);
+    }
+    else
+    {
+        this->wsvr_set_ctrl_enabled(false);
+    }
 }

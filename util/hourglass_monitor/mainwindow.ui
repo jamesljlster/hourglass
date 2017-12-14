@@ -139,7 +139,7 @@
            </widget>
           </item>
           <item row="7" column="0" colspan="4">
-           <widget class="QGraphicsView" name="graphicsView"/>
+           <widget class="QGraphicsView" name="wsvrCtrlPanel"/>
           </item>
           <item row="0" column="3">
            <widget class="QPushButton" name="wsvrRefresh">
@@ -184,14 +184,14 @@
            </widget>
           </item>
           <item row="4" column="2" colspan="2">
-           <widget class="QCheckBox" name="checkBox">
+           <widget class="QCheckBox" name="wsvrEnableCtrl">
             <property name="text">
              <string>Enable Control</string>
             </property>
            </widget>
           </item>
           <item row="5" column="2" colspan="2">
-           <widget class="QPushButton" name="pushButton_7">
+           <widget class="QPushButton" name="wsvrLock">
             <property name="text">
              <string>Lock Device</string>
             </property>
