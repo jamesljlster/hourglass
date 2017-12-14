@@ -59,6 +59,7 @@ void MainWindow::wclt_timer_event()
 void MainWindow::wsvr_set_ui_enabled(bool enable)
 {
     this->ui->wsvrGroup->setEnabled(enable);
+    this->wsvr_set_ctrl_enabled(this->ui->wsvrEnableCtrl->checkState() == Qt::Checked);
 }
 
 void MainWindow::wsvr_set_ctrl_enabled(bool enable)
