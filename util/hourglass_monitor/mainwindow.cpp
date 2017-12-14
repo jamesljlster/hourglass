@@ -48,6 +48,13 @@ MainWindow::~MainWindow()
     delete this->wcltTimer;
 }
 
+void MainWindow::wsvr_draw_ctrl(int x, int y)
+{
+    int width = this->ui->wsvrCtrlPanel->width();
+    int height = this->ui->wsvrCtrlPanel->height();
+
+}
+
 void MainWindow::wclt_timer_event()
 {
     if(this->wcltStatus > 0)
