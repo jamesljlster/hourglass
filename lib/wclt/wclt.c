@@ -90,7 +90,7 @@ RET:
 int wclt_get_speed(wclt_t wclt, int* leftSpeedPtr, int* rightSpeedPtr)
 {
 	int tmpSal, tmpSar;
-	int ret = WCLT_NO_ERROR;
+	int ret;
 	char buf[WCLT_BUF_SIZE] = {0};
 
 	// Make control string
@@ -123,6 +123,7 @@ int wclt_get_speed(wclt_t wclt, int* leftSpeedPtr, int* rightSpeedPtr)
 	// Assign value
 	*leftSpeedPtr = tmpSal;
 	*rightSpeedPtr = tmpSar;
+	ret = WCLT_NO_ERROR;
 
 RET:
 	return ret;
