@@ -21,6 +21,11 @@ MainWindow::MainWindow(QWidget *parent) :
     // Set initial status
     this->wcltStatus = 0;
     this->tsStatus = 0;
+
+    // Initial timer and event
+    this->wcltTimer = new QTimer();
+    connect(this->wcltTimer, SIGNAL(timeout()), this, SLOT(on_wsvrTimer_timeout()));
+    this->wcltTimer->start(this->ui->wsvrUpdateInterval->value() * 1000);
 }
 
 MainWindow::~MainWindow()
@@ -36,6 +41,17 @@ MainWindow::~MainWindow()
     if(this->tsStatus > 0)
     {
         trasvc_client_disconnect(this->ts);
+    }
+
+    // Cleanup
+    delete this->wcltTimer;
+}
+
+void MainWindow::on_wsvrTimer_timeout()
+{
+    if(this->wcltStatus > 0)
+    {
+        this->on_wsvrRefresh_clicked();
     }
 }
 
@@ -116,4 +132,9 @@ void MainWindow::on_wsvrRefresh_clicked()
         qMsg.setText(QString("Server not connected!"));
         qMsg.exec();
     }
+}
+
+void MainWindow::on_wsvrUpdateInterval_valueChanged(double arg1)
+{
+    this->wcltTimer->start(arg1 * 1000);
 }
