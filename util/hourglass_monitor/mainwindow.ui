@@ -212,16 +212,25 @@
            </widget>
           </item>
           <item row="7" column="1" colspan="2">
-           <widget class="QSlider" name="horizontalSlider">
+           <widget class="QSlider" name="wsvrSpeedBar">
+            <property name="maximum">
+             <number>100</number>
+            </property>
+            <property name="value">
+             <number>25</number>
+            </property>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
            </widget>
           </item>
           <item row="7" column="3">
-           <widget class="QSpinBox" name="spinBox">
+           <widget class="QSpinBox" name="wsvrSpeedSpin">
             <property name="suffix">
              <string> %</string>
+            </property>
+            <property name="maximum">
+             <number>100</number>
             </property>
            </widget>
           </item>

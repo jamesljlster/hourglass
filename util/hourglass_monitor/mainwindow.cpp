@@ -23,6 +23,8 @@ MainWindow::MainWindow(QWidget *parent) :
     this->tsStatus = 0;
     this->wsvr_set_ui_enabled(false);
 
+    this->ui->wsvrSpeedSpin->setValue(this->ui->wsvrSpeedBar->value());
+
     // Initial timer and event
     this->wcltTimer = new QTimer();
     connect(this->wcltTimer, SIGNAL(timeout()), this, SLOT(wclt_timer_event()));
@@ -179,4 +181,14 @@ void MainWindow::on_wsvrEnableCtrl_stateChanged(int arg1)
     {
         this->wsvr_set_ctrl_enabled(false);
     }
+}
+
+void MainWindow::on_wsvrSpeedBar_valueChanged(int value)
+{
+    this->ui->wsvrSpeedSpin->setValue(value);
+}
+
+void MainWindow::on_wsvrSpeedSpin_valueChanged(int arg1)
+{
+    this->ui->wsvrSpeedBar->setValue(arg1);
 }

@@ -22,6 +22,16 @@ QCtrlPanel::QCtrlPanel(QWidget *parent) : QWidget(parent)
     this->theta = 0;
 }
 
+float QCtrlPanel::get_r()
+{
+    return this->r;
+}
+
+float QCtrlPanel::get_theta()
+{
+    return this->theta;
+}
+
 void QCtrlPanel::mouseMoveEvent(QMouseEvent* event)
 {
     int width = this->width();
@@ -50,6 +60,9 @@ void QCtrlPanel::mouseMoveEvent(QMouseEvent* event)
         this->r = this->r / (float)radius;
     }
 
+    // Raise event
+    emit status_changed();
+
     LOG("(x, y) = (%d, %d)", xTmp, yTmp);
     LOG("theta: %f\n", this->theta / M_PI * 180);
 
@@ -61,6 +74,9 @@ void QCtrlPanel::mouseReleaseEvent(QMouseEvent* event)
     // Reset position
     this->r = 0;
     this->theta = 0;
+
+    // Raise event
+    emit status_changed();
 
     this->repaint();
 }

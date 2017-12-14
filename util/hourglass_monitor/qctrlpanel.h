@@ -13,6 +13,7 @@ public:
     float get_theta();
 
 signals:
+    void status_changed();
 
 public slots:
 

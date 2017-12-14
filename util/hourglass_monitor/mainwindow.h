@@ -29,6 +29,10 @@ private slots:
 
     void on_wsvrEnableCtrl_stateChanged(int arg1);
 
+    void on_wsvrSpeedBar_valueChanged(int value);
+
+    void on_wsvrSpeedSpin_valueChanged(int arg1);
+
 private:
     Ui::MainWindow *ui;
 
