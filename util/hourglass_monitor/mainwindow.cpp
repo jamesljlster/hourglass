@@ -55,50 +55,60 @@ void MainWindow::on_wsvrTimer_timeout()
     }
 }
 
+void MainWindow::wsvr_connect()
+{
+    int ret;
+    bool ok;
+    string ip;
+    int port;
+
+    // Parse ip and port
+    ip = this->ui->wsvrIP->text().toStdString();
+    port = this->ui->wsvrPort->text().toInt(&ok);
+    if(!ok)
+    {
+        string tmp = "Cannot convert '" + this->ui->wsvrPort->text().toStdString() + "' to server port!";
+        QMessageBox qMsg;
+        qMsg.setWindowTitle(QString("Error"));
+        qMsg.setText(QString(tmp.c_str()));
+        qMsg.exec();
+        return;
+    }
+
+    ret = wclt_connect(&this->wclt, ip.c_str(), port);
+    if(ret < 0)
+    {
+        QMessageBox qMsg;
+        qMsg.setWindowTitle(QString("Error"));
+        qMsg.setText(QString("Connect Failed!"));
+        qMsg.exec();
+        return;
+    }
+
+    // Change status
+    this->wcltStatus = 1;
+    this->ui->wsvrButton->setText("Disconnect");
+}
+
+void MainWindow::wsvr_disconnect()
+{
+    // Disconnect
+    wclt_disconnect(this->wclt);
+
+    // Change status
+    this->wcltStatus = 0;
+    this->ui->wsvrButton->setText("Connect");
+}
+
 void MainWindow::on_wsvrButton_clicked()
 {
     if(this->wcltStatus > 0)
     {
-        // Disconnect
-        wclt_disconnect(this->wclt);
-
-        // Change status
-        this->wcltStatus = 0;
-        this->ui->wsvrButton->setText("Connect");
+        this->wsvr_disconnect();
     }
     else
     {
-        int ret;
-        bool ok;
-        string ip;
-        int port;
-
-        // Parse ip and port
-        ip = this->ui->wsvrIP->text().toStdString();
-        port = this->ui->wsvrPort->text().toInt(&ok);
-        if(!ok)
-        {
-            string tmp = "Cannot convert '" + this->ui->wsvrPort->text().toStdString() + "' to server port!";
-            QMessageBox qMsg;
-            qMsg.setWindowTitle(QString("Error"));
-            qMsg.setText(QString(tmp.c_str()));
-            qMsg.exec();
-            return;
-        }
-
-        ret = wclt_connect(&this->wclt, ip.c_str(), port);
-        if(ret < 0)
-        {
-            QMessageBox qMsg;
-            qMsg.setWindowTitle(QString("Error"));
-            qMsg.setText(QString("Connect Failed!"));
-            qMsg.exec();
-            return;
-        }
-
-        // Change status
-        this->wcltStatus = 1;
-        this->ui->wsvrButton->setText("Disconnect");
+        this->wsvr_connect();
     }
 }
 
@@ -123,6 +133,8 @@ void MainWindow::on_wsvrRefresh_clicked()
             tmp = QString("Error");
             this->ui->wsvrSal->setText(tmp);
             this->ui->wsvrSar->setText(tmp);
+
+            this->wsvr_disconnect();
         }
     }
     else

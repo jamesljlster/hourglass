@@ -132,7 +132,11 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_5">
           <item row="4" column="1">
-           <widget class="QLineEdit" name="wsvrSal"/>
+           <widget class="QLineEdit" name="wsvrSal">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
           <item row="7" column="0" colspan="4">
            <widget class="QGraphicsView" name="graphicsView"/>
@@ -173,7 +177,11 @@
            </widget>
           </item>
           <item row="5" column="1">
-           <widget class="QLineEdit" name="wsvrSar"/>
+           <widget class="QLineEdit" name="wsvrSar">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
           <item row="4" column="2" colspan="2">
            <widget class="QCheckBox" name="checkBox">
@@ -192,10 +200,10 @@
           <item row="0" column="2">
            <widget class="QDoubleSpinBox" name="wsvrUpdateInterval">
             <property name="singleStep">
-             <double>0.500000000000000</double>
+             <double>0.100000000000000</double>
             </property>
             <property name="value">
-             <double>1.000000000000000</double>
+             <double>0.100000000000000</double>
             </property>
            </widget>
           </item>
@@ -338,6 +346,9 @@
             <property name="text">
              <string>0</string>
             </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="8" column="0">
@@ -366,6 +377,9 @@
             <property name="text">
              <string>0</string>
             </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="0" column="0" colspan="2">
@@ -393,12 +407,18 @@
             <property name="text">
              <string>0.0000000</string>
             </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="8" column="1">
            <widget class="QLineEdit" name="lineEdit_6">
             <property name="text">
              <string>0</string>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -413,6 +433,9 @@
            <widget class="QLineEdit" name="lineEdit_7">
             <property name="text">
              <string>0</string>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -455,6 +478,9 @@
            <widget class="QLineEdit" name="lineEdit_10">
             <property name="text">
              <string>0</string>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
             </property>
            </widget>
           </item>

@@ -36,6 +36,10 @@ private:
     int tsStatus;
     trasvc_client_t ts;
     QTimer* tsTimer;
+
+    // Private functions
+    void wsvr_connect();
+    void wsvr_disconnect();
 };
 
 #endif // MAINWINDOW_H
