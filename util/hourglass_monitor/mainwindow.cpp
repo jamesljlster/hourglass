@@ -53,18 +53,37 @@ MainWindow::~MainWindow()
 void MainWindow::on_wsvrCtrlPanel_stateChanged(float r, float theta)
 {
     int sal, sar;
-    int speedBase = this->ui->wsvrSpeedBar->value() * 255 / 100;
+    int speedMax = this->ui->wsvrSpeedBar->value() * 255 / 100;
 
     // Conversion
     if(cos(theta) >= 0)
     {
-        sal = speedBase * (cos(theta) + sin(theta)) + 255.0;
-        sar = speedBase * (cos(theta) - sin(theta)) + 255.0;
+        sal = (speedMax * r) * (cos(theta) + sin(theta)) + 255.0;
+        sar = (speedMax * r) * (cos(theta) - sin(theta)) + 255.0;
     }
     else
     {
-        sal = speedBase * (cos(theta) - sin(theta)) + 255.0;
-        sar = speedBase * (cos(theta) + sin(theta)) + 255.0;
+        sal = (speedMax * r) * (cos(theta) - sin(theta)) + 255.0;
+        sar = (speedMax * r) * (cos(theta) + sin(theta)) + 255.0;
+    }
+
+    // Checking
+    if(sal > 510)
+    {
+        sal = 510;
+    }
+    else if(sal < 0)
+    {
+        sal = 0;
+    }
+
+    if(sar > 510)
+    {
+        sar = 510;
+    }
+    else if(sar < 0)
+    {
+        sar = 0;
     }
 
     LOG("sal = %d, sar = %d", sal, sar);

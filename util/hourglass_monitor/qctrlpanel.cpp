@@ -77,8 +77,7 @@ void QCtrlPanel::mouseMoveEvent(QMouseEvent* event)
 void QCtrlPanel::mouseReleaseEvent(QMouseEvent* event)
 {
     // Reset position
-    this->r = 0;
-    this->theta = 0;
+    this->reset();
 
     // Raise signal
     emit stateChanged(this->r, this->theta);
