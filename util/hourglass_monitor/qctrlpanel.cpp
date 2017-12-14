@@ -2,6 +2,8 @@
 
 #include "qctrlpanel.h"
 
+#define LINE_WIDTH 3
+
 QCtrlPanel::QCtrlPanel(QWidget *parent) : QWidget(parent)
 {
     // Initial values
@@ -22,6 +24,7 @@ void QCtrlPanel::paintEvent(QPaintEvent *paintEvent)
 
     // Start drawing
     QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing);
 
     // Draw background
     QBrush bgColor(Qt::white, Qt::SolidPattern);
@@ -29,11 +32,12 @@ void QCtrlPanel::paintEvent(QPaintEvent *paintEvent)
     painter.drawRect(0, 0, width, height);
 
     // Draw border cycle
-    QPen fgColor(Qt::black);
-    painter.drawEllipse(QPoint(width / 2, height / 2), radius, radius);
+    QPen fgColor(Qt::black, LINE_WIDTH);
+    painter.setPen(fgColor);
+    painter.drawEllipse(QPoint(width / 2, height / 2), radius - LINE_WIDTH, radius - LINE_WIDTH);
 
     // Draw control point
     QBrush ctrlColor(Qt::black, Qt::SolidPattern);
     painter.setBrush(ctrlColor);
-    painter.drawEllipse(QPoint(xShift, yShift), radius / 5, radius / 5);
+    painter.drawEllipse(QPoint(xShift, yShift), radius / 3, radius / 3);
 }
