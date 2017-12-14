@@ -82,6 +82,10 @@ int wclt_control(wclt_t wclt, int leftSpeed, int rightSpeed)
 	{
 		ret = WCLT_CONTROL_FAILED;
 	}
+	else
+	{
+		ret = WCLT_NO_ERROR;
+	}
 
 RET:
 	return ret;
