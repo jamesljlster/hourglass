@@ -73,8 +73,8 @@ void QCtrlPanel::paintEvent(QPaintEvent *paintEvent)
     int drawRadius = ((width > height) ? height : width) / 2;
     int radius = ((width > height) ? height : width) * (CTRL_PART - 1) / (2 * CTRL_PART);
 
-    int xShift = (this->r * radius) * cos(this->theta) + width / 2;
-    int yShift = -((this->r * radius) * sin(this->theta) - height / 2);
+    int xShift = (this->r * radius) * sin(this->theta) + width / 2;
+    int yShift = -((this->r * radius) * cos(this->theta) - height / 2);
 
     // Start drawing
     QPainter painter(this);
