@@ -7,6 +7,9 @@
 #include <cstring>
 #include <string>
 
+#define DEBUG
+#include "debug.hpp"
+
 using namespace std;
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -61,6 +64,7 @@ void MainWindow::on_wsvrButton_clicked()
         {
             string tmp = "Cannot convert '" + this->ui->wsvrPort->text().toStdString() + "' to server port!";
             QMessageBox qMsg;
+            qMsg.setWindowTitle(QString("Error"));
             qMsg.setText(QString(tmp.c_str()));
             qMsg.exec();
             return;
@@ -70,6 +74,7 @@ void MainWindow::on_wsvrButton_clicked()
         if(ret < 0)
         {
             QMessageBox qMsg;
+            qMsg.setWindowTitle(QString("Error"));
             qMsg.setText(QString("Connect Failed!"));
             qMsg.exec();
             return;
@@ -78,5 +83,37 @@ void MainWindow::on_wsvrButton_clicked()
         // Change status
         this->wcltStatus = 1;
         this->ui->wsvrButton->setText("Disconnect");
+    }
+}
+
+void MainWindow::on_wsvrRefresh_clicked()
+{
+    if(this->wcltStatus > 0)
+    {
+        int sal, sar;
+        QString tmp;
+        int ret = wclt_get_speed(this->wclt, &sal, &sar);
+        if(ret == 0)
+        {
+            tmp = QString::number(sal);
+            this->ui->wsvrSal->setText(tmp);
+
+            tmp = QString::number(sar);
+            this->ui->wsvrSar->setText(tmp);
+        }
+        else
+        {
+            LOG("wclt_get_speed() failed with error: %d", ret);
+            tmp = QString("Error");
+            this->ui->wsvrSal->setText(tmp);
+            this->ui->wsvrSar->setText(tmp);
+        }
+    }
+    else
+    {
+        QMessageBox qMsg;
+        qMsg.setWindowTitle(QString("Error"));
+        qMsg.setText(QString("Server not connected!"));
+        qMsg.exec();
     }
 }

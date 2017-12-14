@@ -21,6 +21,8 @@ public:
 private slots:
     void on_wsvrButton_clicked();
 
+    void on_wsvrRefresh_clicked();
+
 private:
     Ui::MainWindow *ui;
 
