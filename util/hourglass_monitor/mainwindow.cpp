@@ -52,7 +52,35 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_wsvrCtrlPanel_stateChanged(float r, float theta)
 {
-    LOG("BOOM!!");
+    int sal, sar;
+    int speedBase = this->ui->wsvrSpeedBar->value() * 255 / 100;
+
+    // Conversion
+    if(cos(theta) >= 0)
+    {
+        sal = speedBase * (cos(theta) + sin(theta)) + 255.0;
+        sar = speedBase * (cos(theta) - sin(theta)) + 255.0;
+    }
+    else
+    {
+        sal = speedBase * (cos(theta) - sin(theta)) + 255.0;
+        sar = speedBase * (cos(theta) + sin(theta)) + 255.0;
+    }
+
+    LOG("sal = %d, sar = %d", sal, sar);
+
+    // Control wheel
+    int ret = wclt_control(this->wclt, sal, sar);
+    if(ret != 0)
+    {
+        LOG("wclt_control() failed with error: %d", ret);
+        QMessageBox qMsg;
+        qMsg.setWindowTitle(QString("Error"));
+        qMsg.setText(QString("Cannot connect to wheel server!"));
+        qMsg.exec();
+
+        this->wsvr_disconnect();
+    }
 }
 
 void MainWindow::wclt_timer_event()
@@ -72,6 +100,7 @@ void MainWindow::wsvr_set_ui_enabled(bool enable)
 void MainWindow::wsvr_set_ctrl_enabled(bool enable)
 {
     this->ui->wsvrCtrlPanel->setEnabled(enable);
+    this->ui->wsvrCtrlPanel->reset();
 }
 
 void MainWindow::wsvr_connect()
@@ -155,9 +184,10 @@ void MainWindow::on_wsvrRefresh_clicked()
         else
         {
             LOG("wclt_get_speed() failed with error: %d", ret);
-            tmp = QString("Error");
-            this->ui->wsvrSal->setText(tmp);
-            this->ui->wsvrSar->setText(tmp);
+            QMessageBox qMsg;
+            qMsg.setWindowTitle(QString("Error"));
+            qMsg.setText(QString("Cannot connect to wheel server!"));
+            qMsg.exec();
 
             this->wsvr_disconnect();
         }

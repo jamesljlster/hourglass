@@ -18,8 +18,7 @@ QCtrlPanel::QCtrlPanel(QWidget *parent) : QWidget(parent)
     this->setMouseTracking(false);
 
     // Initial values
-    this->r = 0;
-    this->theta = 0;
+    this->reset();
 }
 
 float QCtrlPanel::get_r()
@@ -30,6 +29,12 @@ float QCtrlPanel::get_r()
 float QCtrlPanel::get_theta()
 {
     return this->theta;
+}
+
+void QCtrlPanel::reset()
+{
+    this->r = 0;
+    this->theta = 0;
 }
 
 void QCtrlPanel::mouseMoveEvent(QMouseEvent* event)

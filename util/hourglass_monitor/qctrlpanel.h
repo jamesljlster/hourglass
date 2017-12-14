@@ -9,6 +9,8 @@ class QCtrlPanel : public QWidget
 public:
     explicit QCtrlPanel(QWidget *parent = nullptr);
 
+    void reset();
+
     float get_r();
     float get_theta();
 
