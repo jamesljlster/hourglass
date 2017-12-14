@@ -34,7 +34,11 @@ void QCtrlPanel::mouseMoveEvent(QMouseEvent* event)
 
     // Convert coordinate
     this->r = sqrt(xTmp * xTmp + yTmp * yTmp);
-    this->theta = atan((float)yTmp / (float)xTmp);
+    this->theta = -(atan((float)yTmp / (float)xTmp) - M_PI_2);
+    if(xTmp < 0)
+    {
+        this->theta = this->theta - M_PI;
+    }
 
     // Normalize
     if(this->r > radius)
