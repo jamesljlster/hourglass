@@ -1,4 +1,5 @@
 #include <QPainter>
+#include <QMouseEvent>
 
 #include "qctrlpanel.h"
 
@@ -6,9 +7,30 @@
 
 QCtrlPanel::QCtrlPanel(QWidget *parent) : QWidget(parent)
 {
+    // Setup widget
+    this->setMouseTracking(false);
+
     // Initial values
     this->x = 0;
     this->y = 0;
+}
+
+void QCtrlPanel::mouseMoveEvent(QMouseEvent* event)
+{
+    // Set position
+    this->x = event->x() - this->width() / 2;
+    this->y = -event->y() + this->height() / 2;
+
+    this->repaint();
+}
+
+void QCtrlPanel::mouseReleaseEvent(QMouseEvent* event)
+{
+    // Reset position
+    this->x = 0;
+    this->y = 0;
+
+    this->repaint();
 }
 
 void QCtrlPanel::paintEvent(QPaintEvent *paintEvent)
@@ -20,7 +42,7 @@ void QCtrlPanel::paintEvent(QPaintEvent *paintEvent)
     radius /= 2;
 
     int xShift = this->x + width / 2;
-    int yShift = this->y + height / 2;
+    int yShift = -(this->y - height / 2);
 
     // Start drawing
     QPainter painter(this);

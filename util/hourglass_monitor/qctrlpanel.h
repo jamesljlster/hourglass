@@ -18,6 +18,8 @@ public slots:
 
 protected:
     void paintEvent(QPaintEvent *paintEvent);
+    void mouseMoveEvent(QMouseEvent* event);
+    void mouseReleaseEvent(QMouseEvent* event);
 
 private:
     int x;
