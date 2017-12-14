@@ -13,9 +13,11 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    qctrlpanel.cpp
 
 HEADERS  += mainwindow.h \
-    debug.hpp
+    debug.hpp \
+    qctrlpanel.h
 
 FORMS    += mainwindow.ui

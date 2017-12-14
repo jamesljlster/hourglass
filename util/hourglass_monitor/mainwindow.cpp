@@ -48,13 +48,6 @@ MainWindow::~MainWindow()
     delete this->wcltTimer;
 }
 
-void MainWindow::wsvr_draw_ctrl(int x, int y)
-{
-    int width = this->ui->wsvrCtrlPanel->width();
-    int height = this->ui->wsvrCtrlPanel->height();
-
-}
-
 void MainWindow::wclt_timer_event()
 {
     if(this->wcltStatus > 0)
@@ -65,15 +58,7 @@ void MainWindow::wclt_timer_event()
 
 void MainWindow::wsvr_set_ui_enabled(bool enable)
 {
-    this->ui->wsvrRefresh->setEnabled(enable);
-    this->ui->wsvrEnableCtrl->setEnabled(enable);
-    this->ui->wsvrLock->setEnabled(enable);
-    this->ui->wsvrSal->setEnabled(enable);
-    this->ui->wsvrSar->setEnabled(enable);
-
-    this->wsvr_set_ctrl_enabled(
-                (this->ui->wsvrEnableCtrl->checkState() == Qt::Checked) && enable
-                );
+    this->ui->wsvrGroup->setEnabled(enable);
 }
 
 void MainWindow::wsvr_set_ctrl_enabled(bool enable)

@@ -201,9 +201,6 @@
             </property>
            </widget>
           </item>
-          <item row="6" column="0" colspan="4">
-           <widget class="QWidget" name="wsvrCtrlPanel" native="true"/>
-          </item>
           <item row="0" column="2">
            <widget class="QDoubleSpinBox" name="wsvrUpdateInterval">
             <property name="singleStep">
@@ -227,6 +224,9 @@
              <string> %</string>
             </property>
            </widget>
+          </item>
+          <item row="6" column="0" colspan="4">
+           <widget class="QCtrlPanel" name="wsvrCtrlPanel" native="true"/>
           </item>
          </layout>
         </widget>
@@ -557,6 +557,14 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QCtrlPanel</class>
+   <extends>QWidget</extends>
+   <header>qctrlpanel.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

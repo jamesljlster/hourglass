@@ -45,8 +45,6 @@ private:
     void wsvr_disconnect();
     void wsvr_set_ui_enabled(bool enable);
     void wsvr_set_ctrl_enabled(bool enable);
-    void wsvr_draw_ctrl(int x, int y);
-
 
 };
 
