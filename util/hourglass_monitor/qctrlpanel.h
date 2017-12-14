@@ -22,8 +22,8 @@ protected:
     void mouseReleaseEvent(QMouseEvent* event);
 
 private:
-    int x;
-    int y;
+    float r;
+    float theta;
 
 };
 

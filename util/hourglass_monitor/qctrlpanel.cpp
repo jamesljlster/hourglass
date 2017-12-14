@@ -1,9 +1,16 @@
 #include <QPainter>
 #include <QMouseEvent>
+#include <cmath>
 
 #include "qctrlpanel.h"
 
+#define DEBUG
+#include "debug.hpp"
+
 #define LINE_WIDTH 3
+#define CTRL_PART 3
+
+using namespace std;
 
 QCtrlPanel::QCtrlPanel(QWidget *parent) : QWidget(parent)
 {
@@ -11,15 +18,36 @@ QCtrlPanel::QCtrlPanel(QWidget *parent) : QWidget(parent)
     this->setMouseTracking(false);
 
     // Initial values
-    this->x = 0;
-    this->y = 0;
+    this->r = 0;
+    this->theta = 0;
 }
 
 void QCtrlPanel::mouseMoveEvent(QMouseEvent* event)
 {
+    int width = this->width();
+    int height = this->height();
+    int radius = ((width > height) ? height : width) * (CTRL_PART - 1) / (2 * CTRL_PART);
+
     // Set position
-    this->x = event->x() - this->width() / 2;
-    this->y = -event->y() + this->height() / 2;
+    int xTmp = event->x() - this->width() / 2;
+    int yTmp = -event->y() + this->height() / 2;
+
+    // Convert coordinate
+    this->r = sqrt(xTmp * xTmp + yTmp * yTmp);
+    this->theta = atan((float)yTmp / (float)xTmp);
+
+    // Normalize
+    if(this->r > radius)
+    {
+        this->r = 1;
+    }
+    else
+    {
+        this->r = this->r / (float)radius;
+    }
+
+    LOG("(x, y) = (%d, %d)", xTmp, yTmp);
+    LOG("theta: %f\n", this->theta / M_PI * 180);
 
     this->repaint();
 }
@@ -27,8 +55,8 @@ void QCtrlPanel::mouseMoveEvent(QMouseEvent* event)
 void QCtrlPanel::mouseReleaseEvent(QMouseEvent* event)
 {
     // Reset position
-    this->x = 0;
-    this->y = 0;
+    this->r = 0;
+    this->theta = 0;
 
     this->repaint();
 }
@@ -38,11 +66,11 @@ void QCtrlPanel::paintEvent(QPaintEvent *paintEvent)
     // Find drawing information
     int width = this->width();
     int height = this->height();
-    int radius = (width > height) ? height : width;
-    radius /= 2;
+    int drawRadius = ((width > height) ? height : width) / 2;
+    int radius = ((width > height) ? height : width) * (CTRL_PART - 1) / (2 * CTRL_PART);
 
-    int xShift = this->x + width / 2;
-    int yShift = -(this->y - height / 2);
+    int xShift = (this->r * radius) * cos(this->theta) + width / 2;
+    int yShift = -((this->r * radius) * sin(this->theta) - height / 2);
 
     // Start drawing
     QPainter painter(this);
@@ -56,10 +84,10 @@ void QCtrlPanel::paintEvent(QPaintEvent *paintEvent)
     // Draw border cycle
     QPen fgColor(Qt::black, LINE_WIDTH);
     painter.setPen(fgColor);
-    painter.drawEllipse(QPoint(width / 2, height / 2), radius - LINE_WIDTH, radius - LINE_WIDTH);
+    painter.drawEllipse(QPoint(width / 2, height / 2), drawRadius - LINE_WIDTH, drawRadius - LINE_WIDTH);
 
     // Draw control point
     QBrush ctrlColor(Qt::black, Qt::SolidPattern);
     painter.setBrush(ctrlColor);
-    painter.drawEllipse(QPoint(xShift, yShift), radius / 3, radius / 3);
+    painter.drawEllipse(QPoint(xShift, yShift), drawRadius / CTRL_PART, drawRadius / CTRL_PART);
 }
