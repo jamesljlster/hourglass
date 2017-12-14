@@ -158,12 +158,20 @@ void MainWindow::wsvr_connect()
     // Change status
     this->wcltStatus = 1;
     this->ui->wsvrButton->setText("Disconnect");
+
+    // Initial lock status
+    this->wcltLocked = 0;
+    this->ui->wsvrLock->setText(QString("Lock Device"));
 }
 
 void MainWindow::wsvr_disconnect()
 {
     // Disconnect
     wclt_disconnect(this->wclt);
+    if(this->wcltLocked)
+    {
+        this->wsvr_unlock();
+    }
 
     // Disable ui
     this->wsvr_set_ui_enabled(false);
@@ -245,4 +253,48 @@ void MainWindow::on_wsvrSpeedBar_valueChanged(int value)
 void MainWindow::on_wsvrSpeedSpin_valueChanged(int arg1)
 {
     this->ui->wsvrSpeedBar->setValue(arg1);
+}
+void MainWindow::wsvr_lock()
+{
+    int ret = wclt_lock(this->wclt);
+    if(ret != 0)
+    {
+        QMessageBox qMsg;
+        qMsg.setWindowTitle(QString("Error"));
+        qMsg.setText(QString("Failed to lock device!"));
+        qMsg.exec();
+        return;
+    }
+
+    // Change status
+    this->wcltLocked = 1;
+    this->ui->wsvrLock->setText("Unlock Device");
+}
+
+void MainWindow::wsvr_unlock()
+{
+    int ret = wclt_unlock(this->wclt);
+    if(ret != 0)
+    {
+        QMessageBox qMsg;
+        qMsg.setWindowTitle(QString("Error"));
+        qMsg.setText(QString("Failed to unlock device!"));
+        qMsg.exec();
+        return;
+    }
+
+    // Change status
+    this->wcltLocked = 0;
+    this->ui->wsvrLock->setText("Lock Device");
+}
+void MainWindow::on_wsvrLock_clicked()
+{
+    if(this->wcltLocked > 0)
+    {
+        this->wsvr_unlock();
+    }
+    else
+    {
+        this->wsvr_lock();
+    }
 }

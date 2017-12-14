@@ -35,10 +35,13 @@ private slots:
 
     void on_wsvrCtrlPanel_stateChanged(float r, float theta);
 
+    void on_wsvrLock_clicked();
+
 private:
     Ui::MainWindow *ui;
 
     int wcltStatus;
+    int wcltLocked;
     wclt_t wclt;
     QTimer* wcltTimer;
 
@@ -49,6 +52,8 @@ private:
     // Private functions
     void wsvr_connect();
     void wsvr_disconnect();
+    void wsvr_lock();
+    void wsvr_unlock();
     void wsvr_set_ui_enabled(bool enable);
     void wsvr_set_ctrl_enabled(bool enable);
 

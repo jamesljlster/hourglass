@@ -166,6 +166,10 @@ int wclt_lock(wclt_t wclt)
 	{
 		ret = WCLT_CONTROL_FAILED;
 	}
+	else
+	{
+		ret = WCLT_NO_ERROR;
+	}
 
 RET:
 	return ret;
@@ -203,6 +207,10 @@ int wclt_unlock(wclt_t wclt)
 	if(strcmp(buf, WCLT_OK_STR) != 0)
 	{
 		ret = WCLT_CONTROL_FAILED;
+	}
+	else
+	{
+		ret = WCLT_NO_ERROR;
 	}
 
 RET:
