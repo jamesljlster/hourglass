@@ -50,6 +50,11 @@ MainWindow::~MainWindow()
     delete this->wcltTimer;
 }
 
+void MainWindow::on_wsvrCtrlPanel_stateChanged(float r, float theta)
+{
+    LOG("BOOM!!");
+}
+
 void MainWindow::wclt_timer_event()
 {
     if(this->wcltStatus > 0)

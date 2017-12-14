@@ -33,6 +33,8 @@ private slots:
 
     void on_wsvrSpeedSpin_valueChanged(int arg1);
 
+    void on_wsvrCtrlPanel_stateChanged(float r, float theta);
+
 private:
     Ui::MainWindow *ui;
 

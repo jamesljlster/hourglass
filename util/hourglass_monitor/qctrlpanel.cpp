@@ -60,8 +60,8 @@ void QCtrlPanel::mouseMoveEvent(QMouseEvent* event)
         this->r = this->r / (float)radius;
     }
 
-    // Raise event
-    emit status_changed();
+    // Raise signal
+    emit stateChanged(this->r, this->theta);
 
     LOG("(x, y) = (%d, %d)", xTmp, yTmp);
     LOG("theta: %f\n", this->theta / M_PI * 180);
@@ -75,8 +75,8 @@ void QCtrlPanel::mouseReleaseEvent(QMouseEvent* event)
     this->r = 0;
     this->theta = 0;
 
-    // Raise event
-    emit status_changed();
+    // Raise signal
+    emit stateChanged(this->r, this->theta);
 
     this->repaint();
 }
