@@ -39,6 +39,10 @@ private slots:
 
     void on_tsButton_clicked();
 
+    void on_tsUpdateInterval_valueChanged(double arg1);
+
+    void on_tsRefresh_clicked();
+
 private:
     Ui::MainWindow *ui;
 

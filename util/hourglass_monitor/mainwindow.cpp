@@ -30,6 +30,10 @@ MainWindow::MainWindow(QWidget *parent) :
     this->wcltTimer = new QTimer();
     connect(this->wcltTimer, SIGNAL(timeout()), this, SLOT(wclt_timer_event()));
     this->wcltTimer->start(this->ui->wsvrUpdateInterval->value() * 1000);
+
+    this->tsTimer = new QTimer();
+    //connect(this->tsTimer, SIGNAL(timeout()), this, SLOT(ts_timer_event()));
+    this->tsTimer->start(this->ui->tsUpdateInterval->value() * 1000);
 }
 
 MainWindow::~MainWindow()
@@ -199,4 +203,58 @@ void MainWindow::on_tsButton_clicked()
     {
         this->ts_connect();
     }
+}
+
+void MainWindow::on_tsUpdateInterval_valueChanged(double arg1)
+{
+    this->tsTimer->start(arg1 * 1000);
+}
+
+void MainWindow::on_tsRefresh_clicked()
+{
+    int flag, ret;
+    float mse;
+    QMessageBox qMsg;
+
+    if(this->tsStatus > 0)
+    {
+        // Get status
+        ret = trasvc_client_get_status(this->ts, &flag);
+        if(ret != 0)
+        {
+            LOG("trasvc_client_get_status() failed with error: %d", ret);
+            goto ERR;
+        }
+
+        // Get mse
+        ret = trasvc_client_get_mse(this->ts, &mse);
+        if(ret != 0)
+        {
+            LOG("trasvc_client_get_mse() failed with error: %d", ret);
+            goto ERR;
+        }
+
+        // Set ui text
+        this->ui->tsActive->setText(QString(to_string((flag & TRASVC_ACTIVE) > 0).c_str()));
+        this->ui->tsMgrEmpty->setText(QString(to_string((flag & TRASVC_MGRDATA_EMPTY) > 0).c_str()));
+        this->ui->tsMgrFull->setText(QString(to_string((flag & TRASVC_MGRDATA_FULL) > 0).c_str()));
+        this->ui->tsTraEmpty->setText(QString(to_string((flag & TRASVC_TRADATA_EMPTY) > 0).c_str()));
+        this->ui->tsTraFull->setText(QString(to_string((flag & TRASVC_TRADATA_FULL) > 0).c_str()));
+        this->ui->tsMse->setText(QString(to_string(mse).c_str()));
+    }
+    else
+    {
+        QMessageBox qMsg;
+        qMsg.setWindowTitle(QString("Error"));
+        qMsg.setText(QString("Server not connected!"));
+        qMsg.exec();
+    }
+
+    return;
+
+ERR:
+    qMsg.setWindowTitle(QString("Error"));
+    qMsg.setText(QString("Cannot connect to LSTM training server!"));
+    qMsg.exec();
+    this->ts_disconnect();
 }
