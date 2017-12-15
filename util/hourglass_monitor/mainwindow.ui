@@ -286,7 +286,7 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
           <item row="2" column="0" colspan="2">
-           <widget class="QPushButton" name="trasvrButton">
+           <widget class="QPushButton" name="tsButton">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -330,7 +330,7 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QLineEdit" name="trasvrPort">
+           <widget class="QLineEdit" name="tsPort">
             <property name="text">
              <string>7600</string>
             </property>
@@ -356,7 +356,7 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QLineEdit" name="trasvrIP">
+           <widget class="QLineEdit" name="tsIP">
             <property name="text">
              <string>127.0.0.1</string>
             </property>
@@ -366,13 +366,13 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_6">
+        <widget class="QGroupBox" name="tsGroup">
          <property name="title">
           <string notr="true">Detail</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
           <item row="9" column="1">
-           <widget class="QLineEdit" name="lineEdit_8">
+           <widget class="QLineEdit" name="tsMgrFull">
             <property name="text">
              <string>0</string>
             </property>
@@ -396,14 +396,14 @@
            </widget>
           </item>
           <item row="3" column="0" colspan="2">
-           <widget class="QPushButton" name="pushButton_3">
+           <widget class="QPushButton" name="tsRefresh">
             <property name="text">
              <string>Refresh Now</string>
             </property>
            </widget>
           </item>
           <item row="10" column="1">
-           <widget class="QLineEdit" name="lineEdit_9">
+           <widget class="QLineEdit" name="tsTraEmpty">
             <property name="text">
              <string>0</string>
             </property>
@@ -433,7 +433,7 @@
            </widget>
           </item>
           <item row="12" column="1">
-           <widget class="QLineEdit" name="lineEdit_11">
+           <widget class="QLineEdit" name="tsMse">
             <property name="text">
              <string>0.0000000</string>
             </property>
@@ -443,7 +443,7 @@
            </widget>
           </item>
           <item row="8" column="1">
-           <widget class="QLineEdit" name="lineEdit_6">
+           <widget class="QLineEdit" name="tsMgrEmpty">
             <property name="text">
              <string>0</string>
             </property>
@@ -460,7 +460,7 @@
            </widget>
           </item>
           <item row="7" column="1">
-           <widget class="QLineEdit" name="lineEdit_7">
+           <widget class="QLineEdit" name="tsActive">
             <property name="text">
              <string>0</string>
             </property>
@@ -505,7 +505,7 @@
            </widget>
           </item>
           <item row="11" column="1">
-           <widget class="QLineEdit" name="lineEdit_10">
+           <widget class="QLineEdit" name="tsTraFull">
             <property name="text">
              <string>0</string>
             </property>
@@ -528,7 +528,7 @@
            </spacer>
           </item>
           <item row="1" column="0" colspan="2">
-           <widget class="QDoubleSpinBox" name="doubleSpinBox_2">
+           <widget class="QDoubleSpinBox" name="tsUpdateInterval">
             <property name="singleStep">
              <double>0.500000000000000</double>
             </property>

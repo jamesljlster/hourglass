@@ -37,6 +37,8 @@ private slots:
 
     void on_wsvrLock_clicked();
 
+    void on_tsButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 
@@ -56,6 +58,10 @@ private:
     void wsvr_unlock();
     void wsvr_set_ui_enabled(bool enable);
     void wsvr_set_ctrl_enabled(bool enable);
+
+    void ts_connect();
+    void ts_disconnect();
+    void ts_set_ui_enabled(bool enable);
 
 };
 

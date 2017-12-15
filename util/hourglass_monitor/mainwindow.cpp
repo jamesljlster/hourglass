@@ -22,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->wcltStatus = 0;
     this->tsStatus = 0;
     this->wsvr_set_ui_enabled(false);
+    this->ts_set_ui_enabled(false);
 
     this->ui->wsvrSpeedSpin->setValue(this->ui->wsvrSpeedBar->value());
 
@@ -185,5 +186,17 @@ void MainWindow::on_wsvrLock_clicked()
     else
     {
         this->wsvr_lock();
+    }
+}
+
+void MainWindow::on_tsButton_clicked()
+{
+    if(this->tsStatus > 0)
+    {
+        this->ts_disconnect();
+    }
+    else
+    {
+        this->ts_connect();
     }
 }
