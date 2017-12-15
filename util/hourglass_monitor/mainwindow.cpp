@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->wcltTimer->start(this->ui->wsvrUpdateInterval->value() * 1000);
 
     this->tsTimer = new QTimer();
-    //connect(this->tsTimer, SIGNAL(timeout()), this, SLOT(ts_timer_event()));
+    connect(this->tsTimer, SIGNAL(timeout()), this, SLOT(ts_timer_event()));
     this->tsTimer->start(this->ui->tsUpdateInterval->value() * 1000);
 }
 

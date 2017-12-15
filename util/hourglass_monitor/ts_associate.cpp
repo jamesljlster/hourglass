@@ -67,3 +67,11 @@ void MainWindow::ts_set_ui_enabled(bool enable)
 {
     this->ui->tsGroup->setEnabled(enable);
 }
+
+void MainWindow::ts_timer_event()
+{
+    if(this->tsStatus > 0)
+    {
+        this->on_tsRefresh_clicked();
+    }
+}

@@ -43,6 +43,8 @@ private slots:
 
     void on_tsRefresh_clicked();
 
+    void ts_timer_event();
+
 private:
     Ui::MainWindow *ui;
 
