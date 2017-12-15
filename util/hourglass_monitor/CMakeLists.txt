@@ -1,16 +1,14 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
 
 # Set variables
-set(PROJECT_NAME trasvr)
-set(PROJECT_LANGUAGE C)
-set(PROJECT_DEPS trasvc tcpmgr lstm args m pthread)
-if(MINGW)
-	set(PROJECT_DEPS ${PROJECT_DEPS} ws2_32)
-endif()
+set(PROJECT_NAME hourglass_monitor)
+set(PROJECT_DEPS wclt trasvc lstm m)
 
 # Compile setting
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 set(CMAKE_C_FLAGS_RELEASE "-O3")
+set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -Wall")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 # Set default build type
 if(NOT CMAKE_BUILD_TYPE)
@@ -18,15 +16,19 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 # Set project
-project(${PROJECT_NAME} ${PROJECT_LANGUAGE})
+project(${PROJECT_NAME})
+
+# Setup Qt
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+find_package(Qt5Widgets REQUIRED)
 
 # Add definition
 if(CMAKE_BUILD_TYPE MATCHES Debug)
 	add_definitions(-DDEBUG)
 endif()
-
-# Include directory
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # Set file list
 file(GLOB PROJECT_SRCS
@@ -36,8 +38,11 @@ file(GLOB PROJECT_SRCS
 
 # Build utility
 add_executable(${PROJECT_NAME} ${PROJECT_SRCS})
+qt5_use_modules(${PROJECT_NAME} Widgets)
 set_target_properties(${PROJECT_NAME}
-	PROPERTIES OUTPUT_NAME ${PROJECT_NAME}
+	PROPERTIES
+	CXX_STANDARD 11
+	OUTPUT_NAME ${PROJECT_NAME}
 	)
 target_link_libraries(${PROJECT_NAME} ${PROJECT_DEPS})
 
@@ -48,3 +53,4 @@ install(TARGETS ${PROJECT_NAME}
 	LIBRARY DESTINATION "${CMAKE_INSTALL_PREFIX}/lib"
 	PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_PREFIX}/include"
 	)
+
