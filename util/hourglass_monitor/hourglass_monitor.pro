@@ -14,7 +14,8 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    qctrlpanel.cpp
+    qctrlpanel.cpp \
+    wsvr_associate.cpp
 
 HEADERS  += mainwindow.h \
     debug.hpp \
