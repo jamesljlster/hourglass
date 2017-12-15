@@ -477,7 +477,7 @@
            </widget>
           </item>
           <item row="15" column="0" colspan="2">
-           <widget class="QPushButton" name="pushButton_5">
+           <widget class="QPushButton" name="tsDownload">
             <property name="text">
              <string>Download Model</string>
             </property>
@@ -491,7 +491,7 @@
            </widget>
           </item>
           <item row="14" column="0" colspan="2">
-           <widget class="QPushButton" name="pushButton_4">
+           <widget class="QPushButton" name="tsUpload">
             <property name="text">
              <string>Upload Model</string>
             </property>

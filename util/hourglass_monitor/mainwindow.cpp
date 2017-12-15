@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include <QMessageBox>
+#include <QFileDialog>
 
 #include <cstdio>
 #include <cstring>
@@ -257,4 +258,25 @@ ERR:
     qMsg.setText(QString("Cannot connect to LSTM training server!"));
     qMsg.exec();
     this->ts_disconnect();
+}
+
+void MainWindow::on_tsUpload_clicked()
+{
+    // Get model path
+    QString fPath = QFileDialog::getOpenFileName(this, QString("Select LSTM Model to Upload"));
+    if(fPath.isEmpty())
+    {
+        return;
+    }
+
+    // Upload lstm model
+    int ret = trasvc_client_model_upload(this->ts, fPath.toStdString().c_str());
+    if(ret != TRASVC_NO_ERROR)
+    {
+        LOG("trasvc_client_upload_model() failed with error: %d", ret);
+        QMessageBox qMsg;
+        qMsg.setWindowTitle(QString("Error"));
+        qMsg.setText(QString("Failed to upload target LSTM model!"));
+        qMsg.exec();
+    }
 }

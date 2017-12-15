@@ -45,6 +45,8 @@ private slots:
 
     void ts_timer_event();
 
+    void on_tsUpload_clicked();
+
 private:
     Ui::MainWindow *ui;
 
