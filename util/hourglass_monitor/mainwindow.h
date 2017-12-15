@@ -47,6 +47,8 @@ private slots:
 
     void on_tsUpload_clicked();
 
+    void on_tsDownload_clicked();
+
 private:
     Ui::MainWindow *ui;
 

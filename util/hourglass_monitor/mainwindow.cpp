@@ -280,3 +280,40 @@ void MainWindow::on_tsUpload_clicked()
         qMsg.exec();
     }
 }
+
+void MainWindow::on_tsDownload_clicked()
+{
+    // Get save model path
+    QString fPath = QFileDialog::getSaveFileName(this, QString("Select LSTM Model Save Path"));
+    if(fPath.isEmpty())
+    {
+        return;
+    }
+
+    // Download lstm model
+    lstm_t tmpLstm = NULL;
+    int ret = trasvc_client_model_download(this->ts, &tmpLstm);
+    if(ret != TRASVC_NO_ERROR)
+    {
+        LOG("trasvc_client_upload_model() failed with error: %d", ret);
+        QMessageBox qMsg;
+        qMsg.setWindowTitle(QString("Error"));
+        qMsg.setText(QString("Failed to download LSTM model!"));
+        qMsg.exec();
+    }
+    else
+    {
+        // Export lstm model
+        ret = lstm_export(tmpLstm, fPath.toStdString().c_str());
+        if(ret != LSTM_NO_ERROR)
+        {
+            LOG("lstm_export() failed with error: %d", ret);
+            QMessageBox qMsg;
+            qMsg.setWindowTitle(QString("Error"));
+            qMsg.setText(QString("Failed to save LSTM model!"));
+            qMsg.exec();
+        }
+
+        lstm_delete(tmpLstm);
+    }
+}
