@@ -23,7 +23,7 @@ build:
   script:
     - mkdir build
     - cd build
-    - cmake .. -DBUILD_TEST=ON
+    - cmake .. -DBUILD_TEST=ON -DBUILD_HG_MONITOR=OFF
     - make install
 
   # Keep built binaries (expire in 1 day)
