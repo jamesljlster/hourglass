@@ -59,6 +59,14 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
+	// Clean server
+	ret = trasvc_client_clear(tsClient);
+	if(ret < 0)
+	{
+		printf("trasvc_client_connect() failed with error: %s\n", trasvc_get_error_msg(ret));
+		return -1;
+	}
+
 	// Insert dataset
 	printf("Start training data sending...\n");
 	for(int i = 0; i < DATA_AMOUNT - 1; i++)

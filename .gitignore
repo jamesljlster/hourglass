@@ -3,3 +3,6 @@ build
 
 # Temp files
 *.swp
+
+# Qt build setting
+*.pro.user

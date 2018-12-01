@@ -82,6 +82,10 @@ int wclt_control(wclt_t wclt, int leftSpeed, int rightSpeed)
 	{
 		ret = WCLT_CONTROL_FAILED;
 	}
+	else
+	{
+		ret = WCLT_NO_ERROR;
+	}
 
 RET:
 	return ret;
@@ -90,7 +94,7 @@ RET:
 int wclt_get_speed(wclt_t wclt, int* leftSpeedPtr, int* rightSpeedPtr)
 {
 	int tmpSal, tmpSar;
-	int ret = WCLT_NO_ERROR;
+	int ret;
 	char buf[WCLT_BUF_SIZE] = {0};
 
 	// Make control string
@@ -123,6 +127,7 @@ int wclt_get_speed(wclt_t wclt, int* leftSpeedPtr, int* rightSpeedPtr)
 	// Assign value
 	*leftSpeedPtr = tmpSal;
 	*rightSpeedPtr = tmpSar;
+	ret = WCLT_NO_ERROR;
 
 RET:
 	return ret;
@@ -161,6 +166,10 @@ int wclt_lock(wclt_t wclt)
 	{
 		ret = WCLT_CONTROL_FAILED;
 	}
+	else
+	{
+		ret = WCLT_NO_ERROR;
+	}
 
 RET:
 	return ret;
@@ -198,6 +207,10 @@ int wclt_unlock(wclt_t wclt)
 	if(strcmp(buf, WCLT_OK_STR) != 0)
 	{
 		ret = WCLT_CONTROL_FAILED;
+	}
+	else
+	{
+		ret = WCLT_NO_ERROR;
 	}
 
 RET:
@@ -264,6 +277,7 @@ int wclt_str_recv(int sock, char* buf, int bufLen)
 
 int wclt_connect(wclt_t* wcltPtr, const char* serverIP, int serverPort)
 {
+	int tmp;
 	int ret = WCLT_NO_ERROR;
 	sock_t sock = -1;
 	struct sockaddr_in addrInfo;
@@ -286,6 +300,13 @@ int wclt_connect(wclt_t* wcltPtr, const char* serverIP, int serverPort)
 	if(ret < 0)
 	{
 		ret = WCLT_CONNECT_FAILED;
+		goto ERR;
+	}
+
+	// Test connection
+	ret = wclt_get_speed(sock, &tmp, &tmp);
+	if(ret < 0)
+	{
 		goto ERR;
 	}
 

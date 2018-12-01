@@ -214,6 +214,48 @@ void trasvc_client_task(void* arg, int sock)
 					needResp = 0;
 				}
 			}
+			else if((ret & TRASVC_CMD_CLEAR_FLAG) > 0)
+			{
+				// Clear mse
+				svc->mse = 0;
+
+				// Lock manage data
+				pthread_mutex_lock(&svc->mgrData.mutex);
+
+				// Clear manage data
+				svc->mgrData.dataHead = 0;
+				svc->mgrData.dataTail = 0;
+
+				// Unlock manage data
+				pthread_mutex_unlock(&svc->mgrData.mutex);
+
+				// Lock training data and model
+				pthread_mutex_lock(&svc->traData.mutex);
+
+				// Clear training data
+				svc->traData.dataHead = 0;
+				svc->traData.dataTail = 0;
+
+				// Erase and rand model
+				lstm_rand_network(svc->lstm);
+				lstm_forward_computation_erase(svc->lstm);
+				lstm_bptt_erase(svc->lstm);
+
+				// Erase state
+				lstm_state_erase(svc->lstmState);
+
+				// Lock send buffer and clear model
+				pthread_mutex_lock(&svc->lstmSendBuf.mutex);
+				lstm_delete(svc->lstmSendBuf.lstm);
+				svc->lstmSendBuf.lstm = NULL;
+
+				// Unlock mutex
+				pthread_mutex_unlock(&svc->lstmSendBuf.mutex);
+				pthread_mutex_unlock(&svc->traData.mutex);
+
+				// Set return value
+				ret = TRASVC_NO_ERROR;
+			}
 		}
 
 		// Make default response string
@@ -259,6 +301,7 @@ void* trasvc_tra_task(void* arg)
 	int ret;
 	int i, j, iter;
 	int mgrLockStatus = 0;
+	int traLockStatus = 0;
 	int inputs, outputs;
 	int tmpLen, tmpIndex, srcIndex;
 	struct TRASVC* svc = arg;
@@ -273,6 +316,7 @@ void* trasvc_tra_task(void* arg)
 	pthread_cleanup_push(trasvc_mem_free, outBuf);
 	pthread_cleanup_push(trasvc_mem_free, errBuf);
 	pthread_cleanup_push(trasvc_mutex_unlock, &svc->mgrData.mutex);
+	pthread_cleanup_push(trasvc_mutex_unlock, &svc->traData.mutex);
 	pthread_cleanup_push(trasvc_active_reset, svc);
 
 	// Set active flag
@@ -405,6 +449,12 @@ void* trasvc_tra_task(void* arg)
 		// Restore lstm state
 		lstm_state_restore(svc->lstmState, svc->lstm);
 
+		// Lock training data
+		LOG("Wait for traData lock");
+		pthread_mutex_lock(&svc->traData.mutex);
+		traLockStatus = 1;
+		LOG("traData locked");
+
 		// Training
 		tmpLen = svc->traData.dataHead - svc->traData.dataTail;
 		if(tmpLen < 0)
@@ -415,6 +465,11 @@ void* trasvc_tra_task(void* arg)
 		if(tmpLen <= 0)
 		{
 			LOG("Empty training data");
+
+			// Unlock training data
+			pthread_mutex_unlock(&svc->traData.mutex);
+			traLockStatus = 0;
+
 			continue;
 		}
 
@@ -451,7 +506,9 @@ void* trasvc_tra_task(void* arg)
 		}
 
 		// Lock lstm send buffer
+		LOG("Wait for lstmSendBuf lock");
 		pthread_mutex_lock(&svc->lstmSendBuf.mutex);
+		LOG("lstmSendBuf locked");
 
 		// Clean and copy model
 		lstm_delete(svc->lstmSendBuf.lstm);
@@ -459,12 +516,19 @@ void* trasvc_tra_task(void* arg)
 
 		// Unlock lstm send buffer
 		pthread_mutex_unlock(&svc->lstmSendBuf.mutex);
+		LOG("lstmSendBuf unlocked");
+
+		// Unlock training data
+		pthread_mutex_unlock(&svc->traData.mutex);
+		traLockStatus = 0;
+		LOG("traData unlocked");
 	}
 
 RET:
 	svc->traTaskStatus = 0;
 
 	pthread_cleanup_pop(1);	// Reset active flag
+	pthread_cleanup_pop(traLockStatus);	// Unlock mutex
 	pthread_cleanup_pop(mgrLockStatus);	// Unlock mutex
 	pthread_cleanup_pop(1);	// Free errBuf
 	pthread_cleanup_pop(1);	// Free outBuf
