@@ -10,45 +10,46 @@
 
 namespace hourglass
 {
-	class ftsvc
-	{
-		public:
-			// Constructor
-			ftsvc();
+class ftsvc
+{
+   public:
+    // Constructor
+    ftsvc();
 
-			// Destructor
-			~ftsvc();
+    // Destructor
+    ~ftsvc();
 
-			// Open cam function
-			bool open_cam(int camIndex, int width, int height);
-			bool open_cam(std::string& camPath);
+    // Open cam function
+    bool open_cam(int camIndex, int width, int height);
+    bool open_cam(std::string& camPath);
 
-			// Feature setting
-			void set_find_point_rule(int maskSize, int threshold);
-			void set_find_line_rule(int maxDist, int threshold);
-			void set_line_height_filter(int threshold);
+    // Feature setting
+    void set_find_point_rule(int maskSize, int threshold);
+    void set_find_line_rule(int maxDist, int threshold);
+    void set_line_height_filter(int threshold);
 
-			// Show setting
-			void set_image_show(int enable);
+    // Show setting
+    void set_image_show(int enable);
 
-			// Task start and stop
+    // Task start and stop
 
-			// Get normalized feature
-			float get_norm_feature();
+    // Get normalized feature
+    float get_norm_feature();
 
-			// User input
-			char kbin;
+    // User input
+    char kbin;
 
-		protected:
-			int showImg;
+   protected:
+    int showImg;
 
-			int thStatus;
-			pthread_t th;
+    int thStatus;
+    pthread_t th;
 
-			cv::VideoCapture cam;
-			cv::Mat img;
-			laneft_ocv laneFt;
-	};
-}
+    cv::VideoCapture cam;
+    cv::Mat img;
+    laneft_ocv laneFt = laneft_ocv(laneft::LANE_TYPE::LINE);
+};
+
+}  // namespace hourglass
 
 #endif
