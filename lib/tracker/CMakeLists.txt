@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 # Set variables
-set(PROJECT_NAME tracker)
+set(PROJECT_NAME tkr)
 set(PROJECT_LANGUAGE C CXX)
 set(PROJECT_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/tracker.hpp)
 set(PROJECT_DEPS modcfg)
