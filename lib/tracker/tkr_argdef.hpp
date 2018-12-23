@@ -1,6 +1,8 @@
 #ifndef __TKR_ARGDEF_HPP__
 #define __TKR_ARGDEF_HPP__
 
+#define TKRARG_ROOT "tracker"
+
 #define TKRARG_CTRL_METHOD "ctrl_method"
 #define TKRARG_CTRL_PID_ARG "ctrl_pid_arg"
 #define TKRARG_CTRL_LSTM_ARG "ctrl_lstm_arg"
@@ -30,5 +32,15 @@
 #define TKRARG_PID_KI "ki"
 
 #define TKRARG_LSTM_MODEL_PATH "model_path"
+
+namespace hourglass
+{
+enum TKRARG_LIST
+{
+    TKRARG_CFG_PATH,
+    TKRARG_LSTM_MODEL_OVERRIDE,
+    TKRARG_HELP
+};
+}
 
 #endif
