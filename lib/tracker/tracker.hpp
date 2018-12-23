@@ -1,13 +1,14 @@
 #ifndef __TRACKER_HPP__
 #define __TRACKER_HPP__
 
+#include <fstream>
 #include <string>
 
 #include <SPID.h>
 #include <lstm.h>
 #include <trasvc.h>
+#include <wclt.h>
 #include <ftsvc.hpp>
-#include <wclt.hpp>
 
 class Tracker
 {
@@ -32,8 +33,8 @@ class Tracker
     };
 
     // Member variables
-    ftsvc ft;
-    fstream fLog;
+    hourglass::ftsvc ft;
+    std::fstream fLog;
 
     TkrNet wsvr;
     TkrNet trasvr;
