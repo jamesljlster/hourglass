@@ -81,6 +81,8 @@ class Tracker
     bool svc_connect();
     bool svc_disconnect();
 
+    void arg_print();
+
    protected:
     // Member variables
     enum TKR_CTRL_METHOD ctrlMethod;
@@ -129,6 +131,17 @@ class Tracker
     int arg_parse_cam(MODCFG cfg);
     int arg_parse_ft(MODCFG cfg);
     int arg_parse_log(MODCFG cfg);
+
+    void arg_print_ctrl();
+    void arg_print_ctrl_pid();
+    void arg_print_ctrl_lstm();
+    void arg_print_ctrl_learn();
+    void arg_print_wheel_server();
+    void arg_print_training_server();
+    void arg_print_speed();
+    void arg_print_cam();
+    void arg_print_ft();
+    void arg_print_log();
 };
 
 }  // namespace hourglass

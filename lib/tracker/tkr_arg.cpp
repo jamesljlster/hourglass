@@ -378,4 +378,85 @@ RET:
     return ret;
 }
 
+void Tracker::arg_print()
+{
+    // Print arguments
+}
+
+void Tracker::arg_print_ctrl()
+{
+    printf("%s:\n", TKRARG_CTRL_METHOD);
+    switch (this->ctrlMethod)
+    {
+        case TKR_CTRL_METHOD_PID:
+            printf("\t%s = %s\n", TKRARG_CTRL_METHOD, TKRARG_CTRL_METHOD_PID);
+            this->arg_print_ctrl_pid();
+            break;
+
+        case TKR_CTRL_METHOD_LSTM:
+            printf("\t%s = %s\n", TKRARG_CTRL_METHOD, TKRARG_CTRL_METHOD_LSTM);
+            this->arg_print_ctrl_lstm();
+            break;
+
+        case TKR_CTRL_METHOD_LEARN:
+            printf("\t%s = %s\n", TKRARG_CTRL_METHOD, TKRARG_CTRL_METHOD_LEARN);
+            this->arg_print_ctrl_learn();
+            break;
+    }
+}
+
+void Tracker::arg_print_ctrl_pid()
+{
+    printf("%s:\n", TKRARG_CTRL_PID_ARG);
+
+    printf("\t%s = %lf\n", TKRARG_CTRL_PID_ARG_KP, this->pidArg.kp);
+    printf("\t%s = %lf\n", TKRARG_CTRL_PID_ARG_KI, this->pidArg.ki);
+    printf("\t%s = %lf\n", TKRARG_CTRL_PID_ARG_KD, this->pidArg.kd);
+
+    printf("\t%s = %d\n", TKRARG_CTRL_PID_SPEED_BASE, this->pidArg.baseSpeed);
+}
+
+void Tracker::arg_print_ctrl_lstm()
+{
+    printf("%s:\n", TKRARG_CTRL_LSTM_ARG);
+
+    printf("\t%s = %s\n", TKRARG_CTRL_LSTM_ARG_MODEL_PATH,
+           this->lstmArg.modelPath.c_str());
+}
+
+void Tracker::arg_print_ctrl_learn()
+{
+    printf("%s:\n", TKRARG_CTRL_LEARN_ARG);
+
+    printf("\t%s = %s\n", TKRARG_CTRL_LEARN_ARG_MODEL_BASE,
+           this->learnArg.modelBase.c_str());
+
+    printf("\t%s = %s\n", TKRARG_CTRL_LEARN_ARG_MODEL_PREFIX,
+           this->learnArg.modelPrefix.c_str());
+    printf("\t%s = %s\n", TKRARG_CTRL_LEARN_ARG_MODEL_EXT,
+           this->learnArg.modelExt.c_str());
+
+    printf("\t%s = %lf\n", TKRARG_CTRL_LEARN_ARG_MODEL_TARGET_MSE,
+           this->learnArg.targetMse);
+
+    printf("\t%s = %lf\n", TKRARG_CTRL_LEARN_ARG_SPEED_UP_WITH_DELTA_DOWN,
+           this->learnArg.speedUpWithDeltaDown);
+    printf("\t%s = %lf\n", TKRARG_CTRL_LEARN_ARG_SPEED_UP,
+           this->learnArg.speedUp);
+    printf("\t%s = %lf\n", TKRARG_CTRL_LEARN_ARG_SPEED_DELTA_UP,
+           this->learnArg.speedDeltaUp);
+    printf("\t%s = %lf\n", TKRARG_CTRL_LEARN_ARG_SPEED_PRESERVE,
+           this->learnArg.speedPreserve);
+    printf("\t%s = %lf\n", TKRARG_CTRL_LEARN_ARG_SPEED_BASE_DOWN,
+           this->learnArg.speedBaseDown);
+    printf("\t%s = %lf\n", TKRARG_CTRL_LEARN_ARG_SPEED_DOWN,
+           this->learnArg.speedDown);
+
+    printf("\t%s = %lf\n", TKRARG_CTRL_LEARN_ARG_SPEED_LEARNING_RATE,
+           this->learnArg.speedLRate);
+
+    printf("\t%s = %d\n", TKRARG_CTRL_LEARN_ARG_DATA_SEND_LIMIT,
+           this->learnArg.sendLimit);
+}
+
 }  // namespace hourglass
