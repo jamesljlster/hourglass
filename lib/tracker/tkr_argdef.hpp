@@ -12,6 +12,7 @@
 #define TKRARG_CTRL_PID_ARG_KP "kp"
 #define TKRARG_CTRL_PID_ARG_KD "kd"
 #define TKRARG_CTRL_PID_ARG_KI "ki"
+#define TKRARG_CTRL_PID_SPEED_BASE "speed_base"
 
 #define TKRARG_CTRL_LSTM_ARG "ctrl_lstm_arg"
 #define TKRARG_CTRL_LSTM_ARG_MODEL_PATH "model_path"
@@ -39,7 +40,6 @@
 
 #define TKRARG_SPEED_MIN "speed_min"
 #define TKRARG_SPEED_MAX "speed_max"
-#define TKRARG_SPEED_BASE "speed_base"
 
 #define TKRARG_CAM_INDEX "cam_index"
 #define TKRARG_CAM_WIDTH "cam_width"

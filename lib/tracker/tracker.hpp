@@ -39,6 +39,8 @@ class Tracker
         double kp;
         double ki;
         double kd;
+
+        int baseSpeed;
     };
 
     class LstmArg
@@ -91,7 +93,6 @@ class Tracker
 
     int speedMin;
     int speedMax;
-    int speedBase;
 
     int camIndex;
     int camWidth;

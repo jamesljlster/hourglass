@@ -1,3 +1,4 @@
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <string>
@@ -160,6 +161,9 @@ int Tracker::arg_parse_ctrl_pid(MODCFG cfg)
     __modcfg_parse_double(this->pidArg.ki, cfg, tmpStr, TKRARG_CTRL_PID_ARG_KI,
                           ret, RET);
 
+    __modcfg_parse_int(this->pidArg.baseSpeed, cfg, tmpStr,
+                       TKRARG_CTRL_PID_SPEED_BASE, ret, RET);
+
 RET:
     return ret;
 }
@@ -307,8 +311,6 @@ int Tracker::arg_parse_speed(MODCFG cfg)
                        RET);
     __modcfg_parse_int(this->speedMax, cfg, TKRARG_ROOT, TKRARG_SPEED_MAX, ret,
                        RET);
-    __modcfg_parse_int(this->speedBase, cfg, TKRARG_ROOT, TKRARG_SPEED_BASE,
-                       ret, RET);
 
 RET:
     return ret;
