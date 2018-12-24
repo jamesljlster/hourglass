@@ -45,16 +45,33 @@ class Tracker
 
     // Member variables
     enum TKR_CTRL_METHOD ctrlMethod;
-
-    ftsvc ft;
-    std::fstream fLog;
+    double kp;
+    double ki;
+    double kd;
+    std::string modelBasePath;
 
     TkrNet wsvr;
     TkrNet trasvr;
 
-    std::string modelBasePath;
+    int speedMin;
+    int speedMax;
+    int speedBase;
+
+    int camIndex;
+    int camWidth;
+    int camHeight;
+
+    laneft::LANE_TYPE ftType;
+    int ftLineHeightFilter;
+
+    std::string logBase;
+    std::string logExt;
+
     lstm_t model;
     SPID sPid;
+
+    ftsvc ft;
+    std::fstream fLog;
 
     int wcltStatus;
     wclt_t wclt;

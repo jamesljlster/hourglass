@@ -124,19 +124,17 @@ int Tracker::arg_parse_ctrl(MODCFG cfg, args_t args[])
     // Parse control argument
     if (this->ctrlMethod == TKR_CTRL_METHOD::TKR_CTRL_METHOD_PID)
     {
-        double kp, ki, kd;
-
         // Get pid argument node
         __modcfg_get_str(tmpStr, cfg, TKRARG_ROOT, TKRARG_CTRL_PID_ARG, ret,
                          RET);
 
         // Parse pid argument
-        __modcfg_parse_double(kp, cfg, tmpStr, TKRARG_CTRL_PID_ARG_KP, ret,
-                              RET);
-        __modcfg_parse_double(kd, cfg, tmpStr, TKRARG_CTRL_PID_ARG_KD, ret,
-                              RET);
-        __modcfg_parse_double(ki, cfg, tmpStr, TKRARG_CTRL_PID_ARG_KI, ret,
-                              RET);
+        __modcfg_parse_double(this->kp, cfg, tmpStr, TKRARG_CTRL_PID_ARG_KP,
+                              ret, RET);
+        __modcfg_parse_double(this->kd, cfg, tmpStr, TKRARG_CTRL_PID_ARG_KD,
+                              ret, RET);
+        __modcfg_parse_double(this->ki, cfg, tmpStr, TKRARG_CTRL_PID_ARG_KI,
+                              ret, RET);
     }
     else
     {
