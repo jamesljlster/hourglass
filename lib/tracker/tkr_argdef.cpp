@@ -115,10 +115,23 @@ int Tracker::arg_parse_ctrl(MODCFG cfg, args_t args[])
     if (strcmp(tmpStr, TKRARG_CTRL_METHOD_PID) == 0)
     {
         this->ctrlMethod = TKR_CTRL_METHOD::TKR_CTRL_METHOD_PID;
+
+        // Parse PID argument
+        __run_chk(this->arg_parse_ctrl_pid(cfg), ret, RET);
     }
     else if (strcmp(tmpStr, TKRARG_CTRL_METHOD_LSTM) == 0)
     {
         this->ctrlMethod = TKR_CTRL_METHOD::TKR_CTRL_METHOD_LSTM;
+
+        // Parse LSTM argument
+        __run_chk(this->arg_parse_ctrl_lstm(cfg, args), ret, RET);
+    }
+    else if (strcmp(tmpStr, TKRARG_CTRL_METHOD_LEARN) == 0)
+    {
+        this->ctrlMethod = TKR_CTRL_METHOD::TKR_CTRL_METHOD_LEARN;
+
+        // Parse learner argument
+        __run_chk(this->arg_parse_ctrl_learn(cfg, args), ret, RET);
     }
     else
     {
@@ -127,43 +140,119 @@ int Tracker::arg_parse_ctrl(MODCFG cfg, args_t args[])
         goto RET;
     }
 
-    // Parse control argument
-    if (this->ctrlMethod == TKR_CTRL_METHOD::TKR_CTRL_METHOD_PID)
-    {
-        // Get pid argument node
-        __modcfg_get_str(tmpStr, cfg, TKRARG_ROOT, TKRARG_CTRL_PID_ARG, ret,
-                         RET);
+RET:
+    return ret;
+}
 
-        // Parse pid argument
-        __modcfg_parse_double(this->kp, cfg, tmpStr, TKRARG_CTRL_PID_ARG_KP,
-                              ret, RET);
-        __modcfg_parse_double(this->kd, cfg, tmpStr, TKRARG_CTRL_PID_ARG_KD,
-                              ret, RET);
-        __modcfg_parse_double(this->ki, cfg, tmpStr, TKRARG_CTRL_PID_ARG_KI,
-                              ret, RET);
+int Tracker::arg_parse_ctrl_pid(MODCFG cfg)
+{
+    int ret = 0;
+    const char* tmpStr = NULL;
+
+    // Get pid argument node
+    __modcfg_get_str(tmpStr, cfg, TKRARG_ROOT, TKRARG_CTRL_PID_ARG, ret, RET);
+
+    // Parse pid argument
+    __modcfg_parse_double(this->pidArg.kp, cfg, tmpStr, TKRARG_CTRL_PID_ARG_KP,
+                          ret, RET);
+    __modcfg_parse_double(this->pidArg.kd, cfg, tmpStr, TKRARG_CTRL_PID_ARG_KD,
+                          ret, RET);
+    __modcfg_parse_double(this->pidArg.ki, cfg, tmpStr, TKRARG_CTRL_PID_ARG_KI,
+                          ret, RET);
+
+RET:
+    return ret;
+}
+
+int Tracker::arg_parse_ctrl_lstm(MODCFG cfg, args_t args[])
+{
+    int ret = 0;
+    const char* tmpStr = NULL;
+    const char* modelPath = NULL;
+
+    if (args[TKRARG_LSTM_MODEL_OVERRIDE].enable > 0)
+    {
+        this->lstmArg.modelPath =
+            string(args[TKRARG_LSTM_MODEL_OVERRIDE].leading[0]);
     }
     else
     {
-        if (args[TKRARG_LSTM_MODEL_OVERRIDE].enable > 0)
-        {
-            this->modelBasePath =
-                string(args[TKRARG_LSTM_MODEL_OVERRIDE].leading[0]);
-        }
-        else
-        {
-            const char* modelPath = NULL;
+        // Get lstm argument node
+        __modcfg_get_str(tmpStr, cfg, TKRARG_ROOT, TKRARG_CTRL_LSTM_ARG, ret,
+                         RET);
 
-            // Get lstm argument node
-            __modcfg_get_str(tmpStr, cfg, TKRARG_ROOT, TKRARG_CTRL_LSTM_ARG,
-                             ret, RET);
+        // Parse lstm argument
+        __modcfg_get_str(modelPath, cfg, tmpStr,
+                         TKRARG_CTRL_LSTM_ARG_MODEL_PATH, ret, RET);
 
-            // Parse lstm argument
-            __modcfg_get_str(modelPath, cfg, tmpStr,
-                             TKRARG_CTRL_LSTM_ARG_MODEL_PATH, ret, RET);
-
-            this->modelBasePath = string(modelPath);
-        }
+        this->lstmArg.modelPath = string(modelPath);
     }
+
+RET:
+    return ret;
+}
+
+int Tracker::arg_parse_ctrl_learn(MODCFG cfg, args_t args[])
+{
+    int ret = 0;
+    const char* rootStr = NULL;
+    const char* tmpStr = NULL;
+
+    // Get learner argument node
+    __modcfg_get_str(rootStr, cfg, TKRARG_ROOT, TKRARG_CTRL_LEARN_ARG, ret,
+                     RET);
+
+    // Parse model base path
+    if (args[TKRARG_LSTM_MODEL_OVERRIDE].enable > 0)
+    {
+        this->learnArg.modelBase =
+            string(args[TKRARG_LSTM_MODEL_OVERRIDE].leading[0]);
+    }
+    else
+    {
+        // Parse model base path
+        __modcfg_get_str(tmpStr, cfg, rootStr, TKRARG_CTRL_LEARN_ARG_MODEL_BASE,
+                         ret, RET);
+
+        this->learnArg.modelBase = string(tmpStr);
+    }
+
+    // Parse model prefix
+    __modcfg_get_str(tmpStr, cfg, rootStr, TKRARG_CTRL_LEARN_ARG_MODEL_PREFIX,
+                     ret, RET);
+    this->learnArg.modelPrefix = string(tmpStr);
+
+    // Parse model extension
+    __modcfg_get_str(tmpStr, cfg, rootStr, TKRARG_CTRL_LEARN_ARG_MODEL_EXT, ret,
+                     RET);
+    this->learnArg.modelExt = string(tmpStr);
+
+    // Parse target mse
+    __modcfg_parse_double(this->learnArg.targetMse, cfg, rootStr,
+                          TKRARG_CTRL_LEARN_ARG_MODEL_TARGET_MSE, ret, RET);
+
+    // Parse reinforcement learning rule thresholds
+    __modcfg_parse_double(this->learnArg.speedUpWithDeltaDown, cfg, rootStr,
+                          TKRARG_CTRL_LEARN_ARG_SPEED_UP_WITH_DELTA_DOWN, ret,
+                          RET);
+    __modcfg_parse_double(this->learnArg.speedUp, cfg, rootStr,
+                          TKRARG_CTRL_LEARN_ARG_SPEED_UP, ret, RET);
+    __modcfg_parse_double(this->learnArg.speedDeltaUp, cfg, rootStr,
+                          TKRARG_CTRL_LEARN_ARG_SPEED_DELTA_UP, ret, RET);
+    __modcfg_parse_double(this->learnArg.speedPreserve, cfg, rootStr,
+                          TKRARG_CTRL_LEARN_ARG_SPEED_PRESERVE, ret, RET);
+    __modcfg_parse_double(this->learnArg.speedBaseDown, cfg, rootStr,
+                          TKRARG_CTRL_LEARN_ARG_SPEED_BASE_DOWN, ret, RET);
+    __modcfg_parse_double(this->learnArg.speedDown, cfg, rootStr,
+                          TKRARG_CTRL_LEARN_ARG_SPEED_DOWN, ret, RET);
+
+    // Parse learning rate for RL
+    __modcfg_parse_double(this->learnArg.speedLRate, cfg, rootStr,
+                          TKRARG_CTRL_LEARN_ARG_SPEED_LEARNING_RATE, ret, RET);
+
+    // Parse data send limit
+    __modcfg_parse_int(this->learnArg.sendLimit, cfg, rootStr,
+                       TKRARG_CTRL_LEARN_ARG_DATA_SEND_LIMIT, ret, RET);
 
 RET:
     return ret;

@@ -16,6 +16,58 @@ namespace hourglass
 {
 class Tracker
 {
+   protected:
+    // Member enumeration
+    enum TKR_CTRL_METHOD
+    {
+        TKR_CTRL_METHOD_PID,
+        TKR_CTRL_METHOD_LSTM,
+        TKR_CTRL_METHOD_LEARN
+    };
+
+    // Member class
+    class TkrNet
+    {
+       public:
+        std::string ip;
+        int port;
+    };
+
+    class PidArg
+    {
+       public:
+        double kp;
+        double ki;
+        double kd;
+    };
+
+    class LstmArg
+    {
+       public:
+        std::string modelPath;
+    };
+
+    class LearnArg
+    {
+       public:
+        std::string modelBase;
+        std::string modelPrefix;
+        std::string modelExt;
+
+        double targetMse;
+
+        double speedUpWithDeltaDown;
+        double speedUp;
+        double speedDeltaUp;
+        double speedPreserve;
+        double speedBaseDown;
+        double speedDown;
+
+        double speedLRate;
+
+        int sendLimit;
+    };
+
    public:
     // Member variables
     int stop;
@@ -28,27 +80,11 @@ class Tracker
     bool svc_disconnect();
 
    protected:
-    // Member enumeration
-    enum TKR_CTRL_METHOD
-    {
-        TKR_CTRL_METHOD_PID,
-        TKR_CTRL_METHOD_LSTM
-    };
-
-    // Member class
-    class TkrNet
-    {
-       public:
-        std::string ip;
-        int port;
-    };
-
     // Member variables
     enum TKR_CTRL_METHOD ctrlMethod;
-    double kp;
-    double ki;
-    double kd;
-    std::string modelBasePath;
+    PidArg pidArg;
+    LstmArg lstmArg;
+    LearnArg learnArg;
 
     TkrNet wsvr;
     TkrNet trasvr;
@@ -83,6 +119,9 @@ class Tracker
     bool arg_parse(int argc, char* argv[]);
 
     int arg_parse_ctrl(MODCFG cfg, args_t args[]);
+    int arg_parse_ctrl_pid(MODCFG cfg);
+    int arg_parse_ctrl_lstm(MODCFG cfg, args_t args[]);
+    int arg_parse_ctrl_learn(MODCFG cfg, args_t args[]);
     int arg_parse_wheel_server(MODCFG cfg);
     int arg_parse_training_server(MODCFG cfg);
     int arg_parse_speed(MODCFG cfg);
