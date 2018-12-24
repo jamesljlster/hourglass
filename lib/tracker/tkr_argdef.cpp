@@ -91,8 +91,14 @@ bool Tracker::arg_parse(int argc, char* argv[])
         modcfg_create(&cfg, arg_list[TKRARG_LIST::TKRARG_CFG_PATH].leading[0]),
         ret, RET);
 
-    // Parse control method
+    // Parse arguments
     __run_chk(this->arg_parse_ctrl(cfg, arg_list), ret, RET);
+    __run_chk(this->arg_parse_wheel_server(cfg), ret, RET);
+    __run_chk(this->arg_parse_training_server(cfg), ret, RET);
+    __run_chk(this->arg_parse_speed(cfg), ret, RET);
+    __run_chk(this->arg_parse_cam(cfg), ret, RET);
+    __run_chk(this->arg_parse_ft(cfg), ret, RET);
+    __run_chk(this->arg_parse_log(cfg), ret, RET);
 
 RET:
     modcfg_delete(cfg);
@@ -116,7 +122,7 @@ int Tracker::arg_parse_ctrl(MODCFG cfg, args_t args[])
     }
     else
     {
-        printf("Invalid 'ctrl_method' setting: %s\n", tmpStr);
+        printf("Invalid '%s' setting: %s\n", TKRARG_CTRL_METHOD, tmpStr);
         ret = -1;
         goto RET;
     }
@@ -198,6 +204,84 @@ int Tracker::arg_parse_training_server(MODCFG cfg)
     __modcfg_parse_int(port, cfg, TKRARG_ROOT, TKRARG_TRAINING_SERVER_PORT, ret,
                        RET);
     this->trasvr.port = port;
+
+RET:
+    return ret;
+}
+
+int Tracker::arg_parse_speed(MODCFG cfg)
+{
+    int ret = 0;
+
+    // Parse speed settings
+    __modcfg_parse_int(this->speedMin, cfg, TKRARG_ROOT, TKRARG_SPEED_MIN, ret,
+                       RET);
+    __modcfg_parse_int(this->speedMax, cfg, TKRARG_ROOT, TKRARG_SPEED_MAX, ret,
+                       RET);
+    __modcfg_parse_int(this->speedBase, cfg, TKRARG_ROOT, TKRARG_SPEED_BASE,
+                       ret, RET);
+
+RET:
+    return ret;
+}
+
+int Tracker::arg_parse_cam(MODCFG cfg)
+{
+    int ret = 0;
+
+    // Parse camera settings
+    __modcfg_parse_int(this->camIndex, cfg, TKRARG_ROOT, TKRARG_CAM_INDEX, ret,
+                       RET);
+    __modcfg_parse_int(this->camWidth, cfg, TKRARG_ROOT, TKRARG_CAM_WIDTH, ret,
+                       RET);
+    __modcfg_parse_int(this->camHeight, cfg, TKRARG_ROOT, TKRARG_CAM_HEIGHT,
+                       ret, RET);
+
+RET:
+    return ret;
+}
+
+int Tracker::arg_parse_ft(MODCFG cfg)
+{
+    int ret = 0;
+    const char* tmpStr;
+
+    // Parse feature type
+    __modcfg_get_str(tmpStr, cfg, TKRARG_ROOT, TKRARG_FT_TYPE, ret, RET);
+    if (strcmp(tmpStr, TKRARG_FT_TYPE_LANE) == 0)
+    {
+        this->ftType = laneft::LANE_TYPE::LANE;
+    }
+    else if (strcmp(tmpStr, TKRARG_FT_TYPE_LINE) == 0)
+    {
+        this->ftType = laneft::LANE_TYPE::LINE;
+    }
+    else
+    {
+        printf("Invalid '%s' setting: %s\n", TKRARG_FT_TYPE, tmpStr);
+        ret = -1;
+        goto RET;
+    }
+
+    // Parse filter
+    __modcfg_parse_int(this->ftLineHeightFilter, cfg, TKRARG_ROOT,
+                       TKRARG_FT_LINE_HEIGHT_FILTER, ret, RET);
+
+RET:
+    return ret;
+}
+
+int Tracker::arg_parse_log(MODCFG cfg)
+{
+    int ret = 0;
+    const char* tmpStr;
+
+    // Parse log file setting
+    __modcfg_get_str(tmpStr, cfg, TKRARG_ROOT, TKRARG_LOG_BASE, ret, RET);
+    this->logBase = string(tmpStr);
+
+    __modcfg_get_str(tmpStr, cfg, TKRARG_ROOT, TKRARG_LOG_EXT, ret, RET);
+    this->logExt = string(tmpStr);
 
 RET:
     return ret;

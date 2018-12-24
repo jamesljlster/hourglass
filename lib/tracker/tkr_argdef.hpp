@@ -28,16 +28,12 @@
 #define TKRARG_CAM_HEIGHT "cam_height"
 
 #define TKRARG_FT_TYPE "ft_type"
+#define TKRARG_FT_TYPE_LANE "lane"
+#define TKRARG_FT_TYPE_LINE "line"
 #define TKRARG_FT_LINE_HEIGHT_FILTER "ft_line_height_filter"
 
 #define TKRARG_LOG_BASE "log_base"
 #define TKRARG_LOG_EXT "log_ext"
-
-#define TKRARG_PID_PK "kp"
-#define TKRARG_PID_KD "kd"
-#define TKRARG_PID_KI "ki"
-
-#define TKRARG_LSTM_MODEL_PATH "model_path"
 
 namespace hourglass
 {
