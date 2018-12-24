@@ -1,7 +1,6 @@
 #include <cstdlib>
-
-#include <args.h>
-#include <modcfg.h>
+#include <cstring>
+#include <string>
 
 #include "tkr_argdef.hpp"
 #include "tracker.hpp"
@@ -14,12 +13,36 @@
         goto errLabel;                                       \
     }
 
+#define __modcfg_get_str(strVal, cfg, nodeName, elemName, retVal, errLabel) \
+    strVal = modcfg_get_content(cfg, nodeName, elemName);                   \
+    if (strVal == NULL)                                                     \
+    {                                                                       \
+        printf("'%s' not found in '%s' setting!\n", nodeName, elemName);    \
+        retVal = -1;                                                        \
+        goto errLabel;                                                      \
+    }
+
+#define __modcfg_parse_double(val, mod, nodeName, elemName, retVal, errLabel) \
+    {                                                                         \
+        int __ret =                                                           \
+            modcfg_parse_content_double(&val, mod, nodeName, elemName);       \
+        if (__ret < 0)                                                        \
+        {                                                                     \
+            printf("Failed to parse '%s' setting in '%s' module\n", elemName, \
+                   nodeName);                                                 \
+            retVal = -1;                                                      \
+            goto errLabel;                                                    \
+        }                                                                     \
+    }
+
 args_t arg_list[] = {
     {0, "cfg-path", 'C', 1, NULL, NULL, "Tracker config file path"},
     {0, "lstm-model", 'M', 1, NULL, NULL,
      "LSTM control model base (override config)"},
     {0, "help", 'H', 0, NULL, NULL, "Help"},
     ARGS_TERMINATE};
+
+using namespace std;
 
 namespace hourglass
 {
@@ -56,10 +79,77 @@ bool Tracker::arg_parse(int argc, char* argv[])
         ret, RET);
 
     // Parse control method
+    __run_chk(this->arg_parse_ctrl(cfg, arg_list), ret, RET);
 
 RET:
     modcfg_delete(cfg);
     return (ret >= 0);
+}
+
+int Tracker::arg_parse_ctrl(MODCFG cfg, args_t args[])
+{
+    int ret = 0;
+    const char* tmpStr;
+
+    // Parse control method
+    __modcfg_get_str(tmpStr, cfg, TKRARG_ROOT, TKRARG_CTRL_METHOD, ret, RET);
+    if (strcmp(tmpStr, TKRARG_CTRL_METHOD_PID) == 0)
+    {
+        this->ctrlMethod = TKR_CTRL_METHOD::TKR_CTRL_METHOD_PID;
+    }
+    else if (strcmp(tmpStr, TKRARG_CTRL_METHOD_LSTM) == 0)
+    {
+        this->ctrlMethod = TKR_CTRL_METHOD::TKR_CTRL_METHOD_LSTM;
+    }
+    else
+    {
+        printf("Invalid 'ctrl_method' setting: %s\n", tmpStr);
+        ret = -1;
+        goto RET;
+    }
+
+    // Parse control argument
+    if (this->ctrlMethod == TKR_CTRL_METHOD::TKR_CTRL_METHOD_PID)
+    {
+        double kp, ki, kd;
+
+        // Get pid argument node
+        __modcfg_get_str(tmpStr, cfg, TKRARG_ROOT, TKRARG_CTRL_PID_ARG, ret,
+                         RET);
+
+        // Parse pid argument
+        __modcfg_parse_double(kp, cfg, tmpStr, TKRARG_CTRL_PID_ARG_KP, ret,
+                              RET);
+        __modcfg_parse_double(kd, cfg, tmpStr, TKRARG_CTRL_PID_ARG_KD, ret,
+                              RET);
+        __modcfg_parse_double(ki, cfg, tmpStr, TKRARG_CTRL_PID_ARG_KI, ret,
+                              RET);
+    }
+    else
+    {
+        if (args[TKRARG_LSTM_MODEL_OVERRIDE].enable > 0)
+        {
+            this->modelBasePath =
+                string(args[TKRARG_LSTM_MODEL_OVERRIDE].leading[0]);
+        }
+        else
+        {
+            const char* modelPath = NULL;
+
+            // Get lstm argument node
+            __modcfg_get_str(tmpStr, cfg, TKRARG_ROOT, TKRARG_CTRL_LSTM_ARG,
+                             ret, RET);
+
+            // Parse lstm argument
+            __modcfg_get_str(modelPath, cfg, tmpStr,
+                             TKRARG_CTRL_LSTM_ARG_MODEL_PATH, ret, RET);
+
+            this->modelBasePath = string(modelPath);
+        }
+    }
+
+RET:
+    return ret;
 }
 
 }  // namespace hourglass

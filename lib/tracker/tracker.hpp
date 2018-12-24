@@ -5,6 +5,7 @@
 #include <string>
 
 #include <SPID.h>
+#include <args.h>
 #include <lstm.h>
 #include <modcfg.h>
 #include <trasvc.h>
@@ -43,6 +44,8 @@ class Tracker
     };
 
     // Member variables
+    enum TKR_CTRL_METHOD ctrlMethod;
+
     ftsvc ft;
     std::fstream fLog;
 
@@ -62,7 +65,7 @@ class Tracker
     // Member functions
     bool arg_parse(int argc, char* argv[]);
 
-    int arg_parse_ctrl(MODCFG cfg);
+    int arg_parse_ctrl(MODCFG cfg, args_t args[]);
     int arg_parse_wheel_server(MODCFG cfg);
     int arg_parse_training_server(MODCFG cfg);
     int arg_parse_speed(MODCFG cfg);

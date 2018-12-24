@@ -4,8 +4,14 @@
 #define TKRARG_ROOT "tracker"
 
 #define TKRARG_CTRL_METHOD "ctrl_method"
+#define TKRARG_CTRL_METHOD_PID "pid"
+#define TKRARG_CTRL_METHOD_LSTM "lstm"
 #define TKRARG_CTRL_PID_ARG "ctrl_pid_arg"
+#define TKRARG_CTRL_PID_ARG_KP "kp"
+#define TKRARG_CTRL_PID_ARG_KD "kd"
+#define TKRARG_CTRL_PID_ARG_KI "ki"
 #define TKRARG_CTRL_LSTM_ARG "ctrl_lstm_arg"
+#define TKRARG_CTRL_LSTM_ARG_MODEL_PATH "model_path"
 
 #define TKRARG_WHEEL_SERVER_IP "wheel_server_ip"
 #define TKRARG_WHEEL_SERVER_PORT "wheel_server_port"
