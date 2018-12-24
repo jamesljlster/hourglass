@@ -35,6 +35,19 @@
         }                                                                     \
     }
 
+#define __modcfg_parse_int(val, mod, nodeName, elemName, retVal, errLabel)    \
+    {                                                                         \
+        int __ret =                                                           \
+            modcfg_parse_content_int(&val, mod, nodeName, elemName, 10);      \
+        if (__ret < 0)                                                        \
+        {                                                                     \
+            printf("Failed to parse '%s' setting in '%s' module\n", elemName, \
+                   nodeName);                                                 \
+            retVal = -1;                                                      \
+            goto errLabel;                                                    \
+        }                                                                     \
+    }
+
 args_t arg_list[] = {
     {0, "cfg-path", 'C', 1, NULL, NULL, "Tracker config file path"},
     {0, "lstm-model", 'M', 1, NULL, NULL,
@@ -147,6 +160,46 @@ int Tracker::arg_parse_ctrl(MODCFG cfg, args_t args[])
             this->modelBasePath = string(modelPath);
         }
     }
+
+RET:
+    return ret;
+}
+
+int Tracker::arg_parse_wheel_server(MODCFG cfg)
+{
+    int ret = 0;
+    int port;
+    const char* tmpStr = NULL;
+
+    // Parse wheel server ip
+    __modcfg_get_str(tmpStr, cfg, TKRARG_ROOT, TKRARG_WHEEL_SERVER_IP, ret,
+                     RET);
+    this->wsvr.ip = string(tmpStr);
+
+    // Parse wheel server port
+    __modcfg_parse_int(port, cfg, TKRARG_ROOT, TKRARG_WHEEL_SERVER_PORT, ret,
+                       RET);
+    this->wsvr.port = port;
+
+RET:
+    return ret;
+}
+
+int Tracker::arg_parse_training_server(MODCFG cfg)
+{
+    int ret = 0;
+    int port;
+    const char* tmpStr = NULL;
+
+    // Parse training server ip
+    __modcfg_get_str(tmpStr, cfg, TKRARG_ROOT, TKRARG_TRAINING_SERVER_IP, ret,
+                     RET);
+    this->trasvr.ip = string(tmpStr);
+
+    // Parse training server port
+    __modcfg_parse_int(port, cfg, TKRARG_ROOT, TKRARG_TRAINING_SERVER_PORT, ret,
+                       RET);
+    this->trasvr.port = port;
 
 RET:
     return ret;
