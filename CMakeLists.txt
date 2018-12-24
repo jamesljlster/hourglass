@@ -15,6 +15,7 @@ set(PROJECT_LANGUAGE C CXX)
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "Installation directory")
 option(BUILD_TEST "Enable building test" OFF)
 option(BUILD_HG_MONITOR "Enable building Hourglass Monitor" ON)
+option(INSTALL_CONFIG "Install default configure files" OFF)
 
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Build confugure" FORCE)
 if(DEFINED CMAKE_BUILD_TYPE)
@@ -59,6 +60,10 @@ endif()
 
 if(${BUILD_TEST})
     set(UTIL_PATHS ${UTIL_PATHS} ${CMAKE_CURRENT_SOURCE_DIR}/test)
+endif()
+
+if(${INSTALL_CONFIG})
+    set(UTIL_PATHS ${UTIL_PATHS} ${CMAKE_CURRENT_SOURCE_DIR}/config)
 endif()
 
 # Set project
