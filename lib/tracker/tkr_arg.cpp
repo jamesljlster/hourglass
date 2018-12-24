@@ -381,11 +381,12 @@ RET:
 void Tracker::arg_print()
 {
     // Print arguments
+    this->arg_print_ctrl();
 }
 
 void Tracker::arg_print_ctrl()
 {
-    printf("%s:\n", TKRARG_CTRL_METHOD);
+    printf("\n%s:\n", TKRARG_CTRL_METHOD);
     switch (this->ctrlMethod)
     {
         case TKR_CTRL_METHOD_PID:
@@ -407,7 +408,7 @@ void Tracker::arg_print_ctrl()
 
 void Tracker::arg_print_ctrl_pid()
 {
-    printf("%s:\n", TKRARG_CTRL_PID_ARG);
+    printf("\n%s:\n", TKRARG_CTRL_PID_ARG);
 
     printf("\t%s = %lf\n", TKRARG_CTRL_PID_ARG_KP, this->pidArg.kp);
     printf("\t%s = %lf\n", TKRARG_CTRL_PID_ARG_KI, this->pidArg.ki);
@@ -418,7 +419,7 @@ void Tracker::arg_print_ctrl_pid()
 
 void Tracker::arg_print_ctrl_lstm()
 {
-    printf("%s:\n", TKRARG_CTRL_LSTM_ARG);
+    printf("\n%s:\n", TKRARG_CTRL_LSTM_ARG);
 
     printf("\t%s = %s\n", TKRARG_CTRL_LSTM_ARG_MODEL_PATH,
            this->lstmArg.modelPath.c_str());
@@ -426,7 +427,7 @@ void Tracker::arg_print_ctrl_lstm()
 
 void Tracker::arg_print_ctrl_learn()
 {
-    printf("%s:\n", TKRARG_CTRL_LEARN_ARG);
+    printf("\n%s:\n", TKRARG_CTRL_LEARN_ARG);
 
     printf("\t%s = %s\n", TKRARG_CTRL_LEARN_ARG_MODEL_BASE,
            this->learnArg.modelBase.c_str());
