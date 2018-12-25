@@ -112,10 +112,10 @@ class Tracker
     ftsvc ft;
     std::fstream fLog;
 
-    int wcltStatus;
+    int wcltStatus = 0;
     wclt_t wclt;
 
-    int tsStatus;
+    int tsStatus = 0;
     trasvc_client_t ts;
 
     // Member functions

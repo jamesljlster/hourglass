@@ -80,6 +80,11 @@ bool Tracker::arg_parse(int argc, char* argv[])
 
     __arg_chk(TKRARG_LIST::TKRARG_CFG_PATH);
 
+    if (ret < 0)
+    {
+        goto RET;
+    }
+
     // Read config file
     __run_chk(
         modcfg_create(&cfg, arg_list[TKRARG_LIST::TKRARG_CFG_PATH].leading[0]),
@@ -102,7 +107,7 @@ bool Tracker::arg_parse(int argc, char* argv[])
 RET:
     modcfg_delete(cfg);
     return (ret >= 0);
-}
+}  // namespace hourglass
 
 int Tracker::arg_parse_ctrl(MODCFG cfg, args_t args[])
 {
