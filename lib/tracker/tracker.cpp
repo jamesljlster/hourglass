@@ -33,6 +33,9 @@ Tracker::Tracker(int argc, char* argv[])
     // Setup feature
     this->ft.set_line_height_filter(this->ftLineHeightFilter);
     this->ft.set_image_show(1);
+
+    // Load model (if needed)
+    this->load_lstm_model();
 }
 
 Tracker::~Tracker() { this->svc_disconnect(); }
@@ -265,5 +268,7 @@ void Tracker::dump_info(float offset, float sal, float sar)
     // Dump log
     this->fLog << offset << "," << sal << "," << sar << endl;
 }
+
+float Tracker::get_norm_feature() { return this->ft.get_norm_feature(); }
 
 }  // namespace hourglass

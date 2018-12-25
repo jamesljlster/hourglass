@@ -7,6 +7,9 @@
 #include "tkr_private.hpp"
 #include "tracker.hpp"
 
+#define INPUTS 1
+#define OUTPUTS 2
+
 #define __modcfg_get_str(strVal, cfg, nodeName, elemName, retVal, errLabel) \
     strVal = modcfg_get_content(cfg, nodeName, elemName);                   \
     if (strVal == NULL)                                                     \
@@ -532,6 +535,40 @@ void Tracker::arg_print_log()
 
     printf("\t%s = %s\n", TKRARG_LOG_BASE, this->logBase.c_str());
     printf("\t%s = %s\n", TKRARG_LOG_EXT, this->logExt.c_str());
+}
+
+void Tracker::load_lstm_model()
+{
+    // Find model path
+    string modelPath;
+    switch (this->ctrlMethod)
+    {
+        case Tracker::TKR_CTRL_METHOD::TKR_CTRL_METHOD_PID:
+            return;
+            break;
+
+        case Tracker::TKR_CTRL_METHOD::TKR_CTRL_METHOD_LSTM:
+            modelPath = this->lstmArg.modelPath;
+            break;
+
+        case Tracker::TKR_CTRL_METHOD::TKR_CTRL_METHOD_LEARN:
+            modelPath = this->learnArg.modelBase;
+            break;
+    }
+
+    // Load model
+    int ret = lstm_import(&(this->model), modelPath.c_str());
+    if (ret < 0)
+    {
+        throw runtime_error(string("Failed to load lstm model with path: ") +
+                            modelPath);
+    }
+
+    if (lstm_config_get_inputs(lstm_get_config(this->model)) != INPUTS ||
+        lstm_config_get_outputs(lstm_get_config(this->model)) != OUTPUTS)
+    {
+        throw runtime_error("Incompatible LSTM control model!");
+    }
 }
 
 }  // namespace hourglass

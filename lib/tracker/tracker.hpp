@@ -91,6 +91,9 @@ class Tracker
     void start_new_log(std::string suffix);
     void dump_info(float offset, float sal, float sar);
 
+    float get_norm_feature();
+    float get_ctrl_speed(float* salPtr, float* sarPtr);
+
    protected:
     // Member variables
     enum TKR_CTRL_METHOD ctrlMethod;
@@ -153,6 +156,8 @@ class Tracker
 
     struct tm get_current_date();
     std::string make_time_str();
+
+    void load_lstm_model();
 };
 
 }  // namespace hourglass
