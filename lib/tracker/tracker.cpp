@@ -1,19 +1,29 @@
-#include "tracker.hpp"
+#include <exception>
+#include <stdexcept>
+
 #include "tkr_private.hpp"
+#include "tracker.hpp"
 
 using namespace std;
 
 namespace hourglass
 {
-bool Tracker::init(int argc, char* argv[])
+Tracker::Tracker(int argc, char* argv[])
 {
-    bool ret = true;
-
     // Parse argument
-    ret &= this->arg_parse(argc, argv);
+    if (!this->arg_parse(argc, argv))
+    {
+        throw runtime_error("Argument parsing filed!");
+    }
 
-    return ret;
+    // Connect to service
+    if (!this->svc_connect())
+    {
+        throw runtime_error("Service connection failed!");
+    }
 }
+
+Tracker::~Tracker() { this->svc_disconnect(); }
 
 bool Tracker::svc_connect()
 {

@@ -75,8 +75,8 @@ class Tracker
     int stop;
 
     // Member functions
-    bool init(int argc, char* argv[]);
-    void cleanup();
+    Tracker(int argc, char* argv[]);
+    ~Tracker();
 
     bool svc_connect();
     void svc_disconnect();
