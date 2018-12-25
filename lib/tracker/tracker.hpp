@@ -83,6 +83,11 @@ class Tracker
 
     void arg_print();
 
+    void reinf_speed(float err, int sal, int sar, int* reSalPtr, int* reSarPtr);
+
+    std::string make_log_fname(std::string suffix);
+    std::string make_model_fname(std::string suffix);
+
    protected:
     // Member variables
     enum TKR_CTRL_METHOD ctrlMethod;
@@ -142,6 +147,9 @@ class Tracker
     void arg_print_cam();
     void arg_print_ft();
     void arg_print_log();
+
+    struct tm get_current_date();
+    std::string make_time_str();
 };
 
 }  // namespace hourglass
