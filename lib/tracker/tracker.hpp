@@ -79,7 +79,7 @@ class Tracker
     void cleanup();
 
     bool svc_connect();
-    bool svc_disconnect();
+    void svc_disconnect();
 
     void arg_print();
 

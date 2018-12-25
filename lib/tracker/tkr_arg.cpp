@@ -4,15 +4,8 @@
 #include <string>
 
 #include "tkr_argdef.hpp"
+#include "tkr_private.hpp"
 #include "tracker.hpp"
-
-#define __run_chk(func, retVal, errLabel)                    \
-    retVal = func;                                           \
-    if (retVal < 0)                                          \
-    {                                                        \
-        printf("%s failed with error: %d\n", #func, retVal); \
-        goto errLabel;                                       \
-    }
 
 #define __modcfg_get_str(strVal, cfg, nodeName, elemName, retVal, errLabel) \
     strVal = modcfg_get_content(cfg, nodeName, elemName);                   \
@@ -66,7 +59,7 @@ bool Tracker::arg_parse(int argc, char* argv[])
     MODCFG cfg = NULL;
 
     // Processing arguments
-    __run_chk(args_parse(arg_list, argc, argv, NULL), ret, RET);
+    ret = args_parse(arg_list, argc, argv, NULL);
     if (ret < 0 || arg_list[TKRARG_LIST::TKRARG_HELP].enable > 0)
     {
         printf("\nUsage:\n");
