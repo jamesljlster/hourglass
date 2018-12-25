@@ -95,7 +95,12 @@ bool Tracker::arg_parse(int argc, char* argv[])
     // Parse arguments
     __run_chk(this->arg_parse_ctrl(cfg, arg_list), ret, RET);
     __run_chk(this->arg_parse_wheel_server(cfg), ret, RET);
-    __run_chk(this->arg_parse_training_server(cfg), ret, RET);
+
+    if (this->ctrlMethod == Tracker::TKR_CTRL_METHOD::TKR_CTRL_METHOD_LEARN)
+    {
+        __run_chk(this->arg_parse_training_server(cfg), ret, RET);
+    }
+
     __run_chk(this->arg_parse_speed(cfg), ret, RET);
     __run_chk(this->arg_parse_cam(cfg), ret, RET);
     __run_chk(this->arg_parse_ft(cfg), ret, RET);
@@ -382,6 +387,17 @@ void Tracker::arg_print()
 {
     // Print arguments
     this->arg_print_ctrl();
+    this->arg_print_wheel_server();
+
+    if (this->ctrlMethod == Tracker::TKR_CTRL_METHOD::TKR_CTRL_METHOD_LEARN)
+    {
+        this->arg_print_training_server();
+    }
+
+    this->arg_print_speed();
+    this->arg_print_cam();
+    this->arg_print_ft();
+    this->arg_print_log();
 }
 
 void Tracker::arg_print_ctrl()
@@ -458,6 +474,66 @@ void Tracker::arg_print_ctrl_learn()
 
     printf("\t%s = %d\n", TKRARG_CTRL_LEARN_ARG_DATA_SEND_LIMIT,
            this->learnArg.sendLimit);
+}
+
+void Tracker::arg_print_wheel_server()
+{
+    printf("\n%s:\n", "wheel_server");
+
+    printf("\t%s = %s\n", TKRARG_WHEEL_SERVER_IP, this->wsvr.ip.c_str());
+    printf("\t%s = %d\n", TKRARG_WHEEL_SERVER_PORT, this->wsvr.port);
+}
+
+void Tracker::arg_print_training_server()
+{
+    printf("\n%s:\n", "training_server");
+
+    printf("\t%s = %s\n", TKRARG_TRAINING_SERVER_IP, this->trasvr.ip.c_str());
+    printf("\t%s = %d\n", TKRARG_TRAINING_SERVER_PORT, this->trasvr.port);
+}
+
+void Tracker::arg_print_speed()
+{
+    printf("\n%s:\n", "speed");
+
+    printf("\t%s = %d\n", TKRARG_SPEED_MIN, this->speedMin);
+    printf("\t%s = %d\n", TKRARG_SPEED_MAX, this->speedMax);
+}
+
+void Tracker::arg_print_cam()
+{
+    printf("\n%s:\n", "cam");
+
+    printf("\t%s = %d\n", TKRARG_CAM_INDEX, this->camIndex);
+    printf("\t%s = %d\n", TKRARG_CAM_WIDTH, this->camWidth);
+    printf("\t%s = %d\n", TKRARG_CAM_HEIGHT, this->camHeight);
+}
+
+void Tracker::arg_print_ft()
+{
+    printf("\n%s:\n", "ft");
+
+    switch (this->ftType)
+    {
+        case laneft::LANE_TYPE::LANE:
+            printf("\t%s = %s\n", TKRARG_FT_TYPE, TKRARG_FT_TYPE_LANE);
+            break;
+
+        case laneft::LANE_TYPE::LINE:
+            printf("\t%s = %s\n", TKRARG_FT_TYPE, TKRARG_FT_TYPE_LINE);
+            break;
+    }
+
+    printf("\t%s = %d\n", TKRARG_FT_LINE_HEIGHT_FILTER,
+           this->ftLineHeightFilter);
+}
+
+void Tracker::arg_print_log()
+{
+    printf("\n%s:\n", "log");
+
+    printf("\t%s = %s\n", TKRARG_LOG_BASE, this->logBase.c_str());
+    printf("\t%s = %s\n", TKRARG_LOG_EXT, this->logExt.c_str());
 }
 
 }  // namespace hourglass
