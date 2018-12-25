@@ -94,6 +94,11 @@ ftsvc::~ftsvc()
     }
 }
 
+void ftsvc::set_lane_type(laneft::LANE_TYPE laneType)
+{
+    this->laneFt.set_lane_type(laneType);
+}
+
 void ftsvc::set_find_point_rule(int maskSize, int threshold)
 {
     this->laneFt.set_find_point_rule(maskSize, threshold);

@@ -15,14 +15,24 @@ Tracker::Tracker(int argc, char* argv[])
     // Parse argument
     if (!this->arg_parse(argc, argv))
     {
-        throw runtime_error("Argument parsing filed!");
+        throw runtime_error("Argument parsing failed!");
     }
 
     // Connect to service
     if (!this->svc_connect())
     {
-        throw runtime_error("Service connection failed!");
+        throw runtime_error("Service initialization failed!");
     }
+
+    // Open camera
+    if (!this->ft.open_cam(this->camIndex, this->camWidth, this->camHeight))
+    {
+        throw runtime_error("Failed to open camera!");
+    }
+
+    // Setup feature
+    this->ft.set_line_height_filter(this->ftLineHeightFilter);
+    this->ft.set_image_show(1);
 }
 
 Tracker::~Tracker() { this->svc_disconnect(); }
@@ -221,6 +231,39 @@ string Tracker::make_time_str()
 
     string ret = strBuf;
     return ret;
+}
+
+void Tracker::start_new_log(string suffix)
+{
+    // Close file stream
+    if (this->fLog.is_open())
+    {
+        this->fLog.close();
+    }
+
+    // Open file stream
+    string logPath = this->make_log_fname(suffix);
+    this->fLog.open(logPath, ios_base::out);
+    if (!fLog.is_open())
+    {
+        throw runtime_error(string("Failed to open log file with path: ") +
+                            logPath);
+    }
+
+    // Dump csv header
+    fLog << "offset,sal,sar" << endl;
+}
+
+void Tracker::dump_info(float offset, float sal, float sar)
+{
+    // Check file stream
+    if (!this->fLog.is_open())
+    {
+        throw runtime_error("Log file is not opened");
+    }
+
+    // Dump log
+    this->fLog << offset << "," << sal << "," << sar << endl;
 }
 
 }  // namespace hourglass

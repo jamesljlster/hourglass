@@ -24,6 +24,8 @@ class ftsvc
     bool open_cam(std::string& camPath);
 
     // Feature setting
+    void set_lane_type(laneft::LANE_TYPE laneType);
+
     void set_find_point_rule(int maskSize, int threshold);
     void set_find_line_rule(int maxDist, int threshold);
     void set_line_height_filter(int threshold);

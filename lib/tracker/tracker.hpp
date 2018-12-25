@@ -88,6 +88,9 @@ class Tracker
     std::string make_log_fname(std::string suffix);
     std::string make_model_fname(std::string suffix);
 
+    void start_new_log(std::string suffix);
+    void dump_info(float offset, float sal, float sar);
+
    protected:
     // Member variables
     enum TKR_CTRL_METHOD ctrlMethod;
