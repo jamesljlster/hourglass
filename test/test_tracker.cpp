@@ -7,7 +7,11 @@ int main(int argc, char* argv[])
 {
     Tracker tkr;
 
-    tkr.init(argc, argv);
+    if (!tkr.init(argc, argv))
+    {
+        return -1;
+    }
+
     tkr.arg_print();
 
     return 0;

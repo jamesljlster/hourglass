@@ -67,6 +67,15 @@ bool Tracker::arg_parse(int argc, char* argv[])
 
     // Processing arguments
     __run_chk(args_parse(arg_list, argc, argv, NULL), ret, RET);
+    if (ret < 0 || arg_list[TKRARG_LIST::TKRARG_HELP].enable > 0)
+    {
+        printf("\nUsage:\n");
+        args_print_help(arg_list);
+        printf("\n");
+
+        ret = -1;
+        goto RET;
+    }
 
     // Check argument
 #define __arg_chk(index)                                          \
@@ -77,15 +86,6 @@ bool Tracker::arg_parse(int argc, char* argv[])
     }
 
     __arg_chk(TKRARG_LIST::TKRARG_CFG_PATH);
-
-    if (ret < 0 || arg_list[TKRARG_LIST::TKRARG_HELP].enable > 0)
-    {
-        printf("\nUsage:\n");
-        args_print_help(arg_list);
-        printf("\n");
-
-        goto RET;
-    }
 
     // Read config file
     __run_chk(
