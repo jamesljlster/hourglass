@@ -271,4 +271,82 @@ void Tracker::dump_info(float offset, float sal, float sar)
 
 float Tracker::get_norm_feature() { return this->ft.get_norm_feature(); }
 
+void Tracker::get_norm_ctrl_speed(float ft, float* salPtr, float* sarPtr)
+{
+    float tmpSal, tmpSar;
+
+    if (this->ctrlMethod == Tracker::TKR_CTRL_METHOD_PID)
+    {
+        float range = this->speedMax - this->speedMin;
+        float shift = this->speedMin;
+
+        // Get PID control speed
+        float delta = SPID_Control(&(this->sPid), 0, ft);
+        int baseSpeed = this->pidArg.baseSpeed;
+        tmpSal = baseSpeed - delta;
+        tmpSar = baseSpeed + delta;
+
+        // Normalize
+        tmpSal = (tmpSal - shift) / range;
+        tmpSar = (tmpSar - shift) / range;
+    }
+    else
+    {
+        float outputs[2];
+
+        lstm_forward_computation(this->model, &ft, outputs);
+        tmpSal = outputs[0];
+        tmpSar = outputs[1];
+    }
+
+    // Check speed range
+    if (tmpSal > 1.0)
+    {
+        tmpSal = 1.0;
+    }
+    else if (tmpSal < 0.0)
+    {
+        tmpSal = 0.0;
+    }
+
+    if (tmpSar > 1.0)
+    {
+        tmpSar = 1.0;
+    }
+    else if (tmpSar < 0.0)
+    {
+        tmpSar = 0.0;
+    }
+
+    // Assign value
+    *salPtr = tmpSal;
+    *sarPtr = tmpSar;
+}
+
+void Tracker::wheel_ctrl(float normSal, float normSar)
+{
+    float range = this->speedMax - this->speedMin;
+    float shift = this->speedMin;
+
+    int sal = normSal * range + shift;
+    int sar = normSar * range + shift;
+
+    int ret = wclt_control(this->wclt, sal, sar);
+    if (ret < 0)
+    {
+        throw runtime_error(string("wclt_control() failed with error: ") +
+                            to_string(ret));
+    }
+}
+
+void Tracker::wheel_stop()
+{
+    int ret = wclt_control(this->wclt, 255, 255);
+    if (ret < 0)
+    {
+        throw runtime_error(string("wclt_control() failed with error: ") +
+                            to_string(ret));
+    }
+}
+
 }  // namespace hourglass

@@ -92,7 +92,15 @@ class Tracker
     void dump_info(float offset, float sal, float sar);
 
     float get_norm_feature();
-    float get_ctrl_speed(float* salPtr, float* sarPtr);
+    void get_norm_ctrl_speed(float ft, float* salPtr, float* sarPtr);
+    void wheel_ctrl(float normSal, float normSar);
+    void wheel_stop();
+
+    void send_data();
+    int get_data_limit(float* ptr, int len);
+    float get_training_mse();
+    void get_model(lstm_t* lstmPtr);
+    void replace_model(lstm_t lstm);
 
    protected:
     // Member variables
@@ -117,7 +125,7 @@ class Tracker
     std::string logBase;
     std::string logExt;
 
-    lstm_t model;
+    lstm_t model = NULL;
     SPID sPid;
 
     ftsvc ft;

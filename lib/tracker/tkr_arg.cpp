@@ -544,6 +544,9 @@ void Tracker::load_lstm_model()
     switch (this->ctrlMethod)
     {
         case Tracker::TKR_CTRL_METHOD::TKR_CTRL_METHOD_PID:
+            SPID_ZeroMemory(&(this->sPid));
+            SPID_SetWeight(&(this->sPid), this->pidArg.kp, this->pidArg.ki,
+                           this->pidArg.kd);
             return;
             break;
 
