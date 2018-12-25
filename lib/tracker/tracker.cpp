@@ -349,4 +349,73 @@ void Tracker::wheel_stop()
     }
 }
 
+void Tracker::send_data(float* ptr, int len)
+{
+    while (1)
+    {
+        int ret = trasvc_client_datasend(this->ts, ptr, len);
+        if (ret < 0)
+        {
+            // Stop Wheel
+            this->wheel_stop();
+
+            // Error handling
+            string errMsg =
+                string("trasvc_client_datasend() failed with error: ") +
+                string(trasvc_get_error_msg(ret));
+            if (ret == TRASVC_TIMEOUT)
+            {
+                cout << errMsg << endl;
+                continue;
+            }
+            else
+            {
+                throw runtime_error(errMsg);
+            }
+        }
+        else
+        {
+            break;
+        }
+    }
+}
+
+int Tracker::get_data_limit() { return this->learnArg.sendLimit; }
+
+float Tracker::get_training_mse()
+{
+    float mse;
+    int ret = trasvc_client_get_mse(this->ts, &mse);
+    if (ret < 0)
+    {
+        string errMsg = string("trasvc_client_get_mse() failed with error: ") +
+                        string(trasvc_get_error_msg(ret));
+        throw runtime_error(errMsg);
+    }
+
+    return mse;
+}
+
+void Tracker::get_model(lstm_t* lstmPtr)
+{
+    int ret = trasvc_client_model_download(this->ts, lstmPtr);
+    if (ret < 0)
+    {
+        string errMsg =
+            string("trasvc_client_model_download() failed with error: ") +
+            string(trasvc_get_error_msg(ret));
+        throw runtime_error(errMsg);
+    }
+}
+
+void Tracker::replace_model(lstm_t lstm)
+{
+    if (this->model)
+    {
+        lstm_delete(this->model);
+    }
+
+    this->model = lstm;
+}
+
 }  // namespace hourglass

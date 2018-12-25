@@ -96,8 +96,8 @@ class Tracker
     void wheel_ctrl(float normSal, float normSar);
     void wheel_stop();
 
-    void send_data();
-    int get_data_limit(float* ptr, int len);
+    void send_data(float* ptr, int len);
+    int get_data_limit();
     float get_training_mse();
     void get_model(lstm_t* lstmPtr);
     void replace_model(lstm_t lstm);
