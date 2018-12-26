@@ -80,15 +80,44 @@ void Tracker::svc_disconnect()
 {
     if (this->wcltStatus)
     {
+        // Stop wheel
+        this->wheel_stop();
+
+        // Disconnect
         wclt_disconnect(this->wclt);
         this->wcltStatus = 0;
     }
 
     if (this->tsStatus)
     {
+        // Stop training service
+        trasvc_client_stop(this->ts);
+
+        // Disconnect
         trasvc_client_disconnect(this->ts);
         this->tsStatus = 0;
     }
+}
+
+void Tracker::reinf_speed_norm(float err, float sal, float sar, float* reSalPtr,
+                               float* reSarPtr)
+{
+    int reSal, reSar;
+    int tmpSal, tmpSar;
+
+    float range = this->speedMax - this->speedMin;
+    float shift = this->speedMin;
+
+    // Denormalize speed
+    tmpSal = sal * range + shift;
+    tmpSar = sar * range + shift;
+
+    // Find updated speed
+    this->reinf_speed(err, tmpSal, tmpSar, &reSal, &reSar);
+
+    // Normalize speed
+    *reSalPtr = (float)(reSal - shift) / range;
+    *reSarPtr = (float)(reSar - shift) / range;
 }
 
 void Tracker::reinf_speed(float err, int sal, int sar, int* reSalPtr,
@@ -189,6 +218,11 @@ string Tracker::make_log_fname(string suffix)
     return ret;
 }
 
+string Tracker::make_model_fname()
+{
+    return this->make_model_fname(string(""));
+}
+
 string Tracker::make_model_fname(string suffix)
 {
     // Check control mode
@@ -235,6 +269,8 @@ string Tracker::make_time_str()
     string ret = strBuf;
     return ret;
 }
+
+void Tracker::start_new_log() { this->start_new_log(string("")); }
 
 void Tracker::start_new_log(string suffix)
 {
@@ -349,6 +385,12 @@ void Tracker::wheel_stop()
     }
 }
 
+void Tracker::send_data(float ft, float normSal, float normSar)
+{
+    float dataTmp[3] = {ft, normSal, normSar};
+    this->send_data(dataTmp, 3);
+}
+
 void Tracker::send_data(float* ptr, int len)
 {
     while (1)
@@ -396,6 +438,8 @@ float Tracker::get_training_mse()
     return mse;
 }
 
+float Tracker::get_target_mse() { return this->learnArg.targetMse; }
+
 void Tracker::get_model(lstm_t* lstmPtr)
 {
     int ret = trasvc_client_model_download(this->ts, lstmPtr);
@@ -417,5 +461,7 @@ void Tracker::replace_model(lstm_t lstm)
 
     this->model = lstm;
 }
+
+char Tracker::ft_kbin() { return this->ft.kbin; }
 
 }  // namespace hourglass

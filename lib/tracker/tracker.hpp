@@ -83,11 +83,15 @@ class Tracker
 
     void arg_print();
 
+    void reinf_speed_norm(float err, float sal, float sar, float* reSalPtr,
+                          float* reSarPtr);
     void reinf_speed(float err, int sal, int sar, int* reSalPtr, int* reSarPtr);
 
     std::string make_log_fname(std::string suffix);
+    std::string make_model_fname();
     std::string make_model_fname(std::string suffix);
 
+    void start_new_log();
     void start_new_log(std::string suffix);
     void dump_info(float offset, float sal, float sar);
 
@@ -96,11 +100,15 @@ class Tracker
     void wheel_ctrl(float normSal, float normSar);
     void wheel_stop();
 
+    void send_data(float ft, float normSal, float normSar);
     void send_data(float* ptr, int len);
     int get_data_limit();
     float get_training_mse();
+    float get_target_mse();
     void get_model(lstm_t* lstmPtr);
     void replace_model(lstm_t lstm);
+
+    char ft_kbin();
 
    protected:
     // Member variables
