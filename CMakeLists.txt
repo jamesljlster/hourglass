@@ -34,6 +34,8 @@ set(DEPS_PATHS
     ${CMAKE_CURRENT_SOURCE_DIR}/deps/SimplePID/src
     ${CMAKE_CURRENT_SOURCE_DIR}/deps/ModConfig/src
     ${CMAKE_CURRENT_SOURCE_DIR}/deps/CSV_DataProc/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/deps/Wheel/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/deps/Wheel_Server/lib
     )
 
 # Library paths
@@ -46,6 +48,7 @@ set(LIB_PATHS
 
 # Utility paths
 set(UTIL_PATHS
+    ${CMAKE_CURRENT_SOURCE_DIR}/deps/Wheel_Server/util/wheel_server
     ${CMAKE_CURRENT_SOURCE_DIR}/util/trasvr
     ${CMAKE_CURRENT_SOURCE_DIR}/util/rand_model
     ${CMAKE_CURRENT_SOURCE_DIR}/util/lstm_trainer
