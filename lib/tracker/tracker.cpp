@@ -69,6 +69,8 @@ bool Tracker::svc_connect()
         __ts_run_chk(trasvc_client_start(this->ts), ret, ERR);
     }
 
+    goto RET;
+
 ERR:
     this->svc_disconnect();
 
