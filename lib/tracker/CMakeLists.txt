@@ -1,19 +1,24 @@
 cmake_minimum_required(VERSION 2.8)
 
 # Set variables
-set(PROJECT_NAME ftsvc)
+set(PROJECT_NAME tkr)
 set(PROJECT_LANGUAGE C CXX)
-set(PROJECT_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/ftsvc.hpp)
+set(PROJECT_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/tracker.hpp)
+set(PROJECT_DEPS modcfg)
 
 # Compile setting
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 set(CMAKE_C_FLAGS_RELEASE "-O3")
-set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -Wall")
-set(CMAKE_Cxx_FLAGS_RELEASE "-O3")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
-# Set default build type
+# Set default build option
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
+endif()
+
+if(NOT BUILD_SHARED_LIBS)
+    set(BUILD_SHARED_LIBS OFF)
 endif()
 
 # Set project
@@ -34,12 +39,16 @@ file(GLOB PROJECT_SRCS
     )
 
 # Build library
-add_library(${PROJECT_NAME} STATIC ${PROJECT_SRCS})
+add_library(${PROJECT_NAME} ${PROJECT_SRCS})
 set_target_properties(${PROJECT_NAME} PROPERTIES
-	CXX_STANDARD 11
+    CXX_STANDARD 11
     OUTPUT_NAME ${PROJECT_NAME}
     PREFIX "lib"
     )
+
+if(${BUILD_SHARED_LIBS})
+    target_link_libraries(${PROJECT_NAME} ${PROJECT_DEPS})
+endif()
 
 # Install
 install(TARGETS ${PROJECT_NAME}

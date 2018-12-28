@@ -19,3 +19,9 @@
 [submodule "deps/CSV_DataProc"]
 	path = deps/CSV_DataProc
 	url = git@140.127.205.188:jamesljlster/CSV_DataProc.git
+[submodule "deps/Wheel_Server"]
+	path = deps/Wheel_Server
+	url = git@140.127.205.188:jamesljlster/Wheel_Server.git
+[submodule "deps/Wheel"]
+	path = deps/Wheel
+	url = git@140.127.205.188:jamesljlster/Wheel.git

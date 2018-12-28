@@ -7,6 +7,7 @@
 #include <cstdio>
 #include <cstring>
 #include <string>
+#include <cmath>
 
 #define DEBUG
 #include "debug.hpp"
