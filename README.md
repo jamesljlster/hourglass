@@ -28,6 +28,12 @@ Video demo:
 
 ### Reinforcement learning
 
+In reinforcement learning task, the robot will keep running on lane in order to collect new control data and renew control data through RL rule.
+Then renewed datas will be sent to the training server.
+After 2500 (configurable argument) instances of data been sent, the robot will ask training server for a new LSTM control model.
+
+<img src=".assets/rl.png" width=650 />
+
 Video demo:
 
 <a href="https://drive.google.com/file/d/13vYEPOvu2ZCIZap5lwf6mrX1cap59SAY/view" target="_blank" title="Reinforcement Learning Video Demo">
@@ -35,6 +41,8 @@ Video demo:
 </a>
 
 ### Final state
+
+After reinforcement learning, the control performance improvement is noticeable.
 
 Video demo:
 
@@ -59,8 +67,6 @@ Video demo (reserve):
 <img src=".assets/monitor.png" width=650 />
 
 ### Experimental Result
-
-<img src=".assets/rl.png" width=650 />
 
 <img src=".assets/rl_rule.png" width=650 />
 
