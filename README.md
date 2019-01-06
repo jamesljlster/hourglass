@@ -20,10 +20,11 @@ Then do the following processing to get control offset:
 
 The LSTM initial control model is based on dataset collected with simple PID controller (slow but stable).
 
-This is a demo for our project:
+Demo Video:
 
-<iframe src="https://drive.google.com/file/d/1MmDySuFw_UZrD1y0BNdrFcl4YF5j4xwb/preview" width="640" height="360"></iframe>
-
+<a href="https://drive.google.com/file/d/15Csmsowz_JMXiRkoREaeF4YYJCDcHHgb/view" target="_blank" title="Initial State Video Demo">
+    <img src=".assets/demo_lstm_init.jpg" width=650 />
+</a>
 
 ### System Architecture
 
