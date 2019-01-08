@@ -5,6 +5,26 @@
 Traditionally, using fuzzy or PID control system to deal with tracking problem needs a lot of time wasted on parameter tuning.
 In order to reduce the time and efforts on control parameter optimization, we build a online learning system with LSTM (Long Short-Term Memory) and RL (Reinforcement Learning).
 
+### Project Dependences
+
+Open source:
+- [OpenCV](https://opencv.org/)
+- [libserialport](https://sigrok.org/wiki/Libserialport)
+
+Personal project (used as git submodule):
+- [args](../args): Summarizing program arguments.
+- [CSV_DataProc](../CSV_DataProc): Reading CSV format file.
+- [laneft](../laneft): Control feature processing.
+- [lstm](../lstm): Long Short-Term Memory (LSTM) library.
+- [ModConfig](../ModConfig): Reading configure file.
+- [SimplePID](../SimplePID): A very simple PID controller.
+- [tcpmgr](../tcpmgr): Managing TCP conntection.
+- [Wheel](../Wheel): Robot wheel controll module.
+- [Wheel_Server](../Wheel_Server): Robot wheel controll server.
+
+The links is provided as project relative links.
+Please view this README in project homepage.
+
 ### Feature extraction
 
 To control robot tracking on lane, we use a camera to provide a lane image.
@@ -58,21 +78,29 @@ Video demo (reserve):
 
 ### System Architecture
 
+The system could be separated to three individual part, communcating with TCP connection. The online learning feature is combined with two parts, robot and LSTM trainer.
+
 <img src=".assets/system_arch.png" width=650 />
+
+LSTM trainer architecture:
 
 <img src=".assets/lstm_trainer.png" width=650 />
 
+Robot architecture:
+
 <img src=".assets/robot.png" width=650 />
+
+Monitor architecture:
 
 <img src=".assets/monitor.png" width=650 />
 
 ### Experimental Result
 
+The experiment is run with the rule below:
+
 <img src=".assets/rl_rule.png" width=650 />
 
+After 51 times control model update, running speed average is increased to 60%.
+Control speed average logs of initial model and final model are shown in right side of the picture.
+
 <img src=".assets/result.png" width=650 />
-
-### Project Dependences
-
-- [OpenCV](https://opencv.org/)
-- [libserialport](https://sigrok.org/wiki/Libserialport)
