@@ -12,18 +12,15 @@ Open source:
 - [libserialport](https://sigrok.org/wiki/Libserialport)
 
 Personal project (used as git submodule):
-- [args](../../args): Summarizing program arguments.
-- [CSV_DataProc](../../CSV_DataProc): Reading CSV format file.
-- [laneft](../../laneft): Control feature processing.
-- [lstm](../../lstm): Long Short-Term Memory (LSTM) library.
-- [ModConfig](../../ModConfig): Reading configure file.
-- [SimplePID](../../SimplePID): A very simple PID controller.
-- [tcpmgr](../../tcpmgr): Managing TCP conntection.
-- [Wheel](../../Wheel): Robot wheel controll module.
-- [Wheel_Server](../../Wheel_Server): Robot wheel controll server.
-
-The links is provided as project relative links.
-Please view this README in project homepage.
+- args: Summarizing program arguments.
+- CSV_DataProc: Reading CSV format file.
+- laneft: Control feature processing.
+- lstm: Long Short-Term Memory (LSTM) library.
+- ModConfig: Reading configure file.
+- SimplePID: A very simple PID controller.
+- tcpmgr: Managing TCP conntection.
+- Wheel: Robot wheel controll module.
+- Wheel_Server: Robot wheel controll server.
 
 ### Feature extraction
 
