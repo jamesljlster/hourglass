@@ -97,7 +97,7 @@ The experiment is run with the rule below:
 
 <img src=".assets/rl_rule.png" width=650 />
 
-After 51 times control model update, running speed average is increased to 60%.
+After 51 times control model update, running speed average is increased to 60% and control offset is saturated around 0.2.
 Control speed average logs of initial model and final model are shown in right side of the picture.
 
 <img src=".assets/result.png" width=650 />
